@@ -201,13 +201,13 @@ export class Home extends Component {
         onSkip={this.skipWelcome}
         urlBasePath={this.props.urlBasePath}
         telemetry={this.props.telemetry}
+        branding={getServices().injectedMetadata.getBranding()}
       />
     );
   }
 
   render() {
     const { isLoading, isWelcomeEnabled, isNewOpenSearchDashboardsInstance } = this.state;
-
     if (isWelcomeEnabled) {
       if (isLoading) {
         return this.renderLoading();

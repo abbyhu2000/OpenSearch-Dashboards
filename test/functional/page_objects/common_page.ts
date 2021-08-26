@@ -68,8 +68,7 @@ export function CommonPageProvider({ getService, getPageObjects }: FtrProviderCo
       // Disable the welcome screen. This is relevant for environments
       // which don't allow to use the yml setting, e.g. cloud production.
       // It is done here so it applies to logins but also to a login re-use.
-      await browser.setLocalStorageItem('home:welcome:show', 'false');
-
+      await browser.setLocalStorageItem('home:welcome:show', 'true');
       let currentUrl = await browser.getCurrentUrl();
       log.debug(`currentUrl = ${currentUrl}\n    appUrl = ${appUrl}`);
       await testSubjects.find('opensearchDashboardsChrome', 6 * defaultFindTimeout); // 60 sec waiting

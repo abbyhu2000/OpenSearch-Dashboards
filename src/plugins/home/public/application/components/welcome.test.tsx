@@ -49,10 +49,19 @@ test('should render a Welcome screen with the telemetry disclaimer', () => {
   expect(component).toMatchSnapshot();
 });
 */
+
+const branding = {
+  logoUrl: '/',
+  smallLogoUrl: '/',
+  title: 'OpenSearch Dashboards',
+};
+
 test('should render a Welcome screen with the telemetry disclaimer when optIn is true', () => {
   const telemetry = telemetryPluginMock.createStartContract();
   telemetry.telemetryService.getIsOptedIn = jest.fn().mockReturnValue(true);
-  const component = shallow(<Welcome urlBasePath="/" onSkip={() => {}} telemetry={telemetry} />);
+  const component = shallow(
+    <Welcome urlBasePath="/" onSkip={() => {}} telemetry={telemetry} branding={branding} />
+  );
 
   expect(component).toMatchSnapshot();
 });
@@ -60,13 +69,15 @@ test('should render a Welcome screen with the telemetry disclaimer when optIn is
 test('should render a Welcome screen with the telemetry disclaimer when optIn is false', () => {
   const telemetry = telemetryPluginMock.createStartContract();
   telemetry.telemetryService.getIsOptedIn = jest.fn().mockReturnValue(false);
-  const component = shallow(<Welcome urlBasePath="/" onSkip={() => {}} telemetry={telemetry} />);
+  const component = shallow(
+    <Welcome urlBasePath="/" onSkip={() => {}} telemetry={telemetry} branding={branding} />
+  );
 
   expect(component).toMatchSnapshot();
 });
 
 test('should render a Welcome screen with no telemetry disclaimer', () => {
-  const component = shallow(<Welcome urlBasePath="/" onSkip={() => {}} />);
+  const component = shallow(<Welcome urlBasePath="/" onSkip={() => {}} branding={branding} />);
 
   expect(component).toMatchSnapshot();
 });
@@ -75,7 +86,31 @@ test('fires opt-in seen when mounted', () => {
   const telemetry = telemetryPluginMock.createStartContract();
   const mockSetOptedInNoticeSeen = jest.fn();
   telemetry.telemetryNotifications.setOptedInNoticeSeen = mockSetOptedInNoticeSeen;
-  shallow(<Welcome urlBasePath="/" onSkip={() => {}} telemetry={telemetry} />);
+  shallow(<Welcome urlBasePath="/" onSkip={() => {}} telemetry={telemetry} branding={branding} />);
 
   expect(mockSetOptedInNoticeSeen).toHaveBeenCalled();
+});
+
+test('should render a Welcome screen with the default OpenSearch Dashboards branding', () => {
+  const defaultBranding = {
+    logoUrl: '/',
+    smallLogoUrl: '',
+    title: 'OpenSearch Dashboards',
+  };
+  const component = shallow(
+    <Welcome urlBasePath="/" onSkip={() => {}} branding={defaultBranding} />
+  );
+  expect(component).toMatchSnapshot();
+});
+
+test('should render a Welcome screen with customized branding', () => {
+  const customBranding = {
+    logoUrl: '/',
+    smallLogoUrl: '/custom',
+    title: 'custom title',
+  };
+  const component = shallow(
+    <Welcome urlBasePath="/" onSkip={() => {}} branding={customBranding} />
+  );
+  expect(component).toMatchSnapshot();
 });

@@ -137,41 +137,31 @@ describe('RenderingService', () => {
     });
   });
   describe('checkUrlvalid()', () => {
-    it('URL is valid', async () => {
-      jest.mock('axios', () => ({
-        async get() {
-          return {
-            status: 200,
-          };
-        },
-      }));
+    it('SVG URL is valid', async () => {
       const result = await service.checkUrlValid(
-        'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg'
+        'https://opensearch.org/assets/brand/SVG/Mark/opensearch_mark_default.svg',
+        'error'
       );
       expect(result).toEqual(
-        'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg'
+        'https://opensearch.org/assets/brand/SVG/Mark/opensearch_mark_default.svg'
       );
     });
-    it('URL does not contain jpeg, jpg, gif, or png', async () => {
+    it('PNG URL is valid', async () => {
       const result = await service.checkUrlValid(
-        'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode'
+        'https://opensearch.org/assets/brand/PNG/Mark/opensearch_mark_default.png',
+        'error'
       );
       expect(result).toEqual(
-        'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg'
+        'https://opensearch.org/assets/brand/PNG/Mark/opensearch_mark_default.png'
       );
+    });
+    it('URL does not contain svg, or png', async () => {
+      const result = await service.checkUrlValid('https://validUrl', 'error');
+      expect(result).toEqual('');
     });
     it('URL is invalid', async () => {
-      jest.mock('axios', () => ({
-        async get() {
-          return {
-            status: 404,
-          };
-        },
-      }));
-      const result = await service.checkUrlValid('http://notfound');
-      expect(result).toEqual(
-        'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg'
-      );
+      const result = await service.checkUrlValid('http://notfound.svg', 'error');
+      expect(result).toEqual('');
     });
   });
 });

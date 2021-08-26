@@ -63,7 +63,14 @@ export class RenderingService {
       .pipe(first())
       .toPromise();
 
-    const validLogoUrl = await this.checkUrlValid(opensearchDashboardsConfig.branding.logoUrl);
+    const validLogoUrl = await this.checkUrlValid(
+      opensearchDashboardsConfig.branding.logoUrl,
+      'Config logoUrl is not found or invalid, default OpenSearch logo will be rendered on the main page'
+    );
+    const validSmallLogoUrl = await this.checkUrlValid(
+      opensearchDashboardsConfig.branding.smallLogoUrl,
+      'Config smallLogoUrl is not found or invalid, default OpenSearch logo will be rendered on the welcome page'
+    );
 
     return {
       render: async (
@@ -115,6 +122,8 @@ export class RenderingService {
             },
             branding: {
               logoUrl: validLogoUrl,
+              smallLogoUrl: validSmallLogoUrl,
+              title: opensearchDashboardsConfig.branding.title,
             },
           },
         };
@@ -132,22 +141,18 @@ export class RenderingService {
     return ((await browserConfig?.pipe(take(1)).toPromise()) ?? {}) as Record<string, any>;
   }
 
-  public checkUrlValid = async (url: string): Promise<string> => {
+  public checkUrlValid = async (url: string, errorMessage: string): Promise<string> => {
     if (url.match(/\.(png|svg)$/) === null) {
-      this.logger
-        .get('branding')
-        .error('Invalid URL for logo. Rendering default OpenSearch Dashboard Logo.');
-      return 'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg';
+      this.logger.get('branding').error(errorMessage);
+      return '';
     }
     return await Axios.get(url, { adapter: AxiosHttpAdapter })
       .then(() => {
         return url;
       })
       .catch(() => {
-        this.logger
-          .get('branding')
-          .error('Invalid URL for logo. Rendering default OpenSearch Dashboard Logo.');
-        return 'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg';
+        this.logger.get('branding').error(errorMessage);
+        return '';
       });
   };
 }

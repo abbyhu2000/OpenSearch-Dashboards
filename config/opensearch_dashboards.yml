@@ -151,6 +151,13 @@
 # ]
 #vis_type_timeline.graphiteBlockedIPs: []
 
-# user input URL for customized logo 
+# user input URL for customized logo on the main page
 # opensearchDashboards.branding.logoUrl: ""
+
+# user input URL for customized logo of smaller version 
+# opensearchDashboards.branding.smallLogoUrl: ""
+
+# user input for custom application title
+# opensearchDashboards.branding.title: ""
+
 

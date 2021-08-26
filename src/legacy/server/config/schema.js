@@ -237,6 +237,10 @@ export default () =>
         logoUrl: Joi.string().default(
           'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg'
         ),
+        smallLogoUrl: Joi.string().default(
+          'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg'
+        ),
+        title: Joi.string().default('OpenSearch Dashboards'),
       }),
     }).default(),
 

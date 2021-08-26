@@ -38,11 +38,13 @@ export interface CustomLogoType {
 }
 
 export const CustomLogo = ({ ...branding }: CustomLogoType) => {
+  const defaultUrl =
+    'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg';
   return (
     <img
       data-test-subj="customLogo"
-      data-test-image-url={branding.logoUrl}
-      src={branding.logoUrl}
+      data-test-image-url={branding.logoUrl === '' ? defaultUrl : branding.logoUrl}
+      src={branding.logoUrl === '' ? defaultUrl : branding.logoUrl}
       alt="logo"
       loading="lazy"
       className="logoImage"

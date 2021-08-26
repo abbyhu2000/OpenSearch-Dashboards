@@ -58,6 +58,11 @@ interface Props {
   urlBasePath: string;
   onSkip: () => void;
   telemetry?: TelemetryPluginStart;
+  branding: {
+    logoUrl: string;
+    smallLogoUrl: string;
+    title: string;
+  };
 }
 
 /**
@@ -141,19 +146,39 @@ export class Welcome extends React.Component<Props> {
   };
 
   render() {
-    const { urlBasePath, telemetry } = this.props;
+    const { urlBasePath, telemetry, branding } = this.props;
     return (
       <EuiPortal>
         <div className="homWelcome">
           <header className="homWelcome__header">
             <div className="homWelcome__content eui-textCenter">
               <EuiSpacer size="xl" />
-              <span className="homWelcome__logo">
-                <EuiIcon type={OpenSearchMarkCentered} size="original" />
-              </span>
-              <EuiTitle size="l" className="homWelcome__title">
+              {branding.smallLogoUrl === '' ? (
+                <span className="homWelcome__logo">
+                  <EuiIcon type={OpenSearchMarkCentered} size="original" />
+                </span>
+              ) : (
+                <div className="homWelcome__customLogoContainer">
+                  <img
+                    className="homWelcome__customLogo"
+                    data-test-subj="welcomeCustomLogo"
+                    data-test-image-url={branding.smallLogoUrl}
+                    alt="logo"
+                    src={branding.smallLogoUrl}
+                  />
+                </div>
+              )}
+              <EuiTitle
+                size="l"
+                className="homWelcome__title"
+                data-test-subj="welcomeCustomTitle"
+                data-test-title-message={`Welcome to ${branding.title}`}
+              >
                 <h1>
-                  <FormattedMessage id="home.welcomeTitle" defaultMessage="Welcome to OpenSearch" />
+                  <FormattedMessage
+                    id="home.welcomeTitle"
+                    defaultMessage={`Welcome to ${branding.title}`}
+                  />
                 </h1>
               </EuiTitle>
               <EuiSpacer size="m" />
