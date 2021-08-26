@@ -58,9 +58,8 @@ export default function ({ getService, loadTestFile }: FtrProviderContext) {
     describe('', function () {
       this.tags('ciGroup9');
 
-      // loadTestFile(require.resolve('./_custom_branding'));
+      loadTestFile(require.resolve('./_custom_branding'));
       loadTestFile(require.resolve('./_embedding_chart'));
-      // loadTestFile(require.resolve('./_custom_branding'));
       loadTestFile(require.resolve('./_chart_types'));
       loadTestFile(require.resolve('./_area_chart'));
       loadTestFile(require.resolve('./_data_table'));
