@@ -79,6 +79,7 @@ export interface InjectedMetadataParams {
     branding: {
       logoUrl: string;
       smallLogoUrl: string;
+      loadingLogoUrl: string;
       title: string;
     };
   };
@@ -188,6 +189,7 @@ export interface InjectedMetadataSetup {
   getBranding: () => {
     logoUrl: string;
     smallLogoUrl: string;
+    loadingLogoUrl: string;
     title: string;
   };
 }

@@ -235,11 +235,12 @@ export default () =>
       autocompleteTimeout: Joi.number().integer().min(1).default(1000),
       branding: Joi.object({
         logoUrl: Joi.string().default(
-          'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg'
+          '/'
         ),
         smallLogoUrl: Joi.string().default(
-          'https://opensearch.org/assets/brand/SVG/Logo/opensearch_dashboards_logo_darkmode.svg'
+          '/'
         ),
+        loadingLogoUrl: Joi.string().default('/'),
         title: Joi.string().default('OpenSearch Dashboards'),
       }),
     }).default(),

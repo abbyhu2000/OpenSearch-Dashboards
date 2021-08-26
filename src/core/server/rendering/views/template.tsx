@@ -95,6 +95,18 @@ export const Template: FunctionComponent<Props> = ({
       />
     </svg>
   );
+
+  const customLoadingLogo = (
+  <div>
+    <img 
+    src={injectedMetadata.branding.loadingLogoUrl}
+    alt="logo"
+    height="30"
+    width="30"
+    loading="lazy"
+    />
+</div>);
+
   return (
     <html lang={locale}>
       <head>
@@ -148,7 +160,7 @@ export const Template: FunctionComponent<Props> = ({
           data-test-subj="osdLoadingMessage"
         >
           <div className="osdLoaderWrap">
-            {openSearchLogoSpinner}
+            {injectedMetadata.branding.loadingLogoUrl === ''? openSearchLogoSpinner: customLoadingLogo}
             <div
               className="osdWelcomeText"
               data-error-message={i18n('core.ui.welcomeErrorMessage', {

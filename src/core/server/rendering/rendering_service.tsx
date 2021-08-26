@@ -71,6 +71,11 @@ export class RenderingService {
       opensearchDashboardsConfig.branding.smallLogoUrl,
       'Config smallLogoUrl is not found or invalid, default OpenSearch logo will be rendered on the welcome page'
     );
+    const validLoadingLogoUrl = await this.checkUrlValid(
+      opensearchDashboardsConfig.branding.loadingLogoUrl,
+      'Config loadingLogoUrl is not found or invalid, default OpenSearch logo will be rendered on the loading page'
+    );
+    console.log(validLoadingLogoUrl)
 
     return {
       render: async (
@@ -123,6 +128,7 @@ export class RenderingService {
             branding: {
               logoUrl: validLogoUrl,
               smallLogoUrl: validSmallLogoUrl,
+              loadingLogoUrl: validLoadingLogoUrl,
               title: opensearchDashboardsConfig.branding.title,
             },
           },
