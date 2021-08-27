@@ -97,15 +97,36 @@ export const Template: FunctionComponent<Props> = ({
   );
 
   const customLoadingLogo = (
-  <div>
+    <div className="loadingLogoContainer">
+      <img 
+        className="loadingLogo"
+        src={injectedMetadata.branding.loadingLogoUrl}
+        alt="logo"
+      />
+    </div>);
+
+const customStaticLogo = (
+  <div className="loadingLogoContainer">
     <img 
-    src={injectedMetadata.branding.loadingLogoUrl}
-    alt="logo"
-    height="30"
-    width="30"
-    loading="lazy"
+      className="loadingLogo"
+      src={injectedMetadata.branding.smallLogoUrl}
+      alt="logo"
     />
-</div>);
+  </div>);
+
+    const loadingLogo = ():JSX.Element => {
+      if(injectedMetadata.branding.loadingLogoUrl === ''){
+        if(injectedMetadata.branding.smallLogoUrl === ''){
+          return openSearchLogoSpinner;
+        }
+        else{
+          return customStaticLogo;
+        }
+      }
+      else{
+        return customLoadingLogo;
+      }
+    }
 
   return (
     <html lang={locale}>
@@ -160,7 +181,7 @@ export const Template: FunctionComponent<Props> = ({
           data-test-subj="osdLoadingMessage"
         >
           <div className="osdLoaderWrap">
-            {injectedMetadata.branding.loadingLogoUrl === ''? openSearchLogoSpinner: customLoadingLogo}
+            {loadingLogo()}
             <div
               className="osdWelcomeText"
               data-error-message={i18n('core.ui.welcomeErrorMessage', {
@@ -168,8 +189,9 @@ export const Template: FunctionComponent<Props> = ({
                   'OpenSearch did not load properly. Check the server output for more information.',
               })}
             >
-              {i18n('core.ui.welcomeMessage', { defaultMessage: 'Loading OpenSearch' })}
+              {i18n('core.ui.welcomeMessage', { defaultMessage: `Loading ${injectedMetadata.branding.title}` })}
             </div>
+            {((injectedMetadata.branding.loadingLogoUrl === '')&&(injectedMetadata.branding.smallLogoUrl !== ''))?<div className="osdProgress"/>:<div />}
           </div>
         </div>
 

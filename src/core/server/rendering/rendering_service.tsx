@@ -148,8 +148,8 @@ export class RenderingService {
   }
 
   public checkUrlValid = async (url: string, errorMessage: string): Promise<string> => {
-    if (url.match(/\.(png|svg)$/) === null) {
-      this.logger.get('branding').error(errorMessage);
+    if (url.match(/\.(png|svg|gif)$/) === null) {
+      this.logger.get('branding').warn(errorMessage);
       return '';
     }
     return await Axios.get(url, { adapter: AxiosHttpAdapter })
@@ -157,7 +157,7 @@ export class RenderingService {
         return url;
       })
       .catch(() => {
-        this.logger.get('branding').error(errorMessage);
+        this.logger.get('branding').warn(errorMessage);
         return '';
       });
   };

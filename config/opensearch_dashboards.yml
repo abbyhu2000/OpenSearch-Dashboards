@@ -152,15 +152,21 @@
 #vis_type_timeline.graphiteBlockedIPs: []
 
 # full version customized logo URL
-# opensearchDashboards.branding.logoUrl: ""
+ opensearchDashboards.branding.logoUrl: "https://d1.awsstatic.com/logos/aws-logo-lockups/poweredbyaws/Powered-By_logo-horiz_RGB_REV.0225902cc6a7f48ea9c65e903f"
 
 # smaller version customized logo URL
-# opensearchDashboards.branding.smallLogoUrl: ""
+# opensearchDashboards.branding.smallLogoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/1024px-Amazon_Web_Services_Logo.svg.png"
 
 # loading logo URL
- opensearchDashboards.branding.loadingLogoUrl: "https://i.ibb.co/WHHLG2W/bear.png"
+# opensearchDashboards.branding.loadingLogoUrl: "https://media.giphy.com/media/ZPgS6AJ7oX08zW0UcV/giphy.gif"
 
 # custom application title
-# opensearchDashboards.branding.title: ""
+ opensearchDashboards.branding.title: "AWS OpenSearch Dashboards"
 
+# AWS logo: https://toppng.com/uploads/preview/aws-logo-amazon-web-services-ico-11562880403an9a3aaryc.png
+# small AWS logo: https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/1024px-Amazon_Web_Services_Logo.svg.png
+# OpenSearch full logo darkmode: https://opensearch.org/assets/brand/SVG/Logo/opensearch_logo_darkmode.svg
+# OpenSearch full logo lightmode: https://opensearch.org/assets/brand/SVG/Logo/opensearch_logo_default.svg
+# Bear Logo: https://i.ibb.co/WHHLG2W/bear.png
+# Loading logo: https://media.giphy.com/media/ZPgS6AJ7oX08zW0UcV/giphy.gif (testing with gif first because still looking for good animated svg url)
 

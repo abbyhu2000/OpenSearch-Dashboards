@@ -168,6 +168,16 @@ export const Styles: FunctionComponent<Props> = ({ darkMode }) => {
               transform: scaleX(1) translateX(100%);
             }
           }
+
+          .loadingLogoContainer {
+            height: 60px;
+            padding: 10px 10px 10px 10px;
+          }
+
+          .loadingLogo {
+            height: 100%;
+            max-width: 100%;
+          }
         `,
       }}
     />
