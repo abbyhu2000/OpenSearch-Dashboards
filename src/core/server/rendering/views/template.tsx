@@ -94,10 +94,13 @@ export const Template: FunctionComponent<Props> = ({
     </svg>
   );
 
-  const loadingLogoDefault = injectedMetadata.branding.loadingLogo?.defaultUrl;
+  /* const loadingLogoDefault = injectedMetadata.branding.loadingLogo?.defaultUrl;
   const loadingLogoDarkMode = injectedMetadata.branding.loadingLogo?.darkModeUrl;
   const markDefault = injectedMetadata.branding.mark?.defaultUrl;
-  const markDarkMode = injectedMetadata.branding.mark?.darkModeUrl;
+  const markDarkMode = injectedMetadata.branding.mark?.darkModeUrl;*/
+
+  const loadingurl = injectedMetadata.branding.loadingLogo?.defaultUrl;
+  const loadingbar = injectedMetadata.branding.loadingLogo?.loadingBar;
   const favicon = injectedMetadata.branding.faviconUrl;
   const applicationTitle = injectedMetadata.branding.applicationTitle;
 
@@ -109,9 +112,9 @@ export const Template: FunctionComponent<Props> = ({
    *
    * @returns a valid custom URL or undefined if no valid URL is provided
    */
-  const customLoadingLogoDefaultMode = () => {
+  /* const customLoadingLogoDefaultMode = () => {
     return loadingLogoDefault ?? markDefault ?? undefined;
-  };
+  };*/
 
   /**
    * Use branding configurations to check which URL to use for rendering
@@ -121,18 +124,18 @@ export const Template: FunctionComponent<Props> = ({
    *
    * @returns a valid custom URL or undefined if no valid URL is provided
    */
-  const customLoadingLogoDarkMode = () => {
+  /* const customLoadingLogoDarkMode = () => {
     return loadingLogoDarkMode ?? loadingLogoDefault ?? markDarkMode ?? markDefault ?? undefined;
-  };
+  };*/
 
   /**
    * Render custom loading logo for both default mode and dark mode
    *
    * @returns a valid custom loading logo URL, or undefined
    */
-  const customLoadingLogo = () => {
+  /* const customLoadingLogo = () => {
     return darkMode ? customLoadingLogoDarkMode() : customLoadingLogoDefaultMode();
-  };
+  };*/
 
   /**
    * Check if a horizontal loading is needed to be rendered.
@@ -144,7 +147,8 @@ export const Template: FunctionComponent<Props> = ({
    * @returns a loading bar component or no loading bar component
    */
   const renderBrandingEnabledOrDisabledLoadingBar = () => {
-    if (customLoadingLogo() && !loadingLogoDefault) {
+    if (loadingbar) {
+      // console.log('yes loading bar');
       return <div className="osdProgress" />;
     }
   };
@@ -157,10 +161,10 @@ export const Template: FunctionComponent<Props> = ({
    * @returns a image component with custom logo URL, or the default opensearch logo spinner
    */
   const renderBrandingEnabledOrDisabledLoadingLogo = () => {
-    if (customLoadingLogo()) {
+    if (loadingurl) {
       return (
         <div className="loadingLogoContainer">
-          <img className="loadingLogo" src={customLoadingLogo()} alt={applicationTitle + ' logo'} />
+          <img className="loadingLogo" src={loadingurl} alt={applicationTitle + ' logo'} />
         </div>
       );
     }

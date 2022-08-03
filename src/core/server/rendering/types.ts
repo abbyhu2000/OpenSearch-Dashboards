@@ -151,3 +151,15 @@ export interface BrandingAssignment {
   applicationTitle?: string;
   useExpandedHeader?: boolean;
 }
+
+export interface BrandingAssignmentWithoutValidation {
+  logoDefaultConfig: string;
+  logoDarkmodeConfig: string;
+  markDefaultConfig: string;
+  markDarkmodeConfig: string;
+  loadingLogoDefaultConfig: string;
+  loadingLogoDarkmodeConfig: string;
+  faviconConfig: string;
+  applicationTitleConfig: string;
+  useExpandedHeader: boolean;
+}

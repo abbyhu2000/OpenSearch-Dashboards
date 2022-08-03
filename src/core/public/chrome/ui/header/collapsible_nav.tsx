@@ -142,8 +142,8 @@ export function CollapsibleNav({
   const DARKMODE_OPENSEARCH_MARK = `${branding.assetFolderUrl}/opensearch_mark_dark_mode.svg`;
 
   const darkMode = branding.darkMode;
-  const markDefault = branding.mark?.defaultUrl;
-  const markDarkMode = branding.mark?.darkModeUrl;
+  const mark = branding.mark?.defaultUrl;
+  // const markDarkMode = branding.mark?.darkModeUrl;
 
   /**
    * Use branding configurations to check which URL to use for rendering
@@ -151,9 +151,9 @@ export function CollapsibleNav({
    *
    * @returns a valid custom URL or original default mode opensearch mark if no valid URL is provided
    */
-  const customSideMenuLogoDefaultMode = () => {
+  /* const customSideMenuLogoDefaultMode = () => {
     return markDefault ?? DEFAULT_OPENSEARCH_MARK;
-  };
+  };*/
 
   /**
    * Use branding configurations to check which URL to use for rendering
@@ -161,9 +161,9 @@ export function CollapsibleNav({
    *
    * @returns a valid custom URL or original dark mode opensearch mark if no valid URL is provided
    */
-  const customSideMenuLogoDarkMode = () => {
+  /* const customSideMenuLogoDarkMode = () => {
     return markDarkMode ?? markDefault ?? DARKMODE_OPENSEARCH_MARK;
-  };
+  };*/
 
   /**
    * Render custom side menu logo for both default mode and dark mode
@@ -171,7 +171,8 @@ export function CollapsibleNav({
    * @returns a valid logo URL
    */
   const customSideMenuLogo = () => {
-    return darkMode ? customSideMenuLogoDarkMode() : customSideMenuLogoDefaultMode();
+    // console.log(mark)
+    return mark ?? (darkMode ? DARKMODE_OPENSEARCH_MARK : DEFAULT_OPENSEARCH_MARK);
   };
 
   return (

@@ -138,15 +138,24 @@ export class RenderingService {
               darkMode,
               assetFolderUrl: `${uiPublicUrl}/default_branding`,
               logo: {
-                defaultUrl: brandingAssignment.logoDefault,
+                defaultUrl: this.darkModeLogic(
+                  darkMode,
+                  brandingAssignment.logoDefault,
+                  brandingAssignment.logoDarkmode
+                ),
                 darkModeUrl: brandingAssignment.logoDarkmode,
               },
               mark: {
-                defaultUrl: brandingAssignment.markDefault,
+                defaultUrl: this.darkModeLogic(
+                  darkMode,
+                  brandingAssignment.markDefault,
+                  brandingAssignment.markDarkmode
+                ),
                 darkModeUrl: brandingAssignment.markDarkmode,
               },
               loadingLogo: {
-                defaultUrl: brandingAssignment.loadingLogoDefault,
+                defaultUrl: this.loadingLogoLogic(darkMode, brandingAssignment).loadinglogo,
+                loadingBar: this.loadingLogoLogic(darkMode, brandingAssignment).loadBar,
                 darkModeUrl: brandingAssignment.loadingLogoDarkmode,
               },
               faviconUrl: brandingAssignment.favicon,
@@ -162,6 +171,24 @@ export class RenderingService {
   }
 
   public async stop() {}
+
+  private darkModeLogic(darkMode: boolean, defaultUrl?: string, darkmodeUrl?: string) {
+    const defaultImg = defaultUrl ?? undefined;
+    const darkImg = darkmodeUrl ?? defaultUrl ?? undefined;
+    return darkMode ? darkImg : defaultImg;
+  }
+
+  private loadingLogoLogic(
+    darkMode: boolean,
+    { markDefault, markDarkmode, loadingLogoDefault, loadingLogoDarkmode }: BrandingAssignment
+  ) {
+    const defaultLoading = loadingLogoDefault ?? markDefault ?? undefined;
+    const darkLoading =
+      loadingLogoDarkmode ?? loadingLogoDefault ?? markDarkmode ?? markDefault ?? undefined;
+    const loadinglogo = darkMode ? darkLoading : defaultLoading;
+    const loadBar = !loadingLogoDefault && defaultLoading ? true : false;
+    return { loadinglogo, loadBar };
+  }
 
   /**
    * Setups HTTP Agent if SSL is enabled to pass SSL config
@@ -200,36 +227,59 @@ export class RenderingService {
     darkMode: boolean,
     opensearchDashboardsConfig: Readonly<OpenSearchDashboardsConfigType>
   ): Promise<BrandingAssignment> => {
+    const branding = opensearchDashboardsConfig.branding;
+
+    const skipValidation = false;
+    const logoDefaultConfig = branding.logo.defaultUrl;
+    const logoDarkmodeConfig = branding.logo.darkModeUrl;
+    const markDefaultConfig = branding.mark.defaultUrl;
+    const markDarkmodeConfig = branding.mark.darkModeUrl;
+    const loadingLogoDefaultConfig = branding.loadingLogo.defaultUrl;
+    const loadingLogoDarkmodeConfig = branding.loadingLogo.darkModeUrl;
+    const faviconConfig = branding.faviconUrl;
+    const applicationTitleConfig = branding.applicationTitle;
+
+    // use expanded menu by default unless explicitly set to false
+    const { useExpandedHeader = true } = branding;
+
+    /* if(skipValidation){
+      const branding = opensearchDashboardsConfig.branding;
+      const brandingWithoutValidation: BrandingAssignment= {
+        branding.logo.defaultUrl as logoDefaultConfig
+        logoDarkmodeConfig,
+        markDefaultConfig,
+        markDarkmodeConfig,
+        loadingLogoDefaultConfig,
+        loadingLogoDarkmodeConfig,
+        faviconConfig,
+        applicationTitleConfig,
+        useExpandedHeader,
+      }
+      return brandingWithoutValidation;
+    }*/
+
     const brandingValidation: BrandingValidation = await this.checkBrandingValid(
+      skipValidation,
       darkMode,
       opensearchDashboardsConfig
     );
-    const branding = opensearchDashboardsConfig.branding;
 
     // assign default mode URL based on the brandingValidation function result
-    const logoDefault = brandingValidation.isLogoDefaultValid
-      ? branding.logo.defaultUrl
-      : undefined;
+    const logoDefault = brandingValidation.isLogoDefaultValid ? logoDefaultConfig : undefined;
 
-    const markDefault = brandingValidation.isMarkDefaultValid
-      ? branding.mark.defaultUrl
-      : undefined;
+    const markDefault = brandingValidation.isMarkDefaultValid ? markDefaultConfig : undefined;
 
     const loadingLogoDefault = brandingValidation.isLoadingLogoDefaultValid
-      ? branding.loadingLogo.defaultUrl
+      ? loadingLogoDefaultConfig
       : undefined;
 
     // assign dark mode URLs based on brandingValidation function result
-    let logoDarkmode = brandingValidation.isLogoDarkmodeValid
-      ? branding.logo.darkModeUrl
-      : undefined;
+    let logoDarkmode = brandingValidation.isLogoDarkmodeValid ? logoDarkmodeConfig : undefined;
 
-    let markDarkmode = brandingValidation.isMarkDarkmodeValid
-      ? branding.mark.darkModeUrl
-      : undefined;
+    let markDarkmode = brandingValidation.isMarkDarkmodeValid ? markDarkmodeConfig : undefined;
 
     let loadingLogoDarkmode = brandingValidation.isLoadingLogoDarkmodeValid
-      ? branding.loadingLogo.darkModeUrl
+      ? loadingLogoDarkmodeConfig
       : undefined;
 
     /**
@@ -238,21 +288,21 @@ export class RenderingService {
      * If user provides a valid dark mode URL but fails to provide a valid default mode URL,
      * return undefined for the dark mode URL
      */
-    if (logoDarkmode && !logoDefault) {
+    if (!skipValidation && logoDarkmode && !logoDefault) {
       this.logger
         .get('branding')
         .error('Must provide a valid logo default mode URL before providing a logo dark mode URL');
       logoDarkmode = undefined;
     }
 
-    if (markDarkmode && !markDefault) {
+    if (!skipValidation && markDarkmode && !markDefault) {
       this.logger
         .get('branding')
         .error('Must provide a valid mark default mode URL before providing a mark dark mode URL');
       markDarkmode = undefined;
     }
 
-    if (loadingLogoDarkmode && !loadingLogoDefault) {
+    if (!skipValidation && loadingLogoDarkmode && !loadingLogoDefault) {
       this.logger
         .get('branding')
         .error(
@@ -262,15 +312,12 @@ export class RenderingService {
     }
 
     // assign favicon based on brandingValidation function result
-    const favicon = brandingValidation.isFaviconValid ? branding.faviconUrl : undefined;
+    const favicon = brandingValidation.isFaviconValid ? faviconConfig : undefined;
 
     // assign application title based on brandingValidation function result
     const applicationTitle = brandingValidation.isTitleValid
-      ? branding.applicationTitle
+      ? applicationTitleConfig
       : DEFAULT_TITLE;
-
-    // use expanded menu by default unless explicitly set to false
-    const { useExpandedHeader = true } = branding;
 
     const brandingAssignment: BrandingAssignment = {
       logoDefault,
@@ -297,34 +344,48 @@ export class RenderingService {
    * @returns {BrandingValidation} indicate valid/invalid URL for each branding config
    */
   private checkBrandingValid = async (
+    skipValidation: boolean,
     darkMode: boolean,
     opensearchDashboardsConfig: Readonly<OpenSearchDashboardsConfigType>
   ): Promise<BrandingValidation> => {
     const branding = opensearchDashboardsConfig.branding;
-    const isLogoDefaultValid = await this.isUrlValid(branding.logo.defaultUrl, 'logo default');
+    const isLogoDefaultValid = skipValidation
+      ? true
+      : await this.isUrlValid(branding.logo.defaultUrl, 'logo default');
 
-    const isLogoDarkmodeValid = darkMode
+    const isLogoDarkmodeValid = skipValidation
+      ? true
+      : darkMode
       ? await this.isUrlValid(branding.logo.darkModeUrl, 'logo darkMode')
       : false;
 
-    const isMarkDefaultValid = await this.isUrlValid(branding.mark.defaultUrl, 'mark default');
+    const isMarkDefaultValid = skipValidation
+      ? true
+      : await this.isUrlValid(branding.mark.defaultUrl, 'mark default');
 
-    const isMarkDarkmodeValid = darkMode
+    const isMarkDarkmodeValid = skipValidation
+      ? true
+      : darkMode
       ? await this.isUrlValid(branding.mark.darkModeUrl, 'mark darkMode')
       : false;
 
-    const isLoadingLogoDefaultValid = await this.isUrlValid(
-      branding.loadingLogo.defaultUrl,
-      'loadingLogo default'
-    );
+    const isLoadingLogoDefaultValid = skipValidation
+      ? true
+      : await this.isUrlValid(branding.loadingLogo.defaultUrl, 'loadingLogo default');
 
-    const isLoadingLogoDarkmodeValid = darkMode
+    const isLoadingLogoDarkmodeValid = skipValidation
+      ? true
+      : darkMode
       ? await this.isUrlValid(branding.loadingLogo.darkModeUrl, 'loadingLogo darkMode')
       : false;
 
-    const isFaviconValid = await this.isUrlValid(branding.faviconUrl, 'favicon');
+    const isFaviconValid = skipValidation
+      ? true
+      : await this.isUrlValid(branding.faviconUrl, 'favicon');
 
-    const isTitleValid = this.isTitleValid(branding.applicationTitle, 'applicationTitle');
+    const isTitleValid = skipValidation
+      ? true
+      : this.isTitleValid(branding.applicationTitle, 'applicationTitle');
 
     const brandingValidation: BrandingValidation = {
       isLogoDefaultValid,

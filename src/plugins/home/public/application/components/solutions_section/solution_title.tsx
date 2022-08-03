@@ -64,9 +64,9 @@ interface Props {
  * @param {HomePluginBranding} - pass in custom branding configurations
  * @returns a valid custom URL or undefined if no valid URL is provided
  */
-const customHomeLogoDefaultMode = (branding: HomePluginBranding) => {
+/* const customHomeLogoDefaultMode = (branding: HomePluginBranding) => {
   return branding.mark?.defaultUrl ?? undefined;
-};
+};*/
 
 /**
  * Use branding configurations to check which URL to use for rendering
@@ -78,9 +78,9 @@ const customHomeLogoDefaultMode = (branding: HomePluginBranding) => {
  * @param {HomePluginBranding} - pass in custom branding configurations
  * @returns {string|undefined} a valid custom URL or undefined if no valid URL is provided
  */
-const customHomeLogoDarkMode = (branding: HomePluginBranding) => {
+/* const customHomeLogoDarkMode = (branding: HomePluginBranding) => {
   return branding.mark?.darkModeUrl ?? branding.mark?.defaultUrl ?? undefined;
-};
+};*/
 
 /**
  * Render custom home logo for both default mode and dark mode
@@ -88,9 +88,9 @@ const customHomeLogoDarkMode = (branding: HomePluginBranding) => {
  * @param {HomePluginBranding} - pass in custom branding configurations
  * @returns {string|undefined} a valid custom loading logo URL, or undefined
  */
-const customHomeLogo = (branding: HomePluginBranding) => {
+/* const customHomeLogo = (branding: HomePluginBranding) => {
   return branding.darkMode ? customHomeLogoDarkMode(branding) : customHomeLogoDefaultMode(branding);
-};
+};*/
 
 /**
  * Check if we render a custom home logo or the default opensearch spinner.
@@ -101,16 +101,16 @@ const customHomeLogo = (branding: HomePluginBranding) => {
  * @returns a image component with custom logo URL, or the default opensearch logo
  */
 const renderBrandingEnabledOrDisabledLogo = (branding: HomePluginBranding) => {
-  const customLogo = customHomeLogo(branding);
-  if (customLogo) {
+  // const customLogo = customHomeLogo(branding);
+  if (branding.mark?.defaultUrl) {
     return (
       <div className="homSolutionPanel__customIcon">
         <img
           className="homSolutionPanel__customIconContainer"
           data-test-subj="dashboardCustomLogo"
-          data-test-image-url={customLogo}
+          data-test-image-url={branding.mark?.defaultUrl}
           alt={branding.applicationTitle + ' logo'}
-          src={customLogo}
+          src={branding.mark?.defaultUrl}
         />
       </div>
     );

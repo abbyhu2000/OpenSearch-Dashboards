@@ -23,9 +23,11 @@ export const HomeIcon = ({
   applicationTitle = 'opensearch dashboards',
   useExpandedHeader = true,
 }: ChromeBranding) => {
-  const { defaultUrl: markUrl, darkModeUrl: darkMarkUrl } = mark ?? {};
+  // const { defaultUrl: markUrl, darkModeUrl: darkMarkUrl } = mark ?? {};
 
-  const customMark = darkMode ? darkMarkUrl ?? markUrl : markUrl;
+  const { defaultUrl: customMark } = mark ?? {};
+  // const customMark = darkMode ? darkMarkUrl ?? markUrl : markUrl;
+
   const defaultMark = darkMode ? DEFAULT_DARK_MARK : DEFAULT_MARK;
 
   const getIconProps = () => {

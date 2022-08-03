@@ -116,9 +116,9 @@ export function HeaderLogo({ href, navigateToApp, branding, ...observables }: Pr
     logo = {},
     applicationTitle = 'opensearch dashboards',
   } = branding;
-  const { defaultUrl: logoUrl, darkModeUrl: darkLogoUrl } = logo;
+  const { defaultUrl: customLogo } = logo;
 
-  const customLogo = darkMode ? darkLogoUrl ?? logoUrl : logoUrl;
+  // const customLogo = darkMode ? darkLogoUrl ?? logoUrl : logoUrl;
   const defaultLogo = darkMode ? DEFAULT_DARK_LOGO : DEFAULT_LOGO;
 
   const logoSrc = customLogo ? customLogo : `${assetFolderUrl}/${defaultLogo}`;

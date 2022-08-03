@@ -51,6 +51,7 @@ export interface Branding {
   /** Loading logo that will be rendered on the loading page */
   loadingLogo?: {
     defaultUrl?: string;
+    loadingBar?: boolean;
     darkModeUrl?: string;
   };
   /** Custom favicon that will be rendered on the browser tab */

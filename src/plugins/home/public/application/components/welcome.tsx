@@ -146,9 +146,10 @@ export class Welcome extends React.Component<Props> {
     }
   };
 
-  private darkMode = this.props.branding.darkMode;
+  /* private darkMode = this.props.branding.darkMode;
   private markDefault = this.props.branding.mark.defaultUrl;
-  private markDarkMode = this.props.branding.mark.darkModeUrl;
+  private markDarkMode = this.props.branding.mark.darkModeUrl;*/
+  private url = this.props.branding.mark.defaultUrl;
   private applicationTitle = this.props.branding.applicationTitle;
 
   /**
@@ -159,9 +160,9 @@ export class Welcome extends React.Component<Props> {
    *
    * @returns a valid custom URL or undefined if no valid URL is provided
    */
-  private customWelcomeLogoDefaultMode = () => {
+  /* private customWelcomeLogoDefaultMode = () => {
     return this.markDefault ?? undefined;
-  };
+  };*/
 
   /**
    * Use branding configurations to check which URL to use for rendering
@@ -172,21 +173,21 @@ export class Welcome extends React.Component<Props> {
    *
    * @returns a valid custom URL or undefined if no valid URL is provided
    */
-  private customWelcomeLogoDarkMode = () => {
+  /* private customWelcomeLogoDarkMode = () => {
     return this.markDarkMode ?? this.markDefault ?? undefined;
-  };
+  };*/
 
   /**
    * Render custom welcome logo for both default mode and dark mode
    *
    * @returns a valid custom loading logo URL, or undefined
    */
-  private customWelcomeLogo = () => {
+  /* private customWelcomeLogo = () => {
     if (this.darkMode) {
       return this.customWelcomeLogoDarkMode();
     }
     return this.customWelcomeLogoDefaultMode();
-  };
+  };*/
 
   /**
    * Check if we render a custom welcome logo or the default opensearch spinner.
@@ -196,15 +197,15 @@ export class Welcome extends React.Component<Props> {
    * @returns a image component with custom logo URL, or the default opensearch logo
    */
   private renderBrandingEnabledOrDisabledLogo = () => {
-    if (this.customWelcomeLogo()) {
+    if (this.url) {
       return (
         <div className="homWelcome__customLogoContainer">
           <img
             className="homWelcome__customLogo"
             data-test-subj="welcomeCustomLogo"
-            data-test-image-url={this.customWelcomeLogo()}
+            data-test-image-url={this.url}
             alt={this.applicationTitle + ' logo'}
-            src={this.customWelcomeLogo()}
+            src={this.url}
           />
         </div>
       );

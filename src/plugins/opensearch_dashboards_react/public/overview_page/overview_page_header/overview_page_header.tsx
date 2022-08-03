@@ -79,8 +79,8 @@ export const OverviewPageHeader: FC<Props> = ({
   const DARKMODE_OPENSEARCH_MARK = `${branding.assetFolderUrl}/opensearch_mark_dark_mode.svg`;
 
   const darkMode = branding.darkMode;
-  const markDefault = branding.mark?.defaultUrl;
-  const markDarkMode = branding.mark?.darkModeUrl;
+  const mark = branding.mark?.defaultUrl;
+  // const markDarkMode = branding.mark?.darkModeUrl;
 
   /**
    * Use branding configurations to check which URL to use for rendering
@@ -90,9 +90,9 @@ export const OverviewPageHeader: FC<Props> = ({
    *
    * @returns a valid custom URL or undefined if no valid URL is provided
    */
-  const customOverviewLogoDefaultMode = () => {
+  /* const customOverviewLogoDefaultMode = () => {
     return markDefault ?? DEFAULT_OPENSEARCH_MARK;
-  };
+  };*/
 
   /**
    * Use branding configurations to check which URL to use for rendering
@@ -103,9 +103,9 @@ export const OverviewPageHeader: FC<Props> = ({
    *
    * @returns a valid custom URL or undefined if no valid URL is provided
    */
-  const customOverviewLogoDarkMode = () => {
+  /* const customOverviewLogoDarkMode = () => {
     return markDarkMode ?? markDefault ?? DARKMODE_OPENSEARCH_MARK;
-  };
+  };*/
 
   /**
    * Render custom overview logo for both default mode and dark mode
@@ -113,7 +113,8 @@ export const OverviewPageHeader: FC<Props> = ({
    * @returns a valid custom loading logo URL, or undefined
    */
   const customOverviewLogo = () => {
-    return darkMode ? customOverviewLogoDarkMode() : customOverviewLogoDefaultMode();
+    // console.log(mark);
+    return mark ?? (darkMode ? DARKMODE_OPENSEARCH_MARK : DEFAULT_OPENSEARCH_MARK);
   };
 
   /**
