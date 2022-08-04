@@ -40,6 +40,7 @@ import { InternalApplicationStart } from '../application';
 import { DocLinksStart } from '../doc_links';
 import { HttpStart } from '../http';
 import { InjectedMetadataStart } from '../injected_metadata';
+import { InjectedBrandingStart } from '../injected_branding';
 import { NotificationsStart } from '../notifications';
 import { IUiSettingsClient } from '../ui_settings';
 import { OPENSEARCH_DASHBOARDS_ASK_OPENSEARCH_LINK } from './constants';
@@ -98,6 +99,7 @@ interface StartDeps {
   docLinks: DocLinksStart;
   http: HttpStart;
   injectedMetadata: InjectedMetadataStart;
+  injectedBranding: InjectedBrandingStart;
   notifications: NotificationsStart;
   uiSettings: IUiSettingsClient;
 }
@@ -151,6 +153,7 @@ export class ChromeService {
     docLinks,
     http,
     injectedMetadata,
+    injectedBranding,
     notifications,
     uiSettings,
   }: StartDeps): Promise<InternalChromeStart> {
@@ -261,7 +264,7 @@ export class ChromeService {
           navControlsExpandedRight$={navControls.getExpandedRight$()}
           onIsLockedUpdate={setIsNavDrawerLocked}
           isLocked$={getIsNavDrawerLocked$}
-          branding={injectedMetadata.getBranding()}
+          branding={injectedBranding.getBranding()}
         />
       ),
 

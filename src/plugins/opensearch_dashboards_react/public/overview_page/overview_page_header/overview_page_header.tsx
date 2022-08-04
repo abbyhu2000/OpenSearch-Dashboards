@@ -79,33 +79,6 @@ export const OverviewPageHeader: FC<Props> = ({
   const DARKMODE_OPENSEARCH_MARK = `${branding.assetFolderUrl}/opensearch_mark_dark_mode.svg`;
 
   const darkMode = branding.darkMode;
-  const markDefault = branding.mark?.defaultUrl;
-  const markDarkMode = branding.mark?.darkModeUrl;
-
-  /**
-   * Use branding configurations to check which URL to use for rendering
-   * overview logo in default mode. In default mode, overview logo will
-   * proritize default mode mark URL. If it is invalid, default opensearch logo
-   * will be rendered.
-   *
-   * @returns a valid custom URL or undefined if no valid URL is provided
-   */
-  const customOverviewLogoDefaultMode = () => {
-    return markDefault ?? DEFAULT_OPENSEARCH_MARK;
-  };
-
-  /**
-   * Use branding configurations to check which URL to use for rendering
-   * overview logo in dark mode. In dark mode, overview logo will render
-   * dark mode mark URL if valid. Otherwise, it will render the default
-   * mode mark URL if valid. If both dark mode mark URL and default mode mark
-   * URL are invalid, the default opensearch logo will be rendered.
-   *
-   * @returns a valid custom URL or undefined if no valid URL is provided
-   */
-  const customOverviewLogoDarkMode = () => {
-    return markDarkMode ?? markDefault ?? DARKMODE_OPENSEARCH_MARK;
-  };
 
   /**
    * Render custom overview logo for both default mode and dark mode
@@ -113,7 +86,7 @@ export const OverviewPageHeader: FC<Props> = ({
    * @returns a valid custom loading logo URL, or undefined
    */
   const customOverviewLogo = () => {
-    return darkMode ? customOverviewLogoDarkMode() : customOverviewLogoDefaultMode();
+    return branding.mark ?? (darkMode ? DARKMODE_OPENSEARCH_MARK : DEFAULT_OPENSEARCH_MARK);
   };
 
   /**

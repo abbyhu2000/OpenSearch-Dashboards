@@ -38,6 +38,8 @@ export async function __osdBootstrap__() {
     document.querySelector('osd-injected-metadata')!.getAttribute('data')!
   );
 
+  const branding = JSON.parse(document.querySelector('osd-branding')!.getAttribute('data')!);
+
   let i18nError: Error | undefined;
   const apmSystem = new ApmSystem(injectedMetadata.vars.apmConfig, injectedMetadata.basePath);
 
@@ -51,6 +53,7 @@ export async function __osdBootstrap__() {
 
   const coreSystem = new CoreSystem({
     injectedMetadata,
+    branding,
     rootDomElement: document.body,
     browserSupportsCsp: !(window as any).__osdCspNotEnforced__,
   });

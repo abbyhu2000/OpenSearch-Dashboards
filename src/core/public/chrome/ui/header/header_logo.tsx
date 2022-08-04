@@ -113,16 +113,14 @@ export function HeaderLogo({ href, navigateToApp, branding, ...observables }: Pr
   const {
     darkMode,
     assetFolderUrl = '',
-    logo = {},
+    logo = '',
     applicationTitle = 'opensearch dashboards',
   } = branding;
-  const { defaultUrl: logoUrl, darkModeUrl: darkLogoUrl } = logo;
 
-  const customLogo = darkMode ? darkLogoUrl ?? logoUrl : logoUrl;
   const defaultLogo = darkMode ? DEFAULT_DARK_LOGO : DEFAULT_LOGO;
 
-  const logoSrc = customLogo ? customLogo : `${assetFolderUrl}/${defaultLogo}`;
-  const testSubj = customLogo ? 'customLogo' : 'defaultLogo';
+  const logoSrc = logo ? logo : `${assetFolderUrl}/${defaultLogo}`;
+  const testSubj = logo ? 'customLogo' : 'defaultLogo';
   const alt = `${applicationTitle} logo`;
 
   return (

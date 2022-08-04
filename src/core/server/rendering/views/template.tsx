@@ -33,9 +33,11 @@ import React, { FunctionComponent, createElement } from 'react';
 import { RenderingMetadata } from '../types';
 import { Fonts } from './fonts';
 import { Styles } from './styles';
+import { Branding } from '../../types';
 
 interface Props {
   metadata: RenderingMetadata;
+  branding: Branding;
 }
 
 export const Template: FunctionComponent<Props> = ({
@@ -48,6 +50,7 @@ export const Template: FunctionComponent<Props> = ({
     bootstrapScriptUrl,
     strictCsp,
   },
+  branding,
 }) => {
   const openSearchLogo = (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -94,45 +97,10 @@ export const Template: FunctionComponent<Props> = ({
     </svg>
   );
 
-  const loadingLogoDefault = injectedMetadata.branding.loadingLogo?.defaultUrl;
-  const loadingLogoDarkMode = injectedMetadata.branding.loadingLogo?.darkModeUrl;
-  const markDefault = injectedMetadata.branding.mark?.defaultUrl;
-  const markDarkMode = injectedMetadata.branding.mark?.darkModeUrl;
-  const favicon = injectedMetadata.branding.faviconUrl;
-  const applicationTitle = injectedMetadata.branding.applicationTitle;
-
-  /**
-   * Use branding configurations to check which URL to use for rendering
-   * loading logo in default mode. In default mode, loading logo will
-   * proritize default loading logo URL, and then default mark URL.
-   * If both are invalid, default opensearch logo and spinner will be rendered.
-   *
-   * @returns a valid custom URL or undefined if no valid URL is provided
-   */
-  const customLoadingLogoDefaultMode = () => {
-    return loadingLogoDefault ?? markDefault ?? undefined;
-  };
-
-  /**
-   * Use branding configurations to check which URL to use for rendering
-   * loading logo in default mode. In dark mode, loading logo will proritize
-   * loading logo URLs, then mark logo URLs.
-   * Within each type, the dark mode URL will be proritized if provided.
-   *
-   * @returns a valid custom URL or undefined if no valid URL is provided
-   */
-  const customLoadingLogoDarkMode = () => {
-    return loadingLogoDarkMode ?? loadingLogoDefault ?? markDarkMode ?? markDefault ?? undefined;
-  };
-
-  /**
-   * Render custom loading logo for both default mode and dark mode
-   *
-   * @returns a valid custom loading logo URL, or undefined
-   */
-  const customLoadingLogo = () => {
-    return darkMode ? customLoadingLogoDarkMode() : customLoadingLogoDefaultMode();
-  };
+  const loadingLogo = branding.loadingLogo?.url;
+  const loadBar = branding.loadingLogo?.loadBar;
+  const favicon = branding.faviconUrl;
+  const applicationTitle = branding.applicationTitle;
 
   /**
    * Check if a horizontal loading is needed to be rendered.
@@ -144,7 +112,7 @@ export const Template: FunctionComponent<Props> = ({
    * @returns a loading bar component or no loading bar component
    */
   const renderBrandingEnabledOrDisabledLoadingBar = () => {
-    if (customLoadingLogo() && !loadingLogoDefault) {
+    if (loadBar) {
       return <div className="osdProgress" />;
     }
   };
@@ -157,10 +125,10 @@ export const Template: FunctionComponent<Props> = ({
    * @returns a image component with custom logo URL, or the default opensearch logo spinner
    */
   const renderBrandingEnabledOrDisabledLoadingLogo = () => {
-    if (customLoadingLogo()) {
+    if (loadingLogo) {
       return (
         <div className="loadingLogoContainer">
-          <img className="loadingLogo" src={customLoadingLogo()} alt={applicationTitle + ' logo'} />
+          <img className="loadingLogo" src={loadingLogo} alt={applicationTitle + ' logo'} />
         </div>
       );
     }
@@ -235,6 +203,7 @@ export const Template: FunctionComponent<Props> = ({
           data: JSON.stringify({ strictCsp }),
         })}
         {createElement('osd-injected-metadata', { data: JSON.stringify(injectedMetadata) })}
+        {createElement('osd-branding', { data: JSON.stringify(branding) })}
         <div
           className="osdWelcomeView"
           id="osd_loading_message"
@@ -246,11 +215,11 @@ export const Template: FunctionComponent<Props> = ({
             <div
               className="osdWelcomeText"
               data-error-message={i18n('core.ui.welcomeErrorMessage', {
-                defaultMessage: `${injectedMetadata.branding.applicationTitle} did not load properly. Check the server output for more information.`,
+                defaultMessage: `${branding.applicationTitle} did not load properly. Check the server output for more information.`,
               })}
             >
               {i18n('core.ui.welcomeMessage', {
-                defaultMessage: `Loading ${injectedMetadata.branding.applicationTitle}`,
+                defaultMessage: `Loading ${branding.applicationTitle}`,
               })}
             </div>
             {renderBrandingEnabledOrDisabledLoadingBar()}

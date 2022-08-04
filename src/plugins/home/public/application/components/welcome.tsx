@@ -58,10 +58,7 @@ interface Props {
   telemetry?: TelemetryPluginStart;
   branding: {
     darkMode: boolean;
-    mark: {
-      defaultUrl?: string;
-      darkModeUrl?: string;
-    };
+    mark?: string;
     applicationTitle?: string;
   };
 }
@@ -146,47 +143,8 @@ export class Welcome extends React.Component<Props> {
     }
   };
 
-  private darkMode = this.props.branding.darkMode;
-  private markDefault = this.props.branding.mark.defaultUrl;
-  private markDarkMode = this.props.branding.mark.darkModeUrl;
+  private mark = this.props.branding.mark;
   private applicationTitle = this.props.branding.applicationTitle;
-
-  /**
-   * Use branding configurations to check which URL to use for rendering
-   * welcome logo in default mode. In default mode, welcome logo will
-   * proritize default mode mark URL. If it is invalid, default opensearch logo
-   * will be rendered.
-   *
-   * @returns a valid custom URL or undefined if no valid URL is provided
-   */
-  private customWelcomeLogoDefaultMode = () => {
-    return this.markDefault ?? undefined;
-  };
-
-  /**
-   * Use branding configurations to check which URL to use for rendering
-   * welcome logo in dark mode. In dark mode, welcome logo will render
-   * dark mode mark URL if valid. Otherwise, it will render the default
-   * mode mark URL if valid. If both dark mode mark URL and default mode mark
-   * URL are invalid, the default opensearch logo will be rendered.
-   *
-   * @returns a valid custom URL or undefined if no valid URL is provided
-   */
-  private customWelcomeLogoDarkMode = () => {
-    return this.markDarkMode ?? this.markDefault ?? undefined;
-  };
-
-  /**
-   * Render custom welcome logo for both default mode and dark mode
-   *
-   * @returns a valid custom loading logo URL, or undefined
-   */
-  private customWelcomeLogo = () => {
-    if (this.darkMode) {
-      return this.customWelcomeLogoDarkMode();
-    }
-    return this.customWelcomeLogoDefaultMode();
-  };
 
   /**
    * Check if we render a custom welcome logo or the default opensearch spinner.
@@ -196,15 +154,15 @@ export class Welcome extends React.Component<Props> {
    * @returns a image component with custom logo URL, or the default opensearch logo
    */
   private renderBrandingEnabledOrDisabledLogo = () => {
-    if (this.customWelcomeLogo()) {
+    if (this.mark) {
       return (
         <div className="homWelcome__customLogoContainer">
           <img
             className="homWelcome__customLogo"
             data-test-subj="welcomeCustomLogo"
-            data-test-image-url={this.customWelcomeLogo()}
+            data-test-image-url={this.mark}
             alt={this.applicationTitle + ' logo'}
-            src={this.customWelcomeLogo()}
+            src={this.mark}
           />
         </div>
       );

@@ -42,6 +42,12 @@ import {
   InjectedMetadataSetup,
   InjectedMetadataStart,
 } from './injected_metadata';
+import {
+  InjectedBrandingParams,
+  InjectedBrandingService,
+  InjectedBrandingSetup,
+  InjectedBrandingStart,
+} from './injected_branding';
 import { NotificationsService } from './notifications';
 import { OverlayService } from './overlays';
 import { PluginsService } from './plugins';
@@ -59,6 +65,7 @@ interface Params {
   rootDomElement: HTMLElement;
   browserSupportsCsp: boolean;
   injectedMetadata: InjectedMetadataParams['injectedMetadata'];
+  branding: InjectedBrandingParams['branding'];
 }
 
 /** @internal */
@@ -74,12 +81,14 @@ export interface CoreContext {
 export interface InternalCoreSetup extends Omit<CoreSetup, 'application' | 'getStartServices'> {
   application: InternalApplicationSetup;
   injectedMetadata: InjectedMetadataSetup;
+  injectedBranding: InjectedBrandingSetup;
 }
 
 /** @internal */
 export interface InternalCoreStart extends Omit<CoreStart, 'application'> {
   application: InternalApplicationStart;
   injectedMetadata: InjectedMetadataStart;
+  injectedBranding: InjectedBrandingStart;
 }
 
 /**
@@ -93,6 +102,7 @@ export interface InternalCoreStart extends Omit<CoreStart, 'application'> {
 export class CoreSystem {
   private readonly fatalErrors: FatalErrorsService;
   private readonly injectedMetadata: InjectedMetadataService;
+  private readonly injectedBranding: InjectedBrandingService;
   private readonly notifications: NotificationsService;
   private readonly http: HttpService;
   private readonly savedObjects: SavedObjectsService;
@@ -113,7 +123,7 @@ export class CoreSystem {
   private fatalErrorsSetup: FatalErrorsSetup | null = null;
 
   constructor(params: Params) {
-    const { rootDomElement, browserSupportsCsp, injectedMetadata } = params;
+    const { rootDomElement, browserSupportsCsp, injectedMetadata, branding } = params;
 
     this.rootDomElement = rootDomElement;
 
@@ -122,6 +132,8 @@ export class CoreSystem {
     this.injectedMetadata = new InjectedMetadataService({
       injectedMetadata,
     });
+
+    this.injectedBranding = new InjectedBrandingService({ branding });
 
     this.fatalErrors = new FatalErrorsService(rootDomElement, () => {
       // Stop Core before rendering any fatal errors into the DOM
@@ -151,6 +163,7 @@ export class CoreSystem {
       // Setup FatalErrorsService and it's dependencies first so that we're
       // able to render any errors.
       const injectedMetadata = this.injectedMetadata.setup();
+      const injectedBranding = this.injectedBranding.setup();
       this.fatalErrorsSetup = this.fatalErrors.setup({
         injectedMetadata,
         i18n: this.i18n.getContext(),
@@ -174,6 +187,7 @@ export class CoreSystem {
         fatalErrors: this.fatalErrorsSetup,
         http,
         injectedMetadata,
+        injectedBranding,
         notifications,
         uiSettings,
       };
@@ -196,6 +210,7 @@ export class CoreSystem {
   public async start() {
     try {
       const injectedMetadata = await this.injectedMetadata.start();
+      const injectedBranding = await this.injectedBranding.start();
       const uiSettings = await this.uiSettings.start();
       const docLinks = this.docLinks.start({ injectedMetadata });
       const http = await this.http.start();
@@ -225,6 +240,7 @@ export class CoreSystem {
         docLinks,
         http,
         injectedMetadata,
+        injectedBranding,
         notifications,
         uiSettings,
       });
@@ -237,7 +253,8 @@ export class CoreSystem {
         docLinks,
         http,
         i18n,
-        injectedMetadata: pick(injectedMetadata, ['getInjectedVar', 'getBranding']),
+        injectedMetadata: pick(injectedMetadata, ['getInjectedVar']),
+        injectedBranding: pick(injectedBranding, ['getBranding']),
         notifications,
         overlays,
         savedObjects,
@@ -252,6 +269,7 @@ export class CoreSystem {
         savedObjects,
         i18n,
         injectedMetadata,
+        injectedBranding,
         notifications,
         overlays,
         uiSettings,
@@ -260,7 +278,7 @@ export class CoreSystem {
 
       await this.plugins.start(core);
 
-      const { useExpandedHeader = true } = injectedMetadata.getBranding() ?? {};
+      const { useExpandedHeader = true } = injectedBranding.getBranding() ?? {};
 
       // ensure the rootDomElement is empty
       this.rootDomElement.textContent = '';

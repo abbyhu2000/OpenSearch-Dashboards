@@ -30,7 +30,6 @@
 
 import { i18n } from '@osd/i18n';
 
-import { Branding } from 'src/core/types';
 import { EnvironmentMode, PackageInfo } from '../config';
 import { ICspConfig } from '../csp';
 import { InternalHttpServiceSetup, OpenSearchDashboardsRequest, LegacyRequest } from '../http';
@@ -73,7 +72,6 @@ export interface RenderingMetadata {
         user: Record<string, UserProvidedValues<any>>;
       };
     };
-    branding: Branding;
   };
 }
 
@@ -116,38 +114,4 @@ export interface InternalRenderingServiceSetup {
     uiSettings: IUiSettingsClient,
     options?: IRenderOptions
   ): Promise<string>;
-}
-
-/**
- * For each string branding config:
- * check if user provides a valid string.
- * Assign True -- if user provides a valid string
- * Assign False -- if user provides an invalid string or user does not provide any string
- */
-export interface BrandingValidation {
-  isLogoDefaultValid: boolean;
-  isLogoDarkmodeValid: boolean;
-  isMarkDefaultValid: boolean;
-  isMarkDarkmodeValid: boolean;
-  isLoadingLogoDefaultValid: boolean;
-  isLoadingLogoDarkmodeValid: boolean;
-  isFaviconValid: boolean;
-  isTitleValid: boolean;
-}
-
-/**
- * For each branding config:
- * if user provides a valid value, the value will be assigned;
- * otherwise, undefined will be assigned.
- */
-export interface BrandingAssignment {
-  logoDefault?: string;
-  logoDarkmode?: string;
-  markDefault?: string;
-  markDarkmode?: string;
-  loadingLogoDefault?: string;
-  loadingLogoDarkmode?: string;
-  favicon?: string;
-  applicationTitle?: string;
-  useExpandedHeader?: boolean;
 }

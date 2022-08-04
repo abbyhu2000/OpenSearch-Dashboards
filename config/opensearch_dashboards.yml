@@ -163,16 +163,16 @@
 # ]
 #vis_type_timeline.graphiteBlockedIPs: []
 
-# opensearchDashboards.branding:
-#   logo:
-#     defaultUrl: ""
-#     darkModeUrl: ""
-#   mark:
-#     defaultUrl: ""
-#     darkModeUrl: ""
-#   loadingLogo:
-#     defaultUrl: ""
-#     darkModeUrl: ""
+ opensearchDashboards.branding:
+   logo:
+     defaultUrl: "https://clipground.com/images/aws-logo-png-9.png"
+     darkModeUrl: "https://vectorified.com/image/aws-logo-vector-5.png"
+   mark:
+     defaultUrl: "https://pngimage.net/wp-content/uploads/2020/02/aws-logo-png-4.png"
+     darkModeUrl: "https://abacusinsights.com/wp-content/uploads/2019/07/logo-AWS.png"
+   loadingLogo:
+     defaultUrl: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/d31fcf75226323.5c4702fb7ef89.gif"
+     darkModeUrl: "https://gifimage.net/wp-content/uploads/2018/05/sparkler-gif-9.gif"
 #   faviconUrl: ""
 #   applicationTitle: ""
 #   useExpandedHeader: false

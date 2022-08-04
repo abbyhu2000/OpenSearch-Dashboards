@@ -69,6 +69,8 @@ export interface HomeOpenSearchDashboardsServices {
   tutorialService: TutorialService;
   injectedMetadata: {
     getInjectedVar: (name: string, defaultValue?: any) => unknown;
+  };
+  injectedBranding: {
     getBranding: () => HomePluginBranding;
   };
 }

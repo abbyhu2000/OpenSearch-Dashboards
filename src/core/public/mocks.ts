@@ -102,7 +102,6 @@ function createCoreStartMock({ basePath = '' } = {}) {
     savedObjects: savedObjectsServiceMock.createStartContract(),
     injectedMetadata: {
       getInjectedVar: injectedMetadataServiceMock.createStartContract().getInjectedVar,
-      getBranding: injectedMetadataServiceMock.createStartContract().getBranding,
     },
     fatalErrors: fatalErrorsServiceMock.createStartContract(),
   };
