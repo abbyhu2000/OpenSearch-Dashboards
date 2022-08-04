@@ -143,7 +143,6 @@ export class RenderingService {
                   brandingAssignment.logoDefault,
                   brandingAssignment.logoDarkmode
                 ),
-                darkModeUrl: brandingAssignment.logoDarkmode,
               },
               mark: {
                 defaultUrl: this.darkModeLogic(
@@ -151,12 +150,10 @@ export class RenderingService {
                   brandingAssignment.markDefault,
                   brandingAssignment.markDarkmode
                 ),
-                darkModeUrl: brandingAssignment.markDarkmode,
               },
               loadingLogo: {
                 defaultUrl: this.loadingLogoLogic(darkMode, brandingAssignment).loadinglogo,
                 loadingBar: this.loadingLogoLogic(darkMode, brandingAssignment).loadBar,
-                darkModeUrl: brandingAssignment.loadingLogoDarkmode,
               },
               faviconUrl: brandingAssignment.favicon,
               applicationTitle: brandingAssignment.applicationTitle,
