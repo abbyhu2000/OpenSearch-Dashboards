@@ -1,0 +1,3 @@
+[submodule "i18n"]
+	path = plugins/i18n-plugin
+	url = https://github.com/abbyhu2000/i18n-plugin.git
