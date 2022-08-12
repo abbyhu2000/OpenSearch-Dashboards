@@ -278,12 +278,18 @@ export function CollapsibleNav({
           const category = categoryDictionary[categoryName]!;
           const opensearchLinkLogo =
             category.id === 'opensearchDashboards' ? customSideMenuLogo() : category.euiIconType;
+          const opensearchTitle = 
+            category.id === 'opensearchDashboards' ? 
+            i18n.translate('core.ui.primaryNavSection.title', {
+              defaultMessage: 'Opensearch Dashboards',
+            })
+            : category.label;
 
           return (
             <EuiCollapsibleNavGroup
               key={category.id}
               iconType={opensearchLinkLogo}
-              title={category.label}
+              title={opensearchTitle}
               isCollapsible={true}
               initialIsOpen={getIsCategoryOpen(category.id, storage)}
               onToggle={(isCategoryOpen) => setIsCategoryOpen(category.id, isCategoryOpen, storage)}
