@@ -90,6 +90,7 @@ export class RenderingService {
         };
         const basePath = http.basePath.get(request);
         const uiPublicUrl = `${basePath}/ui`;
+        console.log(uiPublicUrl)
         const serverBasePath = http.basePath.serverBasePath;
         const settings = {
           defaults: uiSettings.getRegistered(),
