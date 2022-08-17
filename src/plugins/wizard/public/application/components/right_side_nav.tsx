@@ -19,6 +19,7 @@ import {
     EuiButtonEmpty
   } from '@elastic/eui';
 import './right_side_nav.scss';
+import './searchable_dropdown.scss';
 import { useOpenSearchDashboards } from '../../../../opensearch_dashboards_react/public';
 import { WizardServices } from '../../types';
 import { useTypedDispatch  } from '../utils/state_management';
@@ -95,49 +96,40 @@ const TypeSelectorPopover = () => {
       </EuiButtonEmpty>
     )
 
+    console.log(activeVisualization?.icon)
+
     const formControl = (
         <EuiFormControlLayout
-          fullWidth={true}
           style={{ cursor: 'pointer' }}
           icon={{ type: 'arrowDown', side: 'right' }}
           readOnly={true}
+          fullWidth={true}
         >
-            <EuiButton>
-            iconType={activeVisualization?.icon} 
-            onClick={onButtonClick}
-            color="text"
-            size="s"
-            style={{ textAlign: 'left' }}
+            <EuiButtonEmpty
+              iconType={activeVisualization?.icon} 
+              onClick={onButtonClick}
+              color="text"
+              size="s"
+              style={{ textAlign: 'left' }}
+              className="searchableDropdown--topDisplay">
                 {activeVisualization?.title}
-                </EuiButton>
+            </EuiButtonEmpty>
         </EuiFormControlLayout>
       );
   
     return (
+      <div className="searchableDropdown">
       <EuiPopover
-        id="contextMenuExample"
         button={formControl}
         isOpen={isPopoverOpen}
         closePopover={closePopover}
-        panelPaddingSize="none"
-        anchorPosition="downLeft"
       >
-     <div className="wizVizTypeSelect">
-     <EuiText>Chart Type</EuiText>
-      <EuiFlexGroup responsive={false} gutterSize={'s'}>
-        <EuiFlexItem>
-          <EuiFieldSearch
-            data-test-subj="fieldFilterSearchInput"
-            compressed
-            fullWidth
-            onChange={(event) => dispatch(setSearchField(event.currentTarget.value))}
-            placeholder='search'
-          />
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      </div>
+     <div className="searchableDropdown--fixedWidthChild">
+    
         <EuiContextMenu initialPanelId={0} panels={panels} />
+        </div>
       </EuiPopover>
+      </div>
     );
   };
   

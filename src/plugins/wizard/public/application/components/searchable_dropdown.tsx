@@ -140,6 +140,8 @@ export const SearchableDropdown = ({
       </>
     );
 
+    console.log(selected)
+
   const selectedView = (
     <EuiButtonEmpty
       color="text"
