@@ -8,6 +8,7 @@ import { I18nProvider } from '@osd/i18n/react';
 import { EuiPage } from '@elastic/eui';
 import { DragDropProvider } from './utils/drag_drop/drag_drop_context';
 import { SideNav } from './components/side_nav';
+import { RightSideNav } from './components/right_side_nav';
 import { TopNav } from './components/top_nav';
 import { Workspace } from './components/workspace';
 import './app.scss';
@@ -21,6 +22,7 @@ export const WizardApp = () => {
           <TopNav />
           <SideNav />
           <Workspace />
+          <RightSideNav />
         </EuiPage>
       </DragDropProvider>
     </I18nProvider>

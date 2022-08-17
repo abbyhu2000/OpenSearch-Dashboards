@@ -12,18 +12,6 @@
   border-right: $euiBorderThin;
 }
 
-.wizSidenavTabs {
-  .euiTab__content {
-    text-transform: capitalize;
-  }
-
-  @include scrollNavParent(min-content 1fr);
-
-  & > [role="tabpanel"] {
-    @include scrollNavParent;
-  }
-}
-
 .wizDatasourceSelect {
   max-width: $wizSideNavWidth;
   padding: $euiSize $euiSize 0 $euiSize;

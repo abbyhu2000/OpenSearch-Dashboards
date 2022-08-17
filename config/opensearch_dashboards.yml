@@ -219,4 +219,4 @@
 
 # Set the value of this setting to true to start exploring wizard
 # functionality in Visualization.
-# wizard.enabled: false
+ wizard.enabled: true
