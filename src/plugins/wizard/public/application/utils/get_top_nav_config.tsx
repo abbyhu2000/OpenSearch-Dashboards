@@ -40,12 +40,14 @@ import { WizardServices } from '../..';
 import { WizardVisSavedObject } from '../../types';
 import { StyleState, VisualizationState } from './state_management';
 import { EDIT_PATH } from '../../../common';
+import { IndexPattern } from '../../../../data/common';
 interface TopNavConfigParams {
   visualizationIdFromUrl: string;
   savedWizardVis: WizardVisSavedObject;
   visualizationState: VisualizationState;
   styleState: StyleState;
   hasUnappliedChanges: boolean;
+  indexPattern: IndexPattern;
 }
 
 export const getTopNavConfig = (
@@ -55,6 +57,7 @@ export const getTopNavConfig = (
     visualizationState,
     styleState,
     hasUnappliedChanges,
+    indexPattern,
   }: TopNavConfigParams,
   { history, toastNotifications, i18n: { Context: I18nContext } }: WizardServices
 ) => {
@@ -92,6 +95,9 @@ export const getTopNavConfig = (
             return;
           }
           const currentTitle = savedWizardVis.title;
+          savedWizardVis.searchSourceFields = {
+            index: indexPattern,
+          };
           savedWizardVis.visualizationState = JSON.stringify(visualizationState);
           savedWizardVis.styleState = JSON.stringify(styleState);
           savedWizardVis.title = newTitle;

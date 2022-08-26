@@ -30,6 +30,7 @@ export const TopNav = () => {
   );
 
   const savedWizardVis = useSavedWizardVis(visualizationIdFromUrl);
+  const indexPattern = useIndexPatterns().selected;
 
   const config = useMemo(() => {
     if (savedWizardVis === undefined) return;
@@ -43,12 +44,18 @@ export const TopNav = () => {
         visualizationState,
         styleState,
         hasUnappliedChanges,
+        indexPattern,
       },
       services
     );
-  }, [hasUnappliedChanges, rootState, savedWizardVis, services, visualizationIdFromUrl]);
-
-  const indexPattern = useIndexPatterns().selected;
+  }, [
+    hasUnappliedChanges,
+    indexPattern,
+    rootState,
+    savedWizardVis,
+    services,
+    visualizationIdFromUrl,
+  ]);
 
   return (
     <div className="wizTopNav">
