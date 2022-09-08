@@ -1,6 +1,6 @@
 # Testing OpenSearch Dashboards Plugins
 
-This document outlines best practices and patterns for testing OpenSearch Dashboards Plugins.
+This document outlines best practices and patterns for testing OpenSearch Dashboards Plugins. haha
 
 - [Testing OpenSearch Dashboards Plugins](#testing-opensearch-dashboards-plugins)
   - [Strategy](#strategy)
