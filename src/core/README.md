@@ -1,6 +1,6 @@
 # Core
 
-Core is a set of systems (frontend, backend etc.) that OpenSearch Dashboards and its plugins are built on top of. Some changes. Some more changes for the commit. More changes..... More changes More changes More changes More modeggg
+Core is a set of systems (frontend, backend etc.) that OpenSearch Dashboards and its plugins are built on top of. 
 
 
 ## Plugin development
