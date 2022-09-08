@@ -108,7 +108,7 @@ interface Props {
 }
 
 export function HeaderLogo({ href, navigateToApp, branding, ...observables }: Props) {
-  console.log("test workflow")
+  console.log("test workflow!")
   const forceNavigation = useObservable(observables.forceNavigation$, false);
   const navLinks = useObservable(observables.navLinks$, []);
   const {
