@@ -1,6 +1,6 @@
 # Saved objects management
 
-Provides a UI (via the `management` plugin) to find and manage all saved objects in one place (you can see the primary page by navigating to `/app/management/opensearch-dashboards/objects`). Not to be confused with the `savedObjects` plugin, which provides all the core capabilities of saved objects.
+Provides a UI (via the `management` plugin) to find and manage all saved objects in one place (you can see the primary page by navigating to `/app/management/opensearch-dashboards/objects`). Not to be confused with the `savedObjects` plugin, which provides all the core capabilities of saved objects.  haha
 
 From the primary UI page, this plugin allows you to:
 1. Search/view/delete saved objects and their relationships
