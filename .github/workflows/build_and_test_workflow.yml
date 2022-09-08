@@ -4,11 +4,16 @@
 name: Build and test
 
 # trigger on every commit push and PR for all branches except feature branches and pushes for backport branches
+# trigger on every commit push and PR except for markdown only changes
 on:
   push:
     branches: [ '**', '!feature/**', '!backport/**' ]
+    paths-ignore: 
+      - '**.md'
   pull_request:
     branches: [ '**', '!feature/**' ]
+    paths-ignore: 
+      - '**.md'
 
 env:
   TEST_BROWSER_HEADLESS: 1
