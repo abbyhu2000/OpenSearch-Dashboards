@@ -9,11 +9,11 @@ on:
   push:
     branches: [ '**', '!feature/**', '!backport/**' ]
     paths-ignore: 
-      - '**/README.md'
+      - '**/*.md'
   pull_request:
     branches: [ '**', '!feature/**' ]
     paths-ignore: 
-      - '**/README.md'
+      - '**/**.md'
 
 env:
   TEST_BROWSER_HEADLESS: 1
