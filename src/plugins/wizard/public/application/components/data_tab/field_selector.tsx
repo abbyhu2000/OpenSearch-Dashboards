@@ -14,7 +14,6 @@ import {
 } from '../../../../../data/public';
 import { FieldSelectorField } from './field_selector_field';
 
-import './field_selector.scss';
 import { useTypedSelector } from '../../utils/state_management';
 import { useIndexPatterns } from '../../utils/use';
 import { getAvailableFields } from './utils';
@@ -66,13 +65,13 @@ export const FieldSelector = () => {
   );
 
   return (
-    <div className="wizFieldSelector">
+    <div>
       <div>
         <form>
           <FieldSearch value={fieldSearchValue} />
         </form>
       </div>
-      <div className="wizFieldSelector__fieldGroups">
+      <div>
         {/* Count Field */}
         <FieldSelectorField
           field={{
@@ -102,7 +101,6 @@ interface FieldGroupProps {
 const FieldGroup = ({ fields, header, id }: FieldGroupProps) => (
   <EuiAccordion
     id={id}
-    className="wizFieldSelector__fieldGroup"
     buttonContent={
       <EuiTitle size="xxxs">
         <span>{header}</span>

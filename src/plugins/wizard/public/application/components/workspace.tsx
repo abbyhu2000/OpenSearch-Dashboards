@@ -16,7 +16,6 @@ import { PersistedState } from '../../../../visualizations/public';
 import hand_field from '../../assets/hand_field.svg';
 import fields_bg from '../../assets/fields_bg.svg';
 
-import './workspace.scss';
 import { ExperimentalInfo } from './experimental_info';
 
 export const Workspace: FC = ({ children }) => {
@@ -72,13 +71,13 @@ export const Workspace: FC = ({ children }) => {
   }, [data.query.state$]);
 
   return (
-    <section className="wizWorkspace">
-      <EuiFlexGroup className="wizCanvasControls">
+    <section>
+      <EuiFlexGroup>
         <EuiFlexItem>
           <ExperimentalInfo />
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiPanel className="wizCanvas" data-test-subj="visualizationLoader">
+      <EuiPanel data-test-subj="visualizationLoader">
         {expression ? (
           <ReactExpressionRenderer
             expression={expression}
@@ -86,16 +85,15 @@ export const Workspace: FC = ({ children }) => {
             uiState={uiState}
           />
         ) : (
-          <EuiFlexItem className="wizWorkspace__empty" data-test-subj="emptyWorkspace">
+          <EuiFlexItem data-test-subj="emptyWorkspace">
             <EuiEmptyPrompt
               title={<h2>Add a field to start</h2>}
               body={
                 <>
                   <p>Drag a field to the configuration panel to generate a visualization.</p>
-                  <span className="wizWorkspace__container">
-                    <EuiIcon className="wizWorkspace__fieldSvg" type={fields_bg} size="original" />
+                  <span>
+                    <EuiIcon type={fields_bg} size="original" />
                     <EuiIcon
-                      className="wizWorkspace__handFieldSvg"
                       type={hand_field}
                       size="original"
                     />

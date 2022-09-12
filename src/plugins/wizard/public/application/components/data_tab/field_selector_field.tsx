@@ -34,7 +34,7 @@ import { FieldButton, FieldIcon } from '../../../../../opensearch_dashboards_rea
 import { useDrag } from '../../utils/drag_drop/drag_drop_context';
 import { COUNT_FIELD } from '../../utils/drag_drop/types';
 
-import './field_selector_field.scss';
+
 
 export interface FieldSelectorFieldProps {
   field: Partial<IndexPatternField> & Pick<IndexPatternField, 'displayName' | 'type' | 'scripted'>;
@@ -65,7 +65,6 @@ export const FieldSelectorField = ({ field }: FieldSelectorFieldProps) => {
     <span
       data-test-subj={`field-${field.name}`}
       title={field.name}
-      className="wizFieldSelectorField__name"
     >
       {wrapOnDot(field.displayName)}
     </span>
@@ -73,7 +72,6 @@ export const FieldSelectorField = ({ field }: FieldSelectorFieldProps) => {
 
   return (
     <FieldButton
-      className="wizFieldSelectorField"
       isActive={infoIsOpen}
       onClick={togglePopover}
       dataTestSubj={`field-${field.name}-showDetails`}

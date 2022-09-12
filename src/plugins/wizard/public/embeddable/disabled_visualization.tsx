@@ -7,11 +7,9 @@ import { EuiIcon } from '@elastic/eui';
 import { FormattedMessage } from '@osd/i18n/react';
 import React from 'react';
 
-import './disabled_visualization.scss';
-
 export function DisabledVisualization({ title }: { title: string }) {
   return (
-    <div className="wizDisabledVisualization">
+    <div>
       <EuiIcon type="beaker" size="xl" />
       <div>
         <FormattedMessage

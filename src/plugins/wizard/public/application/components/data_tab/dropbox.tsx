@@ -15,7 +15,6 @@ import {
 } from '@elastic/eui';
 import React, { useCallback, useState } from 'react';
 import { IDropAttributes, IDropState } from '../../utils/drag_drop';
-import './dropbox.scss';
 import { useDropbox } from './use';
 import { UseDropboxProps } from './use/use_dropbox';
 import { usePrefersReducedMotion } from './use/use_prefers_reduced_motion';
@@ -86,12 +85,11 @@ const DropboxComponent = ({
 
   return (
     <EuiDragDropContext onDragEnd={handleDragEnd}>
-      <EuiFormRow label={boxLabel} className="dropBox" fullWidth>
-        <div className="dropBox__container">
+      <EuiFormRow label={boxLabel} fullWidth>
+        <div>
           <EuiDroppable droppableId={dropboxId}>
             {fields.map(({ id, label }, index) => (
               <EuiDraggable
-                className={`dropBox__draggable ${id === closing && 'closing'}`}
                 key={id}
                 draggableId={id}
                 index={index}
@@ -99,10 +97,9 @@ const DropboxComponent = ({
                 <EuiPanel
                   key={index}
                   paddingSize="s"
-                  className="dropBox__field"
                   data-test-subj={`dropBoxField-${dropboxId}-${index}`}
                 >
-                  <EuiText size="s" className="dropBox__field_text" onClick={() => onEditField(id)}>
+                  <EuiText size="s" onClick={() => onEditField(id)}>
                     <a role="button" tabIndex={0}>
                       {label}
                     </a>
@@ -122,9 +119,6 @@ const DropboxComponent = ({
           {fields.length < limit && (
             <EuiPanel
               data-test-subj={`dropBoxAddField-${dropboxId}`}
-              className={`dropBox__field dropBox__dropTarget ${
-                isValidDropTarget ? 'validField' : ''
-              } ${canDrop ? 'canDrop' : ''}`}
               {...(isValidDropTarget && dropProps)}
             >
               <EuiText size="s">Click or drop to add</EuiText>

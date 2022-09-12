@@ -13,7 +13,7 @@ import {
   EuiSelectable,
   EuiTextColor,
 } from '@elastic/eui';
-import './searchable_dropdown.scss';
+
 
 export interface SearchableDropdownOption {
   id: string;
@@ -145,7 +145,6 @@ export const SearchableDropdown = ({
       color="text"
       size="s"
       style={{ textAlign: 'left' }}
-      className="searchableDropdown--topDisplay"
       data-test-subj="searchableDropdownValue"
       onClick={onButtonClick}
     >
@@ -168,9 +167,9 @@ export const SearchableDropdown = ({
   );
 
   return (
-    <div className="searchableDropdown">
+    <div>
       <EuiPopover button={formControl} isOpen={isPopoverOpen} closePopover={closePopover}>
-        <div className="searchableDropdown--fixedWidthChild">{selectable}</div>
+        <div>{selectable}</div>
       </EuiPopover>
     </div>
   );

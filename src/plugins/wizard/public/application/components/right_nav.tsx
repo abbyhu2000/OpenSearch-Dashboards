@@ -14,7 +14,7 @@ import {
 import { i18n } from '@osd/i18n';
 import { FormattedMessage } from '@osd/i18n/react';
 import { useVisualizationType } from '../utils/use';
-import './side_nav.scss';
+
 import { useOpenSearchDashboards } from '../../../../opensearch_dashboards_react/public';
 import { WizardServices } from '../../types';
 import { setActiveVisualization, useTypedDispatch } from '../utils/state_management';
@@ -36,8 +36,8 @@ export const RightNav = () => {
   }));
 
   return (
-    <section className="wizSidenav right">
-      <div className="wizSidenav__header">
+    <section>
+      <div>
         <EuiSuperSelect
           options={options}
           valueOfSelected={activeVisName}
@@ -48,7 +48,7 @@ export const RightNav = () => {
           data-test-subj="chartPicker"
         />
       </div>
-      <div className="wizSidenav__style">
+      <div>
         <StyleSection />
       </div>
       {newVisType && (
@@ -90,7 +90,7 @@ export const RightNav = () => {
 
 const OptionItem = ({ icon, title }: { icon: IconType; title: string }) => (
   <>
-    <EuiIcon type={icon} className="wizTypeSelector__icon" />
+    <EuiIcon type={icon}/>
     <span>{title}</span>
   </>
 );

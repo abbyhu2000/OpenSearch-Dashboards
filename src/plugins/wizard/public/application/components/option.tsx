@@ -5,7 +5,6 @@
 
 import { EuiAccordion, EuiHorizontalRule, EuiPanel, EuiSpacer } from '@elastic/eui';
 import React, { FC } from 'react';
-import './option.scss';
 
 interface Props {
   title: string;
@@ -18,11 +17,10 @@ export const Option: FC<Props> = ({ title, children, initialIsOpen = false }) =>
       <EuiAccordion
         id={title}
         buttonContent={title}
-        className="wizOption"
         initialIsOpen={initialIsOpen}
       >
         <EuiSpacer size="s" />
-        <EuiPanel color="subdued" className="wizOption__panel">
+        <EuiPanel color="subdued">
           {children}
         </EuiPanel>
       </EuiAccordion>

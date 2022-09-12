@@ -11,7 +11,6 @@ import { useOpenSearchDashboards } from '../../../../opensearch_dashboards_react
 import { getTopNavConfig } from '../utils/get_top_nav_config';
 import { WizardServices } from '../../types';
 
-import './top_nav.scss';
 import { useIndexPatterns, useSavedWizardVis } from '../utils/use';
 import { useTypedSelector, useTypedDispatch } from '../utils/state_management';
 import { setEditorState } from '../utils/state_management/metadata_slice';
@@ -32,7 +31,7 @@ export const TopNav = () => {
 
   const saveDisabledReason = useCanSave();
   const savedWizardVis = useSavedWizardVis(visualizationIdFromUrl);
-
+  console.log("new test!")
   const config = useMemo(() => {
     if (savedWizardVis === undefined) return;
 
@@ -59,7 +58,7 @@ export const TopNav = () => {
   });
 
   return (
-    <div className="wizTopNav">
+    <div>
       <TopNavMenu
         appName={PLUGIN_ID}
         config={config}

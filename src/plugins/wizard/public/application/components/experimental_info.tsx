@@ -11,7 +11,6 @@ import { i18n } from '@osd/i18n';
 export const InfoComponent = () => {
   return (
     <EuiCallOut
-      className="hide-for-sharing"
       data-test-subj="experimentalVisInfo"
       size="s"
       title={i18n.translate('wizard.experimentalInfoTitle', {
