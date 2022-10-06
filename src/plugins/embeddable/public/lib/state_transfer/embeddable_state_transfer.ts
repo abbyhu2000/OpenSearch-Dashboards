@@ -122,6 +122,7 @@ export class EmbeddableStateTransfer {
       throw new TypeError('ScopedHistory is required to fetch incoming state');
     }
     const incomingState = this.scopedHistory.location?.state;
+    console.log("incoming state", incomingState)
     const castState =
       !guard || guard(incomingState) ? (cloneDeep(incomingState) as IncomingStateType) : undefined;
     if (castState && options?.keysToRemoveAfterFetch) {

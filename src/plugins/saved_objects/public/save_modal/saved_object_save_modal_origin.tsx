@@ -64,7 +64,7 @@ export function SavedObjectSaveModalOrigin(props: OriginSaveModalProps) {
   });
 
   const getReturnToOriginSwitch = (state: SaveModalState) => {
-    if (!props.originatingApp) {
+    if (!props.originatingApp || props.originatingApp === 'visualize') {
       return;
     }
     const origin = props.getAppNameFromId
@@ -125,6 +125,7 @@ export function SavedObjectSaveModalOrigin(props: OriginSaveModalProps) {
       options={getReturnToOriginSwitch}
       description={documentInfo.description}
       showDescription={true}
+      showAddToDashboard={props.originatingApp === 'visualize'}
     />
   );
 }

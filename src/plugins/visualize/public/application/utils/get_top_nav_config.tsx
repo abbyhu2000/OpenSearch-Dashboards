@@ -352,6 +352,7 @@ export const getTopNavConfig = (
               ) {
                 createVisReference();
               } else if (savedVis) {
+                console.log("viz", originatingApp)
                 showSaveModal(saveModal, I18nContext);
               }
             },

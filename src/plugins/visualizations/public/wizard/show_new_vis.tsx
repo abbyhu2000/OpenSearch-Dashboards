@@ -42,6 +42,8 @@ import {
   getApplication,
   getEmbeddable,
 } from '../services';
+import { EmbeddableStart } from 'src/plugins/embeddable/public';
+import { ScopedHistory } from 'opensearch-dashboards/public';
 
 export interface ShowNewVisModalParams {
   editorParams?: string[];

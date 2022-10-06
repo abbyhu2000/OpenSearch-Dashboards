@@ -43,6 +43,7 @@ import { VISUALIZE_ENABLE_LABS_SETTING } from '../../../../visualizations/public
 import { VisualizeServices } from '../types';
 import { VisualizeConstants } from '../visualize_constants';
 import { getTableColumns, getNoItemsMessage } from '../utils';
+import { take } from 'rxjs/operators';
 
 export const VisualizeListing = () => {
   const {
@@ -57,11 +58,26 @@ export const VisualizeListing = () => {
       savedObjectsPublic,
       uiSettings,
       visualizeCapabilities,
+      embeddable,
+      scopedHistory
     },
   } = useOpenSearchDashboards<VisualizeServices>();
   const { pathname } = useLocation();
   const closeNewVisModal = useRef(() => {});
   const listingLimit = savedObjectsPublic.settings.getListingLimit();
+  /*const { originatingApp } =
+    embeddable
+      .getStateTransfer(scopedHistory)
+      .getIncomingEditorState({ keysToRemoveAfterFetch: ['id', 'input'] }) || {};*/
+
+  let currentAppId: string|undefined;
+
+  if (application?.currentAppId$) {
+    application.currentAppId$
+      .pipe(take(1))
+      .subscribe((appId: string | undefined) => ( currentAppId = appId));
+  }
+  //console.log("here is the id", currentAppId)
 
   useEffect(() => {
     if (pathname === '/new') {
@@ -93,7 +109,7 @@ export const VisualizeListing = () => {
   useUnmount(() => closeNewVisModal.current());
 
   const createNewVis = useCallback(() => {
-    closeNewVisModal.current = visualizations.showNewVisModal();
+    closeNewVisModal.current = visualizations.showNewVisModal({originatingApp: currentAppId});
   }, [visualizations]);
 
   const editItem = useCallback(

@@ -45,12 +45,19 @@ import {
   EuiSwitch,
   EuiSwitchEvent,
   EuiTextArea,
+  EuiHorizontalRule,
+  EuiCheckbox,
+  EuiRadio,
+  EuiSelect
 } from '@elastic/eui';
 import { FormattedMessage } from '@osd/i18n/react';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { EuiText } from '@elastic/eui';
 import { i18n } from '@osd/i18n';
-
+ import { SavedObjectsFindOptions } from 'src/core/public/saved_objects';
+ import { useOpenSearchDashboards } from 'src/plugins/opensearch_dashboards_react/public';
+ import { findObjects } from 'src/plugins/saved_objects_management/public/lib';
+ import { CoreStart } from 'opensearch-dashboards/public';
 export interface OnSaveProps {
   newTitle: string;
   newCopyOnSave: boolean;
@@ -60,7 +67,9 @@ export interface OnSaveProps {
 }
 
 interface Props {
-  onSave: (props: OnSaveProps) => void;
+  onSave: (props: OnSaveProps & {
+    addToDashboard?: boolean, addToExistingDashboard?:boolean,chosenDashboard?:string|undefined
+  }) => void;
   onClose: () => void;
   title: string;
   showCopyOnSave: boolean;
@@ -70,6 +79,7 @@ interface Props {
   options?: React.ReactNode | ((state: SaveModalState) => React.ReactNode);
   description?: string;
   showDescription: boolean;
+  showAddToDashboard?: boolean;
 }
 
 export interface SaveModalState {
@@ -79,9 +89,13 @@ export interface SaveModalState {
   hasTitleDuplicate: boolean;
   isLoading: boolean;
   visualizationDescription: string;
+  addToDashboard: boolean;
+  addToExistingDashboard: boolean|undefined;
+  chosenDashboard: string|undefined;
 }
 
 const generateId = htmlIdGenerator();
+// const checkboxIdPrefix = generateId();
 
 export class SavedObjectSaveModal extends React.Component<Props, SaveModalState> {
   private warning = React.createRef<HTMLDivElement>();
@@ -92,6 +106,9 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
     hasTitleDuplicate: false,
     isLoading: false,
     visualizationDescription: this.props.description ? this.props.description : '',
+    addToDashboard: true,
+    addToExistingDashboard: true,
+    chosenDashboard: undefined
   };
 
   public render() {
@@ -150,6 +167,9 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
             {typeof this.props.options === 'function'
               ? this.props.options(this.state)
               : this.props.options}
+
+            <EuiHorizontalRule />
+            {this.renderAddToDashboardDirectly()}
           </EuiForm>
         </EuiModalBody>
 
@@ -225,6 +245,9 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
       isTitleDuplicateConfirmed: this.state.isTitleDuplicateConfirmed,
       onTitleDuplicate: this.onTitleDuplicate,
       newDescription: this.state.visualizationDescription,
+      addToDashboard: this.state.addToDashboard,
+      addToExistingDashboard: this.state.addToExistingDashboard,
+      chosenDashboard: this.state.chosenDashboard
     });
   };
 
@@ -241,6 +264,36 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
       copyOnSave: event.target.checked,
     });
   };
+
+  private onAddToDashboardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      addToDashboard: event.target.checked && event.target.id === 'dashboard'
+    })
+  }
+
+  private onAddToExistingDashboardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      addToExistingDashboard: this.state.addToDashboard && event.target.id === "existing"
+    })
+  }
+
+  private onSelectExistingDashboardChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    //await this.getDashboards()
+    this.setState({
+      chosenDashboard: this.state.addToDashboard&&this.state.addToExistingDashboard?event.target.value:undefined
+    })
+  }
+
+  // private getDashboards = async () => {
+  //   const { services } = useOpenSearchDashboards<CoreStart>();
+  //   const { http } = services;
+  //   const findOptions: SavedObjectsFindOptions = {
+  //       type: 'dashboard'
+  //   }
+   
+  //   const resp = await findObjects(http, findOptions)
+  //   console.log(resp.savedObjects)
+  // }
 
   private onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -310,6 +363,71 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
       </>
     );
   };
+
+  private renderAddToDashboardDirectly = () => {
+    if(!this.props.showAddToDashboard){
+      return;
+    }
+
+    return (
+      <Fragment>
+      <EuiCheckbox
+      className = 'onSaveModalCheckBox'
+      id = {`dashboard`}
+      label = { <FormattedMessage
+        id="savedObjects.saveModal.addToDashboardLabel"
+        defaultMessage="Add to Dashboard"
+      />}
+      checked = {this.state.addToDashboard}
+      onChange = {(e) => this.onAddToDashboardChange(e)}
+      />
+      <EuiSpacer size='xs'/>
+      <div className = 'osdSaveModalRadio'>
+      <EuiRadio
+        id='existing'
+        label="Existing"
+        checked={this.state.addToExistingDashboard}
+        onChange={(e) => this.onAddToExistingDashboardChange(e)}
+        disabled = {!this.state.addToDashboard}
+      />
+      <EuiSpacer size='xs'/>
+      <EuiSelect
+        id="selectExistingDashboard"
+        options={[
+          {
+            text: "dashboardone"
+          },
+          {
+            text: "dashboardtwo"
+          }
+        ]}
+        value={this.state.chosenDashboard}
+        onChange={(e) => this.onSelectExistingDashboardChange(e)}
+        disabled={!(this.state.addToExistingDashboard&&this.state.addToDashboard)}
+      />
+      <EuiSpacer size='xs'/>
+      <EuiRadio
+        id='new'
+        label="New"
+        checked={!this.state.addToExistingDashboard}
+        onChange={(e) => this.onAddToExistingDashboardChange(e)}
+        disabled = {!this.state.addToDashboard}
+      />
+      </div>
+      <EuiSpacer size="m" />
+      <EuiCheckbox
+      className = 'onSaveModalCheckBox'
+      id = {`library`}
+      label = {<FormattedMessage
+        id="savedObjects.saveModal.addToLibraryLabel"
+        defaultMessage="Add to Library"
+      />}
+      checked = {!this.state.addToDashboard}
+      onChange = {(e) => this.onAddToDashboardChange(e)}
+      />
+   </Fragment>
+    )
+  }
 
   private renderCopyOnSave = () => {
     if (!this.props.showCopyOnSave) {

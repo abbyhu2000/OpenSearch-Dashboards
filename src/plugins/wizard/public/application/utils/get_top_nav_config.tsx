@@ -41,6 +41,8 @@ import { WizardVisSavedObject } from '../../types';
 import { AppDispatch } from './state_management';
 import { EDIT_PATH } from '../../../common';
 import { setEditorState } from './state_management/metadata_slice';
+import { addPatch } from 'elastic-apm-node';
+
 export interface TopNavConfigParams {
   visualizationIdFromUrl: string;
   savedWizardVis: WizardVisSavedObject;
@@ -63,6 +65,8 @@ export const getTopNavConfig = (
       .getStateTransfer(scopedHistory)
       .getIncomingEditorState({ keysToRemoveAfterFetch: ['id', 'input'] }) || {};
   const stateTransfer = embeddable.getStateTransfer();
+
+  console.log("here is the originatingApp", originatingApp)
 
   const topNavConfig: TopNavMenuData[] = [
     {
@@ -96,7 +100,6 @@ export const getTopNavConfig = (
             getAppNameFromId={stateTransfer.getAppNameFromId}
           />
         );
-
         showSaveModal(saveModal, I18nContext);
       },
     },
@@ -119,10 +122,15 @@ export const getOnSave = (
     onTitleDuplicate,
     newDescription,
     returnToOrigin,
-  }: OnSaveProps & { returnToOrigin: boolean }) => {
+    addToDashboard,
+    addToExistingDashboard,
+    chosenDashboard
+  }: OnSaveProps & { returnToOrigin: boolean, addToDashboard?: boolean, addToExistingDashboard?:boolean,chosenDashboard?:string|undefined }) => {
     const { embeddable, toastNotifications, application, history } = services;
     const stateTransfer = embeddable.getStateTransfer();
-
+    console.log("addToDashboard", addToDashboard)
+    console.log("addToExistingDashboard", addToExistingDashboard)
+    console.log("chosenDashboard", chosenDashboard)
     if (!savedWizardVis) {
       return;
     }
