@@ -37,22 +37,25 @@ export const TopNav = () => {
   const { selected: indexPattern } = useIndexPatterns();
   const [config, setConfig] = useState<TopNavMenuData[] | undefined>();
 
-  useEffect(() => {
-    const getConfig = () => {
-      if (!savedWizardVis || !indexPattern) return;
+  useEffect( () => {
 
-      return getTopNavConfig(
-        {
-          visualizationIdFromUrl,
-          savedWizardVis: saveStateToSavedObject(savedWizardVis, rootState, indexPattern),
-          saveDisabledReason,
-          dispatch,
-        },
-        services
-      );
-    };
+      const getConfig = () => {
+        if (!savedWizardVis || !indexPattern) return;
+  
+        return getTopNavConfig(
+          {
+            visualizationIdFromUrl,
+            savedWizardVis: saveStateToSavedObject(savedWizardVis, rootState, indexPattern),
+            saveDisabledReason,
+            dispatch,
+          },
+          services
+        );
+      };
+  
+      setConfig(getConfig());
 
-    setConfig(getConfig());
+
   }, [
     rootState,
     savedWizardVis,

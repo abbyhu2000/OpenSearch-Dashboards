@@ -46,7 +46,6 @@ import {
   EuiSwitchEvent,
   EuiTextArea,
   EuiHorizontalRule,
-  EuiCheckbox,
   EuiRadio,
   EuiSelect
 } from '@elastic/eui';
@@ -54,10 +53,10 @@ import { FormattedMessage } from '@osd/i18n/react';
 import React, { Fragment } from 'react';
 import { EuiText } from '@elastic/eui';
 import { i18n } from '@osd/i18n';
- import { SavedObjectsFindOptions } from 'src/core/public/saved_objects';
- import { useOpenSearchDashboards } from 'src/plugins/opensearch_dashboards_react/public';
- import { findObjects } from 'src/plugins/saved_objects_management/public/lib';
- import { CoreStart } from 'opensearch-dashboards/public';
+import { SavedObjectsFindOptions } from 'src/core/server/saved_objects/types';
+import { findObjects } from '../../../saved_objects_management/public/lib';
+import { HttpSetup } from 'src/core/public/http';
+
 export interface OnSaveProps {
   newTitle: string;
   newCopyOnSave: boolean;
@@ -68,7 +67,7 @@ export interface OnSaveProps {
 
 interface Props {
   onSave: (props: OnSaveProps & {
-    addToDashboard?: boolean, addToExistingDashboard?:boolean,chosenDashboard?:string|undefined
+    addToDashboard?: boolean, chosenDashboard?:string|undefined
   }) => void;
   onClose: () => void;
   title: string;
@@ -80,6 +79,7 @@ interface Props {
   description?: string;
   showDescription: boolean;
   showAddToDashboard?: boolean;
+  http?: HttpSetup
 }
 
 export interface SaveModalState {
@@ -90,8 +90,8 @@ export interface SaveModalState {
   isLoading: boolean;
   visualizationDescription: string;
   addToDashboard: boolean;
-  addToExistingDashboard: boolean|undefined;
   chosenDashboard: string|undefined;
+  dashboards: {text?: string; value: string}[]
 }
 
 const generateId = htmlIdGenerator();
@@ -107,8 +107,8 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
     isLoading: false,
     visualizationDescription: this.props.description ? this.props.description : '',
     addToDashboard: true,
-    addToExistingDashboard: true,
-    chosenDashboard: undefined
+    chosenDashboard: undefined,
+    dashboards: []
   };
 
   public render() {
@@ -168,7 +168,6 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
               ? this.props.options(this.state)
               : this.props.options}
 
-            <EuiHorizontalRule />
             {this.renderAddToDashboardDirectly()}
           </EuiForm>
         </EuiModalBody>
@@ -246,7 +245,6 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
       onTitleDuplicate: this.onTitleDuplicate,
       newDescription: this.state.visualizationDescription,
       addToDashboard: this.state.addToDashboard,
-      addToExistingDashboard: this.state.addToExistingDashboard,
       chosenDashboard: this.state.chosenDashboard
     });
   };
@@ -271,29 +269,11 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
     })
   }
 
-  private onAddToExistingDashboardChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  private onSelectExistingDashboardChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     this.setState({
-      addToExistingDashboard: this.state.addToDashboard && event.target.id === "existing"
+      chosenDashboard: this.state.addToDashboard?event.target.value:undefined
     })
   }
-
-  private onSelectExistingDashboardChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-    //await this.getDashboards()
-    this.setState({
-      chosenDashboard: this.state.addToDashboard&&this.state.addToExistingDashboard?event.target.value:undefined
-    })
-  }
-
-  // private getDashboards = async () => {
-  //   const { services } = useOpenSearchDashboards<CoreStart>();
-  //   const { http } = services;
-  //   const findOptions: SavedObjectsFindOptions = {
-  //       type: 'dashboard'
-  //   }
-   
-  //   const resp = await findObjects(http, findOptions)
-  //   console.log(resp.savedObjects)
-  // }
 
   private onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -364,6 +344,35 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
     );
   };
 
+  componentDidMount() {
+    const fetchDashboards = async () => {
+      if(!this.props.http){
+        return;
+      }
+      const findOptions: SavedObjectsFindOptions = {
+        type: 'dashboard'
+      }
+    
+      const resp = await findObjects(this.props.http, findOptions)
+      const dashboards: { text: string|undefined; value: string}[] = []
+      resp.savedObjects.forEach((item) => {
+        dashboards.push({
+          text: item.meta.title, 
+          value: item.id
+        })
+      })
+      this.setState({
+        dashboards: dashboards
+      }) 
+      if(dashboards.length){
+        this.setState({
+          chosenDashboard: dashboards[0].value
+        })
+      }
+    }
+    fetchDashboards()
+  }
+
   private renderAddToDashboardDirectly = () => {
     if(!this.props.showAddToDashboard){
       return;
@@ -371,59 +380,33 @@ export class SavedObjectSaveModal extends React.Component<Props, SaveModalState>
 
     return (
       <Fragment>
-      <EuiCheckbox
-      className = 'onSaveModalCheckBox'
-      id = {`dashboard`}
-      label = { <FormattedMessage
-        id="savedObjects.saveModal.addToDashboardLabel"
-        defaultMessage="Add to Dashboard"
-      />}
-      checked = {this.state.addToDashboard}
-      onChange = {(e) => this.onAddToDashboardChange(e)}
-      />
-      <EuiSpacer size='xs'/>
-      <div className = 'osdSaveModalRadio'>
+      <EuiHorizontalRule margin='m'/>
       <EuiRadio
         id='existing'
-        label="Existing"
-        checked={this.state.addToExistingDashboard}
-        onChange={(e) => this.onAddToExistingDashboardChange(e)}
-        disabled = {!this.state.addToDashboard}
+        label = { <FormattedMessage
+          id="savedObjects.saveModal.addToDashboardLabel"
+          defaultMessage="Add to Dashboard"
+        />}
+        checked={this.state.addToDashboard}
+        onChange={(e) => this.onAddToDashboardChange(e)}
       />
       <EuiSpacer size='xs'/>
       <EuiSelect
         id="selectExistingDashboard"
-        options={[
-          {
-            text: "dashboardone"
-          },
-          {
-            text: "dashboardtwo"
-          }
-        ]}
+        options={this.state.dashboards}
         value={this.state.chosenDashboard}
         onChange={(e) => this.onSelectExistingDashboardChange(e)}
-        disabled={!(this.state.addToExistingDashboard&&this.state.addToDashboard)}
+        disabled={!this.state.addToDashboard || !this.state.dashboards.length}
       />
-      <EuiSpacer size='xs'/>
+      <EuiSpacer size='s'/>
       <EuiRadio
         id='new'
-        label="New"
-        checked={!this.state.addToExistingDashboard}
-        onChange={(e) => this.onAddToExistingDashboardChange(e)}
-        disabled = {!this.state.addToDashboard}
-      />
-      </div>
-      <EuiSpacer size="m" />
-      <EuiCheckbox
-      className = 'onSaveModalCheckBox'
-      id = {`library`}
-      label = {<FormattedMessage
-        id="savedObjects.saveModal.addToLibraryLabel"
-        defaultMessage="Add to Library"
-      />}
-      checked = {!this.state.addToDashboard}
-      onChange = {(e) => this.onAddToDashboardChange(e)}
+        label={<FormattedMessage
+          id="savedObjects.saveModal.addToLibraryLabel"
+          defaultMessage="Add to Library"
+        />}
+        checked={!this.state.addToDashboard}
+        onChange={(e) => this.onAddToDashboardChange(e)}
       />
    </Fragment>
     )

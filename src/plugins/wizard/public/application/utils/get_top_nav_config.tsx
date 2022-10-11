@@ -41,7 +41,8 @@ import { WizardVisSavedObject } from '../../types';
 import { AppDispatch } from './state_management';
 import { EDIT_PATH } from '../../../common';
 import { setEditorState } from './state_management/metadata_slice';
-import { addPatch } from 'elastic-apm-node';
+import { ContainerOutput, EmbeddableFactoryNotFoundError, ErrorEmbeddable, isErrorEmbeddable, SavedObjectEmbeddableInput } from '../../../../embeddable/public';
+import { DashboardContainer, DashboardContainerInput, DASHBOARD_CONTAINER_TYPE } from '../../../../dashboard/public';
 
 export interface TopNavConfigParams {
   visualizationIdFromUrl: string;
@@ -50,7 +51,7 @@ export interface TopNavConfigParams {
   dispatch: AppDispatch;
 }
 
-export const getTopNavConfig = (
+export const getTopNavConfig =  (
   { visualizationIdFromUrl, savedWizardVis, saveDisabledReason, dispatch }: TopNavConfigParams,
   services: WizardServices
 ) => {
@@ -58,6 +59,7 @@ export const getTopNavConfig = (
     i18n: { Context: I18nContext },
     embeddable,
     scopedHistory,
+    http
   } = services;
 
   const { originatingApp } =
@@ -98,6 +100,7 @@ export const getTopNavConfig = (
             onClose={() => {}}
             originatingApp={originatingApp}
             getAppNameFromId={stateTransfer.getAppNameFromId}
+            http={http}
           />
         );
         showSaveModal(saveModal, I18nContext);
@@ -113,7 +116,7 @@ export const getOnSave = (
   originatingApp,
   visualizationIdFromUrl,
   dispatch,
-  services
+  services: WizardServices
 ) => {
   const onSave = async ({
     newTitle,
@@ -123,14 +126,13 @@ export const getOnSave = (
     newDescription,
     returnToOrigin,
     addToDashboard,
-    addToExistingDashboard,
     chosenDashboard
-  }: OnSaveProps & { returnToOrigin: boolean, addToDashboard?: boolean, addToExistingDashboard?:boolean,chosenDashboard?:string|undefined }) => {
+  }: OnSaveProps & { returnToOrigin: boolean, addToDashboard?: boolean, chosenDashboard?:string|undefined }) => {
     const { embeddable, toastNotifications, application, history } = services;
     const stateTransfer = embeddable.getStateTransfer();
     console.log("addToDashboard", addToDashboard)
-    console.log("addToExistingDashboard", addToExistingDashboard)
     console.log("chosenDashboard", chosenDashboard)
+
     if (!savedWizardVis) {
       return;
     }
@@ -158,6 +160,42 @@ export const getOnSave = (
           }),
           'data-test-subj': 'saveVisualizationSuccess',
         });
+
+        /*if(originatingApp === 'visualize'&&chosenDashboard){
+          let dashboardContainer: DashboardContainer | undefined;
+          const dashboardFactory = embeddable.getEmbeddableFactory<
+            DashboardContainerInput,
+            ContainerOutput,
+            DashboardContainer
+          >('dashboard');
+
+          if (dashboardFactory) {
+            dashboardFactory
+              .create({
+                id: chosenDashboard,
+                viewMode: '',
+                filters: [],
+                query: undefined,
+                timeRange: undefined,
+                useMargins: false,
+                title: '',
+                isFullScreenMode: false,
+                panels: {}
+              })
+              .then((container: DashboardContainer | ErrorEmbeddable | undefined) => {
+            if (container && !isErrorEmbeddable(container)) {
+              dashboardContainer = container;
+            }
+           })
+          }
+
+          if(factoryForSavedObjectType){
+            this.props.container.addNewEmbeddable<SavedObjectEmbeddableInput>(
+              'wizard',
+              { id }
+            );
+          }
+        }*/
 
         if (originatingApp && returnToOrigin) {
           // create or edit wizard directly from another app, such as `dashboard`

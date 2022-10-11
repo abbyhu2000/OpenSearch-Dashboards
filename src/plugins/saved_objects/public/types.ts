@@ -34,6 +34,7 @@ import {
   SavedObjectsClientContract,
   SavedObjectAttributes,
   SavedObjectReference,
+  HttpSetup,
 } from 'opensearch-dashboards/public';
 import {
   DataPublicPluginStart,
@@ -88,6 +89,7 @@ export interface SavedObjectOpenSearchDashboardsServices {
   search: DataPublicPluginStart['search'];
   chrome: ChromeStart;
   overlays: OverlayStart;
+  http: HttpSetup;
 }
 
 export interface SavedObjectConfig {

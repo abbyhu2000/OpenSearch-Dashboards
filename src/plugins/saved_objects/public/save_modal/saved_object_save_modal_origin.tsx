@@ -34,6 +34,8 @@ import { EuiFormRow, EuiSwitch } from '@elastic/eui';
 
 import { i18n } from '@osd/i18n';
 import { OnSaveProps, SaveModalState, SavedObjectSaveModal } from '.';
+import { SavedObjectsFindResponse } from 'src/core/server';
+import { HttpSetup } from 'src/core/public/http';
 
 interface SaveModalDocumentInfo {
   id?: string;
@@ -50,6 +52,7 @@ interface OriginSaveModalProps {
   objectType: string;
   onClose: () => void;
   onSave: (props: OnSaveProps & { returnToOrigin: boolean }) => void;
+  http: HttpSetup
 }
 
 export function SavedObjectSaveModalOrigin(props: OriginSaveModalProps) {
@@ -126,6 +129,7 @@ export function SavedObjectSaveModalOrigin(props: OriginSaveModalProps) {
       description={documentInfo.description}
       showDescription={true}
       showAddToDashboard={props.originatingApp === 'visualize'}
+      http={props.http}
     />
   );
 }
