@@ -134,10 +134,11 @@ export class VisBuilderPlugin
 
         // dispatch synthetic hash change event to update hash history objects
         // this is necessary because hash updates triggered by using popState won't trigger this event naturally.
-        const unlistenParentHistory = this.currentHistory.listen(() => {
+        const unlistenParentHistory = params.history.listen(() => {
           window.dispatchEvent(new HashChangeEvent('hashchange'));
         });
 
+        // Register Default Visualizations
         const services: VisBuilderServices = {
           ...coreStart,
           scopedHistory: this.currentHistory,
