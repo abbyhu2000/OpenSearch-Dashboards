@@ -162,7 +162,7 @@ export class VisBuilderPlugin
         // Instantiate the store
         const store = await getPreloadedStore(services);
         const unmount = renderApp(params, services, store);
-
+        
         // Render the application
         return () => {
           unlistenParentHistory();
