@@ -28,14 +28,19 @@
  * under the License.
  */
 
-import { REPO_ROOT } from '@osd/utils';
+import { REPO_ROOT, REPO_ROOT_8_3 } from '@osd/utils';
 
 export function createAbsolutePathSerializer(
-  rootPath: string = REPO_ROOT,
+  rootPath: string | string[] = [REPO_ROOT, REPO_ROOT_8_3],
   replacement = '<absolute path>'
 ) {
+  const rootPaths = Array.isArray(rootPath) ? rootPath : [rootPath];
   return {
-    test: (value: any) => typeof value === 'string' && value.startsWith(rootPath),
-    serialize: (value: string) => value.replace(rootPath, replacement).replace(/\\/g, '/'),
+    test: (value: any) =>
+      typeof value === 'string' && rootPaths.some((path) => value.startsWith(path)),
+    serialize: (value: string) =>
+      rootPaths
+        .reduce((result, oath) => result.replace(oath, replacement), value)
+        .replace(/\\/g, '/'),
   };
 }
