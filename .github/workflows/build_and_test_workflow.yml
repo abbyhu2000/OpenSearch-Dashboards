@@ -26,10 +26,10 @@ env:
 
 jobs:
   build-lint-test:
-    runs-on: ubuntu-latest
-    container:
-      image: docker://opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
-      options: --user 1001
+    runs-on: windows-latest
+    # container:
+    #   image: docker://opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
+    #   options: --user 1001
     name: Build and Verify
     steps:
       - name: Checkout code
@@ -72,10 +72,10 @@ jobs:
         run: yarn test:jest_integration:ci
 
   functional-tests:
-    runs-on: ubuntu-latest
-    container:
-      image: docker://opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
-      options: --user 1001
+    runs-on: windows-latest
+    # container:
+    #   image: docker://opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
+    #   options: --user 1001
     name: Run functional tests
     strategy:
       matrix:
@@ -117,10 +117,10 @@ jobs:
           CACHE_DIR: ciGroup${{ matrix.group }}
 
   build-min-artifact-tests:
-    runs-on: ubuntu-latest
-    container:
-      image: docker://opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
-      options: --user 1001
+    runs-on: windows-latest
+    # container:
+    #   image: docker://opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
+    #   options: --user 1001
     name: Build min release artifacts
     defaults:
       run:
@@ -176,10 +176,10 @@ jobs:
 
   bwc-tests:
     needs: [build-min-artifact-tests]
-    runs-on: ubuntu-latest
-    container:
-      image: docker://opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
-      options: --user 1001
+    runs-on: windows-latest
+    # container:
+    #   image: docker://opensearchstaging/ci-runner:ci-runner-rockylinux8-opensearch-dashboards-integtest-v2
+    #   options: --user 1001
     name: Run backwards compatibility tests
     defaults:
       run:
