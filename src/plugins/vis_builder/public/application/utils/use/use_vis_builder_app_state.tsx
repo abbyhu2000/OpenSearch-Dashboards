@@ -38,34 +38,33 @@ import { MarkdownSimple, toMountPoint } from '../../../../../opensearch_dashboar
 import { migrateLegacyQuery } from '../migrate_legacy_query';
 import { opensearchFilters, connectToQueryState } from '../../../../../data/public';
 import {
-  VisualizeServices,
-  VisualizeAppStateContainer,
-  VisualizeEditorVisInstance,
-} from '../../types';
-import { visStateToEditorState } from '../utils';
-import { createVisualizeAppState } from '../create_visualize_app_state';
+    VisBuilderServices,
+  VisBuilderContainer,
+  VisBuilderVisInstance,
+} from '../../../types';
+import { visStateToEditorState } from '../../utils';
+import { createVisBuilderAppState } from '../create_vis_builder_app_state';
 import { VisualizeConstants } from '../../visualize_constants';
+import { SavedObject } from '../../../../../saved_objects/public';
+
 /**
  * This effect is responsible for instantiating the visualize app state container,
  * which is in sync with "_a" url param
  */
-export const useVisualizeAppState = (
-  services: VisualizeServices,
+export const useVisBuilderAppState = (
+  services: VisBuilderServices,
   eventEmitter: EventEmitter,
-  instance?: VisualizeEditorVisInstance
+  instance?: SavedObject
 ) => {
-  const [hasUnappliedChanges, setHasUnappliedChangpes] = useState(false);
+  const [hasUnappliedChanges, setHasUnappliedChanges] = useState(false);
   const [appState, setAppState] = useState<VisualizeAppStateContainer | null>(null);
 
   useEffect(() => {
     if (instance) {
       const stateDefaults = visStateToEditorState(instance, services);
-      console.log("visualize vis state", stateDefaults)
-      const byValue = !('savedVis' in instance);
-      const { stateContainer, stopStateSync } = createVisualizeAppState({
+      const { stateContainer, stopStateSync } = createVisBuilderAppState({
         stateDefaults,
         osdUrlStateStorage: services.osdUrlStateStorage,
-        byValue,
       });
 
       const onDirtyStateChange = ({ isDirty }: { isDirty: boolean }) => {

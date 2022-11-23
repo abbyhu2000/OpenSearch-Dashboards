@@ -122,7 +122,7 @@ function DefaultEditorControls({
           </EuiFlexItem>
         </EuiFlexGroup>
       )}
-      {enableAutoApply && (
+      {(
         <EuiToolTip
           title={
             autoApplyEnabled

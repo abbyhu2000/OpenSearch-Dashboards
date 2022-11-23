@@ -18,6 +18,8 @@ import { setEditorState } from '../utils/state_management/metadata_slice';
 import { useCanSave } from '../utils/use/use_can_save';
 import { saveStateToSavedObject } from '../../saved_visualizations/transforms';
 import { TopNavMenuData } from '../../../../navigation/public';
+import EventEmitter from 'events';
+import { useVisBuilderAppState } from '../utils/use/use_vis_builder_app_state';
 
 export const TopNav = () => {
   // id will only be set for the edit route
@@ -31,9 +33,16 @@ export const TopNav = () => {
   } = services;
   const rootState = useTypedSelector((state) => state);
   const dispatch = useTypedDispatch();
+  const [eventEmitter] = useState(new EventEmitter());
 
   const saveDisabledReason = useCanSave();
   const savedVisBuilderVis = useSavedVisBuilderVis(visualizationIdFromUrl);
+  const appState = useVisBuilderAppState(
+    services,
+    eventEmitter,
+    savedVisBuilderVis
+  )
+  console.log("save vis builder vis", savedVisBuilderVis)
   const { selected: indexPattern } = useIndexPatterns();
   const [config, setConfig] = useState<TopNavMenuData[] | undefined>();
   const originatingApp = useTypedSelector((state) => {
