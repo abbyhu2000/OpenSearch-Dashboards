@@ -21,11 +21,7 @@ export interface MetadataState {
     };
     state: EditorState;
   };
-<<<<<<< HEAD
   originatingApp?: string;
-=======
-  originatingApp: string | undefined;
->>>>>>> global data persistence for vis builder
 }
 
 const initialState: MetadataState = {
