@@ -42,7 +42,7 @@ import {
   VisBuilderContainer,
   VisBuilderVisInstance,
 } from '../../../types';
-import { visStateToEditorState } from '../../utils';
+import { visBuilderStateToEditorState } from '../get_vis_builder_editor_state';
 import { createVisBuilderAppState } from '../create_vis_builder_app_state';
 import { VisualizeConstants } from '../../visualize_constants';
 import { SavedObject } from '../../../../../saved_objects/public';
@@ -61,7 +61,7 @@ export const useVisBuilderAppState = (
 
   useEffect(() => {
     if (instance) {
-      const stateDefaults = visStateToEditorState(instance, services);
+      const stateDefaults = visBuilderStateToEditorState(instance, services);
       const { stateContainer, stopStateSync } = createVisBuilderAppState({
         stateDefaults,
         osdUrlStateStorage: services.osdUrlStateStorage,
@@ -70,7 +70,7 @@ export const useVisBuilderAppState = (
       const onDirtyStateChange = ({ isDirty }: { isDirty: boolean }) => {
         if (!isDirty) {
           // it is important to update vis state with fresh data
-          stateContainer.transitions.updateVisState(visStateToEditorState(instance, services).vis);
+          stateContainer.transitions.updateVisState(visBuilderStateToEditorState(instance, services).vis);
         }
         setHasUnappliedChanges(isDirty);
       };

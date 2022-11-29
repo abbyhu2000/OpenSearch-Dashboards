@@ -59,6 +59,7 @@ export const VisualizeEditor = ({ onAppLeave }: VisualizeAppProps) => {
     isChromeVisible,
     visualizationIdFromUrl
   );
+  console.log("visualize instance before it pass to get appstate", savedVisInstance)
   const { appState, hasUnappliedChanges } = useVisualizeAppState(
     services,
     eventEmitter,

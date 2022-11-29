@@ -60,7 +60,8 @@ export const useVisualizeAppState = (
   useEffect(() => {
     if (instance) {
       const stateDefaults = visStateToEditorState(instance, services);
-      console.log("visualize vis state", stateDefaults)
+    
+      console.log("visualize state defaults", stateDefaults)
       const byValue = !('savedVis' in instance);
       const { stateContainer, stopStateSync } = createVisualizeAppState({
         stateDefaults,

@@ -37,12 +37,13 @@ export const TopNav = () => {
 
   const saveDisabledReason = useCanSave();
   const savedVisBuilderVis = useSavedVisBuilderVis(visualizationIdFromUrl);
-  const appState = useVisBuilderAppState(
+  console.log("save vis builder vis", savedVisBuilderVis)
+  /*const appState = useVisBuilderAppState(
     services,
     eventEmitter,
     savedVisBuilderVis
   )
-  console.log("save vis builder vis", savedVisBuilderVis)
+  console.log("vis builder appstate", appState)*/
   const { selected: indexPattern } = useIndexPatterns();
   const [config, setConfig] = useState<TopNavMenuData[] | undefined>();
   const originatingApp = useTypedSelector((state) => {
