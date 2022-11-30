@@ -54,11 +54,12 @@ export const useVisualizeAppState = (
   eventEmitter: EventEmitter,
   instance?: VisualizeEditorVisInstance
 ) => {
-  const [hasUnappliedChanges, setHasUnappliedChangpes] = useState(false);
+  const [hasUnappliedChanges, setHasUnappliedChanges] = useState(false);
   const [appState, setAppState] = useState<VisualizeAppStateContainer | null>(null);
 
   useEffect(() => {
     if (instance) {
+      console.log("visualize instance", instance)
       const stateDefaults = visStateToEditorState(instance, services);
     
       console.log("visualize state defaults", stateDefaults)
@@ -72,6 +73,7 @@ export const useVisualizeAppState = (
       const onDirtyStateChange = ({ isDirty }: { isDirty: boolean }) => {
         if (!isDirty) {
           // it is important to update vis state with fresh data
+          console.log("instance", instance)
           stateContainer.transitions.updateVisState(visStateToEditorState(instance, services).vis);
         }
         setHasUnappliedChanges(isDirty);

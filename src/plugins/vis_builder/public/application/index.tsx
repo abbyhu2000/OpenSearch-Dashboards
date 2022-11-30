@@ -17,7 +17,7 @@ import { EDIT_PATH } from '../../common';
 export const renderApp = (
   { element, history }: AppMountParameters,
   services: VisBuilderServices,
-  store: Store
+  store: Store,
 ) => {
   ReactDOM.render(
     <Router history={history}>

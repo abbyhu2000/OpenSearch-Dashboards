@@ -10,6 +10,7 @@ import { reducer as metadataReducer, setOriginatingApp } from './metadata_slice'
 import { VisBuilderServices } from '../../..';
 import { getPreloadedState } from './preload';
 import { setEditorState } from './metadata_slice';
+import { EventEmitter } from 'stream';
 
 const rootReducer = combineReducers({
   style: styleReducer,

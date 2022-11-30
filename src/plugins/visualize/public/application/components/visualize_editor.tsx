@@ -53,18 +53,21 @@ export const VisualizeEditor = ({ onAppLeave }: VisualizeAppProps) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(!visualizationIdFromUrl);
 
   const isChromeVisible = useChromeVisibility(services.chrome);
+  
   const { savedVisInstance, visEditorRef, visEditorController } = useSavedVisInstance(
     services,
     eventEmitter,
     isChromeVisible,
     visualizationIdFromUrl
   );
-  console.log("visualize instance before it pass to get appstate", savedVisInstance)
+  console.log("savedVisInstance", savedVisInstance)
+  //console.log("visualize instance before it pass to get appstate", savedVisInstance)
   const { appState, hasUnappliedChanges } = useVisualizeAppState(
     services,
     eventEmitter,
     savedVisInstance
   );
+  console.log("visualize appState", appState?.getState())
   const { isEmbeddableRendered, currentAppState } = useEditorUpdates(
     services,
     eventEmitter,

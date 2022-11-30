@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { I18nProvider } from '@osd/i18n/react';
 import { EuiPage, EuiResizableContainer } from '@elastic/eui';
 import { useLocation } from 'react-router-dom';
@@ -16,6 +16,7 @@ import { RightNav } from './components/right_nav';
 import { useOpenSearchDashboards } from '../../../opensearch_dashboards_react/public';
 import { VisBuilderServices } from '../types';
 import { syncQueryStateWithUrl } from '../../../data/public';
+import EventEmitter from 'events';
 
 export const VisBuilderApp = () => {
   const {
@@ -25,6 +26,7 @@ export const VisBuilderApp = () => {
     },
   } = useOpenSearchDashboards<VisBuilderServices>();
   const { pathname } = useLocation();
+  const [eventEmitter] = useState(new EventEmitter());
 
   useEffect(() => {
     // syncs `_g` portion of url with query services
@@ -41,8 +43,8 @@ export const VisBuilderApp = () => {
     <I18nProvider>
       <DragDropProvider>
         <EuiPage className="vbLayout">
-          <TopNav />
-          <LeftNav />
+          <TopNav eventEmitter={eventEmitter}/>
+          <LeftNav eventEmitter={eventEmitter}/>
           <EuiResizableContainer className="vbLayout__resizeContainer">
             {(EuiResizablePanel, EuiResizableButton) => (
               <>

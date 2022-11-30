@@ -11,6 +11,7 @@ import { useIndexPatterns } from '../utils/use';
 import { useTypedDispatch } from '../utils/state_management';
 import { setIndexPattern } from '../utils/state_management/visualization_slice';
 import { IndexPattern } from '../../../../data/public';
+import { EventEmitterProp } from '../../types';
 
 function indexPatternEquality(A?: SearchableDropdownOption, B?: SearchableDropdownOption): boolean {
   return !A || !B ? false : A.id === B.id;
@@ -25,7 +26,7 @@ function toSearchableDropdownOption(indexPattern: IndexPattern): SearchableDropd
   };
 }
 
-export const DataSourceSelect = () => {
+export const DataSourceSelect = ({eventEmitter}: EventEmitterProp) => {
   const { indexPatterns, loading, error, selected } = useIndexPatterns();
   const dispatch = useTypedDispatch();
 
@@ -37,6 +38,10 @@ export const DataSourceSelect = () => {
         const foundOption = indexPatterns.filter((s) => s.id === option.id)[0];
         if (foundOption !== undefined && typeof foundOption.id === 'string') {
           dispatch(setIndexPattern(foundOption.id));
+          console.log(foundOption.title, foundOption.id)
+          eventEmitter.emit('dirtyStateChange', {
+            isDirty: false,
+          });
         }
       }}
       prepend={i18n.translate('visBuilder.nav.dataSource.selector.title', {

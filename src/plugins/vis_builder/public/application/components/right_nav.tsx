@@ -16,8 +16,9 @@ import { FormattedMessage } from '@osd/i18n/react';
 import { useVisualizationType } from '../utils/use';
 import './side_nav.scss';
 import { useOpenSearchDashboards } from '../../../../opensearch_dashboards_react/public';
-import { VisBuilderServices } from '../../types';
+import { EventEmitterProp, VisBuilderServices } from '../../types';
 import { setActiveVisualization, useTypedDispatch } from '../utils/state_management';
+import { EventEmitter } from 'stream';
 
 export const RightNav = () => {
   const [newVisType, setNewVisType] = useState<string>();

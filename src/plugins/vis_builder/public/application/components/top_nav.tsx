@@ -9,7 +9,7 @@ import { useUnmount } from 'react-use';
 import { PLUGIN_ID } from '../../../common';
 import { useOpenSearchDashboards } from '../../../../opensearch_dashboards_react/public';
 import { getTopNavConfig } from '../utils/get_top_nav_config';
-import { VisBuilderServices } from '../../types';
+import { EventEmitterProp, VisBuilderServices } from '../../types';
 
 import './top_nav.scss';
 import { useIndexPatterns, useSavedVisBuilderVis } from '../utils/use';
@@ -21,7 +21,7 @@ import { TopNavMenuData } from '../../../../navigation/public';
 import EventEmitter from 'events';
 import { useVisBuilderAppState } from '../utils/use/use_vis_builder_app_state';
 
-export const TopNav = () => {
+export const TopNav = ({eventEmitter}: EventEmitterProp) => {
   // id will only be set for the edit route
   const { id: visualizationIdFromUrl } = useParams<{ id: string }>();
   const { services } = useOpenSearchDashboards<VisBuilderServices>();
@@ -33,17 +33,18 @@ export const TopNav = () => {
   } = services;
   const rootState = useTypedSelector((state) => state);
   const dispatch = useTypedDispatch();
-  const [eventEmitter] = useState(new EventEmitter());
+  //const [eventEmitter] = useState(new EventEmitter());
 
   const saveDisabledReason = useCanSave();
-  const savedVisBuilderVis = useSavedVisBuilderVis(visualizationIdFromUrl);
+  const savedVisBuilderVis = useSavedVisBuilderVis(eventEmitter, visualizationIdFromUrl);
   console.log("save vis builder vis", savedVisBuilderVis)
-  /*const appState = useVisBuilderAppState(
+  const appState = useVisBuilderAppState(
     services,
     eventEmitter,
-    savedVisBuilderVis
+    savedVisBuilderVis,
+    rootState
   )
-  console.log("vis builder appstate", appState)*/
+  console.log("vis builder appstate", appState?.getState())
   const { selected: indexPattern } = useIndexPatterns();
   const [config, setConfig] = useState<TopNavMenuData[] | undefined>();
   const originatingApp = useTypedSelector((state) => {

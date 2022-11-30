@@ -10,18 +10,23 @@ import { DashboardStart } from '../../dashboard/public';
 import { VisualizationsSetup } from '../../visualizations/public';
 import { ExpressionsStart } from '../../expressions/public';
 import { NavigationPublicPluginStart } from '../../navigation/public';
-import { DataPublicPluginStart } from '../../data/public';
+import { DataPublicPluginStart, Filter, Query } from '../../data/public';
 import { TypeServiceSetup, TypeServiceStart } from './services/type_service';
 import { SavedObjectLoader } from '../../saved_objects/public';
 import { AppMountParameters, CoreStart, ToastsStart, ScopedHistory } from '../../../core/public';
-import { IOsdUrlStateStorage } from '../../opensearch_dashboards_utils/public';
+import { IOsdUrlStateStorage, ReduxLikeStateContainer } from '../../opensearch_dashboards_utils/public';
 import { DataPublicPluginSetup } from '../../data/public';
+import { StyleState, VisualizationState } from './application/utils/state_management';
+import { EventEmitter } from 'stream';
 
 export type VisBuilderSetup = TypeServiceSetup;
 export interface VisBuilderStart extends TypeServiceStart {
   savedVisBuilderLoader: SavedObjectLoader;
 }
 
+export interface EventEmitterProp {
+  eventEmitter: EventEmitter
+}
 export interface VisBuilderPluginSetupDependencies {
   embeddable: EmbeddableSetup;
   visualizations: VisualizationsSetup;
@@ -67,3 +72,27 @@ export interface ISavedVis {
 }
 
 export interface VisBuilderVisSavedObject extends SavedObject, ISavedVis {}
+
+export type VisBuilderAppStateContainer = ReduxLikeStateContainer<
+  VisBuilderAppState,
+  VisBuilderAppStateTransitions
+>;
+export interface VisBuilderAppState {
+  filters: Filter[];
+  uiState?: Record<string, unknown>;
+  visualizationState: VisualizationState;
+  styleState: StyleState;
+  query: Query;
+  savedQuery?: string;
+}
+export interface VisBuilderAppStateTransitions {
+  set: (
+    state: VisBuilderAppState
+  ) => <T extends keyof VisBuilderAppState>(
+    prop: T,
+    value: VisBuilderAppState[T]
+  ) => VisBuilderAppState;
+  updateVisState: (state: VisBuilderAppState) => (vis: VisualizationState) => VisBuilderAppState;
+  updateStyleState: (state: VisBuilderAppState) => (style: StyleState) => VisBuilderAppState;
+  updateSavedQuery: (state: VisBuilderAppState) => (savedQueryId?: string) => VisBuilderAppState;
+}

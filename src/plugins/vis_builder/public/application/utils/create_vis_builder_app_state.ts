@@ -35,7 +35,7 @@ import {
   syncState,
   IOsdUrlStateStorage,
 } from '../../../../opensearch_dashboards_utils/public';
-import { PureVisState, VisBuilderAppState, VisBuilderAppStateTransitions } from '../../types'
+import { VisBuilderAppState, VisBuilderAppStateTransitions } from '../../types'
 
 const STATE_STORAGE_KEY = '_a';
 
@@ -44,28 +44,16 @@ interface Arguments {
   stateDefaults: VisBuilderAppState;
 }
 
-function toObject(state: PureVisState): PureVisState {
+/*function toObject(state: PureVisState): PureVisState {
   return omitBy(state, (value, key: string) => {
     return key.charAt(0) === '$' || key.charAt(0) === '_' || isFunction(value);
   }) as PureVisState;
-}
+}*/
 
 const pureTransitions = {
   set: (state) => (prop, value) => ({ ...state, [prop]: value }),
-  setVis: (state) => (vis) => ({
-    ...state,
-    vis: {
-      ...state.vis,
-      ...vis,
-    },
-  }),
-  unlinkSavedSearch: (state) => ({ query, parentFilters = [] }) => ({
-    ...state,
-    query: query || state.query,
-    filters: union(state.filters, parentFilters),
-    linked: false,
-  }),
-  updateVisState: (state) => (newVisState) => ({ ...state, vis: toObject(newVisState) }),
+  updateVisState: (state) => (newVisState) => ({ ...state, visualizationState: newVisState }),
+  updateStyleState: (state) => (newStyleState) => ({ ...state, styleState: newStyleState }),
   updateSavedQuery: (state) => (savedQueryId) => {
     const updatedState = {
       ...state,

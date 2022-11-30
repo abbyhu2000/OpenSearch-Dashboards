@@ -56,6 +56,8 @@ import {
   withNotifyOnErrors,
 } from '../../opensearch_dashboards_utils/public';
 import { opensearchFilters } from '../../data/public';
+import { useState } from 'react';
+import EventEmitter from 'events';
 
 export class VisBuilderPlugin
   implements
@@ -161,6 +163,7 @@ export class VisBuilderPlugin
         };
 
         // Instantiate the store
+        
         const store = await getPreloadedStore(services);
         const unmount = renderApp(params, services, store);
         

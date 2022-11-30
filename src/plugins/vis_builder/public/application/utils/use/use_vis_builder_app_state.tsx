@@ -29,23 +29,26 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { cloneDeep, isEqual } from 'lodash';
+import { cloneDeep, has, isEqual } from 'lodash';
 import { map } from 'rxjs/operators';
 import { EventEmitter } from 'events';
-import { i18n } from '@osd/i18n';
 
-import { MarkdownSimple, toMountPoint } from '../../../../../opensearch_dashboards_react/public';
-import { migrateLegacyQuery } from '../migrate_legacy_query';
-import { opensearchFilters, connectToQueryState } from '../../../../../data/public';
+import { opensearchFilters, connectToQueryState, Query } from '../../../../../data/public';
 import {
     VisBuilderServices,
-  VisBuilderContainer,
-  VisBuilderVisInstance,
+    VisBuilderAppStateContainer,
 } from '../../../types';
-import { visBuilderStateToEditorState } from '../get_vis_builder_editor_state';
+import { visBuilderEditorState } from '../get_vis_builder_editor_state';
 import { createVisBuilderAppState } from '../create_vis_builder_app_state';
-import { VisualizeConstants } from '../../visualize_constants';
 import { SavedObject } from '../../../../../saved_objects/public';
+import { setStyleState, setVisualizationState, useTypedDispatch, useTypedSelector, VisualizationState } from '../state_management';
+import { appendAppPath } from '../../../../../../core/public/application/utils';
+import { CombinedState } from 'redux';
+import { MetadataState } from '../state_management/metadata_slice';
+//import { migrateLegacyQuery } from '../../../../../discover/public/application/helpers/migrate_legacy_query';
+
+
+//import { migrateLegacyQuery } from '../../../../../data/common/search/search_source/migrate_legacy_query';
 
 /**
  * This effect is responsible for instantiating the visualize app state container,
@@ -54,14 +57,28 @@ import { SavedObject } from '../../../../../saved_objects/public';
 export const useVisBuilderAppState = (
   services: VisBuilderServices,
   eventEmitter: EventEmitter,
-  instance?: SavedObject
+  instance?: SavedObject,
+  rootState?: CombinedState<{
+    style: any;
+    visualization: VisualizationState;
+    metadata: MetadataState;
+}>
 ) => {
-  const [hasUnappliedChanges, setHasUnappliedChanges] = useState(false);
-  const [appState, setAppState] = useState<VisualizeAppStateContainer | null>(null);
-
+  //const [hasUnappliedChanges, setHasUnappliedChanges] = useState(false);
+  const [appState, setAppState] = useState<VisBuilderAppStateContainer | null>(null);
+  const visualizationState = useTypedSelector(state => state.visualization)
+  //const styleState = useTypedSelector((state)=>state.style)
+  const dispatch = useTypedDispatch();
+  
   useEffect(() => {
-    if (instance) {
-      const stateDefaults = visBuilderStateToEditorState(instance, services);
+    if (instance && rootState) {
+      const stateDefaults = visBuilderEditorState(instance, services, rootState);
+      
+      /*const stateDefaults = {
+        ...states,
+        visualizationState: visualizationState,
+        styleState: styleState
+      }*/
       const { stateContainer, stopStateSync } = createVisBuilderAppState({
         stateDefaults,
         osdUrlStateStorage: services.osdUrlStateStorage,
@@ -69,14 +86,28 @@ export const useVisBuilderAppState = (
 
       const onDirtyStateChange = ({ isDirty }: { isDirty: boolean }) => {
         if (!isDirty) {
+          const currentStates = visBuilderEditorState(instance, services, rootState)
           // it is important to update vis state with fresh data
-          stateContainer.transitions.updateVisState(visBuilderStateToEditorState(instance, services).vis);
+          console.log("instance", instance)
+          console.log("visualizationstate", visualizationState)
+          console.log("before", stateContainer.getState().visualizationState)
+          stateContainer.transitions.updateVisState(visBuilderEditorState(instance, services, rootState).visualizationState);
+          console.log("after", stateContainer.getState().visualizationState)
+          stateContainer.transitions.updateStyleState(visBuilderEditorState(instance, services, rootState).styleState);
         }
-        setHasUnappliedChanges(isDirty);
+        //setHasUnappliedChanges(isDirty);
       };
 
       eventEmitter.on('dirtyStateChange', onDirtyStateChange);
 
+const migrateLegacyQuery = (query: Query | { [key: string]: any } | string): Query => {
+  // Lucene was the only option before, so language-less queries are all lucene
+  if (!has(query, 'language')) {
+    return { query, language: 'lucene' };
+  }
+
+  return query as Query;
+}
       const { filterManager, queryString } = services.data.query;
       // sync initial app state from state to managers
       filterManager.setAppFilters(cloneDeep(stateContainer.getState().filters));
@@ -112,32 +143,19 @@ export const useVisBuilderAppState = (
       // The savedVis is pulled from OpenSearch, but the appState is pulled from the url, with the
       // defaults applied. If the url was from a previous session which included modifications to the
       // appState then they won't be equal.
-      if (!isEqual(stateContainer.getState().vis, stateDefaults.vis)) {
-        const { aggs, ...visState } = stateContainer.getState().vis;
-        instance.vis
-          .setState({ ...visState, data: { aggs } })
-          .then(() => {
-            // setting up the stateContainer after setState is successful will prevent loading the editor with failures
-            // otherwise the catch will take presedence
-            setAppState(stateContainer);
-          })
-          .catch((error: Error) => {
-            // if setting new vis state was failed for any reason,
-            // redirect to the listing page with error message
-            services.toastNotifications.addWarning({
-              title: i18n.translate('visualize.visualizationLoadingFailedErrorMessage', {
-                defaultMessage: 'Failed to load the visualization',
-              }),
-              text: toMountPoint(<MarkdownSimple>{error.message}</MarkdownSimple>),
-            });
+      
+      if (!isEqual(stateContainer.getState().visualizationState, stateDefaults.visualizationState)) {
+        const visualizationState = stateContainer.getState().visualizationState;
+        dispatch(setVisualizationState(visualizationState))
+      } 
 
-            services.history.replace(
-              `${VisualizeConstants.LANDING_PAGE_PATH}?notFound=visualization`
-            );
-          });
-      } else {
-        setAppState(stateContainer);
+      if(!isEqual(stateContainer.getState().styleState, stateDefaults.styleState)){
+        const styleState = stateContainer.getState().styleState;
+        dispatch(setStyleState(styleState))
       }
+      
+      setAppState(stateContainer);
+      
 
       // don't forget to clean up
       return () => {
@@ -146,7 +164,7 @@ export const useVisBuilderAppState = (
         stopSyncingAppFilters();
       };
     }
-  }, [eventEmitter, instance, services]);
+  }, [eventEmitter, instance, services ]);
 
-  return { appState, hasUnappliedChanges };
+  return appState;
 };
