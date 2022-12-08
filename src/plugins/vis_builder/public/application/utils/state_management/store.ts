@@ -10,6 +10,9 @@ import { reducer as metadataReducer } from './metadata_slice';
 import { VisBuilderServices } from '../../..';
 import { getPreloadedState } from './preload';
 import { setEditorState } from './metadata_slice';
+import storageSession from 'redux-persist/lib/storage/session'
+import { persistReducer } from 'redux-persist';
+import { IOsdUrlStateStorage } from '../../../../../opensearch_dashboards_utils/public';
 
 const rootReducer = combineReducers({
   style: styleReducer,
@@ -17,16 +20,22 @@ const rootReducer = combineReducers({
   metadata: metadataReducer,
 });
 
-export const configurePreloadedStore = (preloadedState: PreloadedState<RootState>) => {
+export const configurePreloadedStore = (preloadedState: PreloadedState<RootState>, storage: IOsdUrlStateStorage) => {
+  const persistConfig = {
+    key: '_a',
+    storage: storageSession
+  }
+  const persistedReducer = persistReducer(persistConfig, rootReducer)
   return configureStore({
-    reducer: rootReducer,
+    reducer: persistedReducer,
     preloadedState,
   });
 };
 
 export const getPreloadedStore = async (services: VisBuilderServices) => {
+  const storage = services.osdUrlStateStorage;
   const preloadedState = await getPreloadedState(services);
-  const store = configurePreloadedStore(preloadedState);
+  const store = configurePreloadedStore(preloadedState, storage);
 
   const { metadata: metadataState, style: styleState, visualization: vizState } = store.getState();
   let previousStore = {

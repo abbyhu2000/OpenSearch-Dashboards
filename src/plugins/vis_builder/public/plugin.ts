@@ -56,6 +56,7 @@ import {
   withNotifyOnErrors,
 } from '../../opensearch_dashboards_utils/public';
 import { opensearchFilters } from '../../data/public';
+import { persistReducer, persistStore } from 'redux-persist';
 
 export class VisBuilderPlugin
   implements
@@ -161,7 +162,8 @@ export class VisBuilderPlugin
 
         // Instantiate the store
         const store = await getPreloadedStore(services);
-        const unmount = renderApp(params, services, store);
+        const persistor = persistStore(store)
+        const unmount = renderApp(params, services, store, persistor);
 
         // Render the application
         return () => {
