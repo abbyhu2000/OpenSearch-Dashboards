@@ -11,15 +11,15 @@ import { DefaultEditorAggParams } from '../../../../../vis_default_editor/public
 import { Title } from './title';
 import { useIndexPatterns, useVisualizationType } from '../../utils/use';
 import { useOpenSearchDashboards } from '../../../../../opensearch_dashboards_react/public';
-import { EventEmitterProp, VisBuilderServices } from '../../../types';
+import { ConfigPanelProps, EventEmitterProp, VisBuilderServices } from '../../../types';
 import { AggParam, IAggType, IFieldParamType } from '../../../../../data/public';
 import { saveDraftAgg, editDraftAgg } from '../../utils/state_management/visualization_slice';
 import { setValidity } from '../../utils/state_management/metadata_slice';
-import { EventEmitter } from 'events';
+// import { EventEmitter } from 'events';
 
 const EDITOR_KEY = 'CONFIG_PANEL';
 
-export function SecondaryPanel({eventEmitter}: EventEmitterProp) {
+export function SecondaryPanel({appState}: ConfigPanelProps ) {
   const { draftAgg, aggConfigParams } = useTypedSelector(
     (state) => state.visualization.activeVisualization!
   );
@@ -66,9 +66,9 @@ export function SecondaryPanel({eventEmitter}: EventEmitterProp) {
 
   const closeMenu = useCallback(() => {
     dispatch(editDraftAgg(undefined));
-    eventEmitter.emit('dirtyStateChange', {
-      isDirty: false,
-    });
+    // eventEmitter.emit('dirtyStateChange', {
+    //   isDirty: false,
+    // });
   }, [dispatch]);
 
   const handleSetValid = useCallback(
@@ -124,9 +124,9 @@ export function SecondaryPanel({eventEmitter}: EventEmitterProp) {
           ): void {
             aggConfig.params[paramName] = value;
             dispatch(editDraftAgg(aggConfig.serialize()));
-            eventEmitter.emit('dirtyStateChange', {
-              isDirty: false,
-            });
+            // eventEmitter.emit('dirtyStateChange', {
+            //   isDirty: false,
+            // });
           }}
           onAggTypeChange={function (aggId: string, aggType: IAggType): void {
             aggConfig.type = aggType;
@@ -145,9 +145,9 @@ export function SecondaryPanel({eventEmitter}: EventEmitterProp) {
             }
 
             dispatch(editDraftAgg(aggConfig.serialize()));
-            eventEmitter.emit('dirtyStateChange', {
-              isDirty: false,
-            });
+            // eventEmitter.emit('dirtyStateChange', {
+            //   isDirty: false,
+            // });
           }}
         />
       )}

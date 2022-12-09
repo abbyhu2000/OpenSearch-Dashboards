@@ -8,16 +8,16 @@ import { FieldSelector } from './field_selector';
 
 import './index.scss';
 import { ConfigPanel } from './config_panel';
-import { EventEmitter } from 'stream';
-import { EventEmitterProp } from '../../../types';
+// import { EventEmitter } from 'stream';
+import { DataTabProps, EventEmitterProp } from '../../../types';
 
 export const DATA_TAB_ID = 'data_tab';
 
-export const DataTab = ({eventEmitter}: EventEmitterProp) => {
+export const DataTab = ({appState}: DataTabProps) => {
   return (
     <div className="vbDataTab">
       <FieldSelector />
-      <ConfigPanel eventEmitter={eventEmitter}/>
+      <ConfigPanel appState={appState}/>
     </div>
   );
 };

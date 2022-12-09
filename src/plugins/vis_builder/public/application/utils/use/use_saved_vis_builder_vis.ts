@@ -28,7 +28,7 @@ import EventEmitter from 'events';
 
 // This function can be used when instantiating a saved vis or creating a new one
 // using url parameters, embedding and destroying it in DOM
-export const useSavedVisBuilderVis = (eventEmitter: EventEmitter, visualizationIdFromUrl: string | undefined) => {
+export const useSavedVisBuilderVis = (visualizationIdFromUrl: string | undefined) => {
   const { services } = useOpenSearchDashboards<VisBuilderServices>();
   const [savedVisState, setSavedVisState] = useState<SavedObject | undefined>(undefined);
   const dispatch = useTypedDispatch();
@@ -117,7 +117,7 @@ export const useSavedVisBuilderVis = (eventEmitter: EventEmitter, visualizationI
     };
 
     loadSavedVisBuilderVis();
-  }, [eventEmitter,dispatch, services, visualizationIdFromUrl]);
+  }, [dispatch, services, visualizationIdFromUrl]);
 
   return savedVisState;
 };

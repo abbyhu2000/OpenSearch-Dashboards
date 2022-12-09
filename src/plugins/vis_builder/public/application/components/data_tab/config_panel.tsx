@@ -10,10 +10,10 @@ import { useTypedSelector } from '../../utils/state_management';
 import './config_panel.scss';
 import { mapSchemaToAggPanel } from './schema_to_dropbox';
 import { SecondaryPanel } from './secondary_panel';
-import EventEmitter from 'events';
-import { EventEmitterProp } from '../../../types';
+// import EventEmitter from 'events';
+import { ConfigPanelProps } from '../../../types';
 
-export function ConfigPanel({eventEmitter}: EventEmitterProp) {
+export function ConfigPanel({appState}: ConfigPanelProps) {
   const vizType = useVisualizationType();
   const editingState = useTypedSelector(
     (state) => state.visualization.activeVisualization?.draftAgg
@@ -27,7 +27,7 @@ export function ConfigPanel({eventEmitter}: EventEmitterProp) {
   return (
     <EuiForm className={`vbConfig ${editingState ? 'showSecondary' : ''}`}>
       <div className="vbConfig__section">{mainPanel}</div>
-      <SecondaryPanel eventEmitter={eventEmitter}/>
+      <SecondaryPanel appState={appState}/>
     </EuiForm>
   );
 }

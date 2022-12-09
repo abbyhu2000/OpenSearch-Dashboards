@@ -27,6 +27,25 @@ export interface VisBuilderStart extends TypeServiceStart {
 export interface EventEmitterProp {
   eventEmitter: EventEmitter
 }
+
+
+
+export interface LeftNavProps {
+  appState: VisBuilderAppStateContainer;
+}
+
+export interface DataSourceSelectProps {
+  appState: VisBuilderAppStateContainer;
+}
+
+export interface DataTabProps {
+  appState: VisBuilderAppStateContainer;
+}
+
+export interface ConfigPanelProps {
+  appState: VisBuilderAppStateContainer;
+}
+
 export interface VisBuilderPluginSetupDependencies {
   embeddable: EmbeddableSetup;
   visualizations: VisualizationsSetup;
@@ -54,11 +73,6 @@ export interface VisBuilderServices extends CoreStart {
   embeddable: EmbeddableStart;
   scopedHistory: ScopedHistory;
   osdUrlStateStorage: IOsdUrlStateStorage;
-<<<<<<< HEAD
-=======
-  setActiveUrl: (newUrl: string) => void;
-  restorePreviousUrl: () => void;
->>>>>>> global data persistence for vis builder
   dashboard: DashboardStart;
 }
 

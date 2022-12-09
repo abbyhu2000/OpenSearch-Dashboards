@@ -11,7 +11,7 @@ import { useIndexPatterns } from '../utils/use';
 import { useTypedDispatch } from '../utils/state_management';
 import { setIndexPattern } from '../utils/state_management/visualization_slice';
 import { IndexPattern } from '../../../../data/public';
-import { EventEmitterProp } from '../../types';
+import { DataSourceSelectProps } from '../../types';
 
 function indexPatternEquality(A?: SearchableDropdownOption, B?: SearchableDropdownOption): boolean {
   return !A || !B ? false : A.id === B.id;
@@ -26,10 +26,9 @@ function toSearchableDropdownOption(indexPattern: IndexPattern): SearchableDropd
   };
 }
 
-export const DataSourceSelect = ({eventEmitter}: EventEmitterProp) => {
+export const DataSourceSelect = ({appState}: DataSourceSelectProps) => {
   const { indexPatterns, loading, error, selected } = useIndexPatterns();
   const dispatch = useTypedDispatch();
-
   // TODO: Should be a standard EUI component
   return (
     <SearchableDropdown
@@ -39,9 +38,7 @@ export const DataSourceSelect = ({eventEmitter}: EventEmitterProp) => {
         if (foundOption !== undefined && typeof foundOption.id === 'string') {
           dispatch(setIndexPattern(foundOption.id));
           console.log(foundOption.title, foundOption.id)
-          eventEmitter.emit('dirtyStateChange', {
-            isDirty: false,
-          });
+          appState.set(appState.getState());
         }
       }}
       prepend={i18n.translate('visBuilder.nav.dataSource.selector.title', {

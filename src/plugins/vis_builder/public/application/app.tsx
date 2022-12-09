@@ -17,6 +17,7 @@ import { useOpenSearchDashboards } from '../../../opensearch_dashboards_react/pu
 import { VisBuilderServices } from '../types';
 import { syncQueryStateWithUrl } from '../../../data/public';
 import EventEmitter from 'events';
+import { useVisBuilderAppState } from './utils/use/use_vis_builder_app_state';
 
 export const VisBuilderApp = () => {
   const {
@@ -38,6 +39,7 @@ export const VisBuilderApp = () => {
     // so the global state is always preserved
   }, [query, osdUrlStateStorage, pathname]);
 
+  //const { instace } = useVisBuilderAppState
   // Render the application DOM.
   return (
     <I18nProvider>

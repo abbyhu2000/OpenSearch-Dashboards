@@ -36,7 +36,7 @@ export const TopNav = ({eventEmitter}: EventEmitterProp) => {
   //const [eventEmitter] = useState(new EventEmitter());
 
   const saveDisabledReason = useCanSave();
-  const savedVisBuilderVis = useSavedVisBuilderVis(eventEmitter, visualizationIdFromUrl);
+  const savedVisBuilderVis = useSavedVisBuilderVis(visualizationIdFromUrl);
   console.log("save vis builder vis", savedVisBuilderVis)
   const appState = useVisBuilderAppState(
     services,

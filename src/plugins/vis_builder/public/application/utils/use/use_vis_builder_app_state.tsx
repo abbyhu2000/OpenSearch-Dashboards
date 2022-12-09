@@ -67,8 +67,12 @@ export const useVisBuilderAppState = (
   //const [hasUnappliedChanges, setHasUnappliedChanges] = useState(false);
   const [appState, setAppState] = useState<VisBuilderAppStateContainer | null>(null);
   const visualizationState = useTypedSelector(state => state.visualization)
+  //const [visualizationState, setVisualizationState] = useState()
   //const styleState = useTypedSelector((state)=>state.style)
   const dispatch = useTypedDispatch();
+  /*useEffect(() => {
+
+  }, visualizationState)*/
   
   useEffect(() => {
     if (instance && rootState) {
@@ -89,6 +93,9 @@ export const useVisBuilderAppState = (
           const currentStates = visBuilderEditorState(instance, services, rootState)
           // it is important to update vis state with fresh data
           console.log("instance", instance)
+          console.log("root state", rootState)
+
+          
           console.log("visualizationstate", visualizationState)
           console.log("before", stateContainer.getState().visualizationState)
           stateContainer.transitions.updateVisState(visBuilderEditorState(instance, services, rootState).visualizationState);
@@ -146,12 +153,12 @@ const migrateLegacyQuery = (query: Query | { [key: string]: any } | string): Que
       
       if (!isEqual(stateContainer.getState().visualizationState, stateDefaults.visualizationState)) {
         const visualizationState = stateContainer.getState().visualizationState;
-        dispatch(setVisualizationState(visualizationState))
+        //dispatch(setVisualizationState(visualizationState))
       } 
 
       if(!isEqual(stateContainer.getState().styleState, stateDefaults.styleState)){
         const styleState = stateContainer.getState().styleState;
-        dispatch(setStyleState(styleState))
+        //dispatch(setStyleState(styleState))
       }
       
       setAppState(stateContainer);
@@ -164,7 +171,7 @@ const migrateLegacyQuery = (query: Query | { [key: string]: any } | string): Que
         stopSyncingAppFilters();
       };
     }
-  }, [eventEmitter, instance, services ]);
+  }, [eventEmitter, instance, services, visualizationState ]);
 
   return appState;
 };
