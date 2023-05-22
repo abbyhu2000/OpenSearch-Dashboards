@@ -175,7 +175,8 @@ export class SearchEmbeddable
    */
   public render(domNode: HTMLElement) {
     if (!this.searchScope) {
-      throw new Error('Search scope not defined');
+      // throw new Error('Search scope not defined');
+      return;
     }
     this.searchInstance = this.$compile(searchTemplate)(this.searchScope);
     const rootNode = angular.element(domNode);

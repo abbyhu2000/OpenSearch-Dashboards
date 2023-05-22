@@ -254,7 +254,7 @@ export interface DashboardServices extends CoreStart {
   savedDashboards: SavedObjectLoader;
   dashboardProviders: () => { [key: string]: DashboardProvider } | undefined;
   dashboardConfig: OpenSearchDashboardsLegacyStart['dashboardConfig'];
-  dashboardCapabilities: DashboardCapabilities;
+  dashboardCapabilities: any;
   embeddableCapabilities: {
     visualizeCapabilities: any;
     mapsCapabilities: any;
@@ -273,4 +273,9 @@ export interface DashboardServices extends CoreStart {
   savedObjectsPublic: SavedObjectsStart;
   restorePreviousUrl: () => void;
   addBasePath?: (url: string) => string;
+}
+
+export interface DashEditorController {
+  render(props: any): void;
+  destroy(): void;
 }

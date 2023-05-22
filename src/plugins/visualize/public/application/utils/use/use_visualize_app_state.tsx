@@ -68,6 +68,7 @@ export const useVisualizeAppState = (
       });
 
       const onDirtyStateChange = ({ isDirty }: { isDirty: boolean }) => {
+        console.log('on dirty state change', instance);
         if (!isDirty) {
           // it is important to update vis state with fresh data
           stateContainer.transitions.updateVisState(visStateToEditorState(instance, services).vis);
