@@ -12,6 +12,7 @@ import {
 } from '../../../../../opensearch_dashboards_utils/public';
 import { DashboardConstants } from '../../../dashboard_constants';
 import { DashboardServices } from '../../../types';
+import { getExistingDashboardBreadcrumbs, getNewDashboardBreadcrumbs } from '../get_breadcrumbs';
 
 /**
  * This effect is responsible for instantiating a saved dashboard or creating a new one
@@ -103,6 +104,12 @@ export const useSavedDashboardInstance = (
               return new Promise(() => {});
             }
           }
+        }
+
+        if (savedDashboard.id) {
+          chrome.setBreadcrumbs(getExistingDashboardBreadcrumbs(savedDashboard.title));
+        } else {
+          chrome.setBreadcrumbs(getNewDashboardBreadcrumbs());
         }
 
         setSavedDashboardInstance(savedDashboard);
