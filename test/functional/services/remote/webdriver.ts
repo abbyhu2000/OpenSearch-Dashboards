@@ -111,7 +111,9 @@ async function attemptToCreateCommand(
         const chromeOptions = new chrome.Options();
         chromeOptions.addArguments(
           // Disables the sandbox for all process types that are normally sandboxed.
+          'headless',
           'no-sandbox',
+          'disable-dev-shm-usage',
           // Launches URL in new browser window.
           'new-window',
           // By default, file:// URIs cannot read other file:// URIs. This is an override for developers who need the old behavior for testing.

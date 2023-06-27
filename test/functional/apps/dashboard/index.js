@@ -124,5 +124,13 @@ export default function ({ getService, loadTestFile }) {
       loadTestFile(require.resolve('./dashboard_listing'));
       loadTestFile(require.resolve('./dashboard_clone'));
     });
+
+    describe('test dashboard listing', function () {
+      this.tags('ciGroupx')
+
+      before(loadLogstash);
+      after(unloadLogstash);
+      loadTestFile(require.resolve('./dashboard_listing'));
+    })
   });
 }

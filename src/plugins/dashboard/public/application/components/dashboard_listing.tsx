@@ -6,15 +6,17 @@
 import React, { useCallback, useMemo } from 'react';
 import { i18n } from '@osd/i18n';
 import { useMount } from 'react-use';
+import { useLocation } from 'react-router-dom';
 import {
   useOpenSearchDashboards,
   TableListView,
 } from '../../../../opensearch_dashboards_react/public';
 import { CreateButton } from '../listing/create_button';
-import { DashboardConstants } from '../../dashboard_constants';
+import { DashboardConstants, createDashboardEditUrl } from '../../dashboard_constants';
 import { DashboardServices } from '../../types';
 import { getTableColumns } from '../utils/get_table_columns';
 import { getNoItemsMessage } from '../utils/get_no_items_message';
+import { useEffect } from 'react';
 
 export const EMPTY_FILTER = '';
 
@@ -33,6 +35,44 @@ export const DashboardListing = () => {
       dashboardProviders,
     },
   } = useOpenSearchDashboards<DashboardServices>();
+
+  const location  = useLocation();
+  
+  useEffect(() => {
+
+    const getDashboardsBasedOnUrl = async () => {
+      const queryParameters = new URLSearchParams(location.search);
+      const title = queryParameters.get('title');
+
+    try{
+      if(title){
+        const results = await savedObjectsClient.find({
+            search: `"${title}"`,
+            searchFields: ['title'],
+            type: 'dashboard',
+        })
+
+        console.log("results", results)
+
+        // The search isn't an exact match, lets see if we can find a single exact match to use
+        /*const matchingDashboards = results.savedObjects.filter(
+          (dashboard) =>
+              dashboard.attributes.title.toLowerCase() === title.toLowerCase()
+        );
+      if (matchingDashboards.length === 1) {
+          history.replace(createDashboardEditUrl(matchingDashboards[0].id));
+      } else {
+          history.replace(`${DashboardConstants.LANDING_PAGE_PATH}?filter="${title}"`);
+      }*/
+      }
+    } catch(e){
+
+    }
+    }
+
+    getDashboardsBasedOnUrl()
+
+  }, [])
 
   const hideWriteControls = dashboardConfig.getHideWriteControls();
 
