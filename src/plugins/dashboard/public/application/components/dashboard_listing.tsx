@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { i18n } from '@osd/i18n';
 import { useMount } from 'react-use';
 import { useLocation } from 'react-router-dom';
@@ -37,42 +37,44 @@ export const DashboardListing = () => {
   } = useOpenSearchDashboards<DashboardServices>();
 
   const location  = useLocation();
-  
-  useEffect(() => {
+  const [initialFilter, setInitialFilter] = useState<string|null>('');
 
+  useEffect(() => {
     const getDashboardsBasedOnUrl = async () => {
       const queryParameters = new URLSearchParams(location.search);
       const title = queryParameters.get('title');
 
     try{
       if(title){
-        const results = await savedObjectsClient.find({
+        const results = await savedObjectsClient.find<any>({
             search: `"${title}"`,
             searchFields: ['title'],
             type: 'dashboard',
         })
 
-        console.log("results", results)
-
-        // The search isn't an exact match, lets see if we can find a single exact match to use
-        /*const matchingDashboards = results.savedObjects.filter(
-          (dashboard) =>
-              dashboard.attributes.title.toLowerCase() === title.toLowerCase()
+        const matchingDashboards = results.savedObjects.filter(
+          (dashboard) => 
+            dashboard.attributes.title.toLowerCase() === title.toLowerCase()
         );
-      if (matchingDashboards.length === 1) {
+
+        if (matchingDashboards.length === 1) {
           history.replace(createDashboardEditUrl(matchingDashboards[0].id));
-      } else {
-          history.replace(`${DashboardConstants.LANDING_PAGE_PATH}?filter="${title}"`);
-      }*/
+        } else {
+          history.push(`${DashboardConstants.LANDING_PAGE_PATH}?filter="${title}"`);
+          setInitialFilter(title)
+        }
+        return new Promise(() => {});
       }
     } catch(e){
 
     }
     }
-
     getDashboardsBasedOnUrl()
-
-  }, [])
+    // const queryParameters = new URLSearchParams(location.search);
+    // const filter = queryParameters.get('filter');
+    // console.log("initial filter", filter)
+    // setInitialFilter(filter)
+  }, [savedObjectsClient])
 
   const hideWriteControls = dashboardConfig.getHideWriteControls();
 
