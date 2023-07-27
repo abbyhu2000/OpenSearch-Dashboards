@@ -39,6 +39,7 @@ import {
   IconType,
 } from '@elastic/eui';
 import { HomePluginBranding } from '../../../plugin';
+import { FormattedMessage } from '@osd/i18n/react';
 
 interface Props {
   /**
@@ -151,7 +152,12 @@ export const SolutionTitle: FC<Props> = ({ title, subtitle, iconType, branding }
         data-test-subj="dashboardCustomTitle"
         data-test-title={branding.applicationTitle}
       >
-        <h3>{branding.applicationTitle}</h3>
+        <h3>
+        <FormattedMessage
+                    id="home.solutionTitle"
+                    defaultMessage={`Welcome to ${branding.applicationTitle}`}
+                  />
+        </h3>
       </EuiTitle>
 
       <EuiText size="s">

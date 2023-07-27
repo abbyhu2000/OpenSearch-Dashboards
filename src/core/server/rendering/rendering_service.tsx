@@ -90,6 +90,7 @@ export class RenderingService {
         };
         const basePath = http.basePath.get(request);
         const uiPublicUrl = `${basePath}/ui`;
+        console.log(uiPublicUrl)
         const serverBasePath = http.basePath.serverBasePath;
         const settings = {
           defaults: uiSettings.getRegistered(),
@@ -129,7 +130,7 @@ export class RenderingService {
             env,
             anonymousStatusPage: status.isStatusPageAnonymous(),
             i18n: {
-              translationsUrl: `${basePath}/translations/${i18n.getLocale()}.json`,
+              translationsUrl: `${basePath}/translations/${i18n.getLocale()}.json`
             },
             csp: { warnLegacyBrowsers: http.csp.warnLegacyBrowsers },
             vars: vars ?? {},

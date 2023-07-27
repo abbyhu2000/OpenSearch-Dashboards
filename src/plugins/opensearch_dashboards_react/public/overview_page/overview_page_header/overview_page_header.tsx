@@ -150,7 +150,14 @@ export const OverviewPageHeader: FC<Props> = ({
 
               <EuiFlexItem>
                 <EuiTitle size="m">
-                  <h1 id="osdOverviewPageHeader__title">{title}</h1>
+                  <h1 id="osdOverviewPageHeader__title">
+                    {i18n.translate(
+                        'opensearch-dashboards-react.osdOverviewPageHeader.title',
+                        {
+                          defaultMessage: title.toString(),
+                        }
+                      )}
+                      </h1>
                 </EuiTitle>
               </EuiFlexItem>
             </EuiFlexGroup>
