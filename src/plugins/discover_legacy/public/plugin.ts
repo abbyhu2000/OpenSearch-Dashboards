@@ -335,6 +335,7 @@ export class DiscoverPlugin
             replace: true,
             path,
           });
+          return () => {};
         }
         setScopedHistory(params.history);
         setHeaderActionMenuMounter(params.setHeaderActionMenu);
