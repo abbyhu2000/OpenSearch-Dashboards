@@ -434,6 +434,9 @@ export {
   IndexPatternSelectProps,
   QueryStringInput,
   QueryStringInputProps,
+  fetchIndexPatterns,
+  QueryLanguageSwitcher,
+  SuggestionsComponent
 } from './ui';
 
 /**
@@ -522,3 +525,5 @@ export {
   DataSourceGroup,
   DataSourceOption,
 } from './data_sources/datasource_selector';
+
+export * from './query'

@@ -1,3 +1,4 @@
+import { SuggestionsListSize } from './typeahead/suggestions_component';
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -33,3 +34,5 @@ export { FilterLabel } from './filter_bar';
 export { QueryStringInput, QueryStringInputProps } from './query_string_input';
 export { SearchBar, SearchBarProps, StatefulSearchBarProps } from './search_bar';
 export { SuggestionsComponent } from './typeahead';
+export { fetchIndexPatterns } from './query_string_input/fetch_index_patterns'
+export { QueryLanguageSwitcher } from './query_string_input/language_switcher'

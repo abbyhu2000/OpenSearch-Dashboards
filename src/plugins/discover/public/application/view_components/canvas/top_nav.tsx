@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { TimeRange, Query, doesKueryExpressionHaveLuceneSyntaxError } from 'src/plugins/data/common';
+import { TimeRange, Query, doesKueryExpressionHaveLuceneSyntaxError } from '../../../../../data/common';
 import { AppMountParameters, Toast } from '../../../../../../core/public';
 import { PLUGIN_ID } from '../../../../common';
 import { toMountPoint, useOpenSearchDashboards, withOpenSearchDashboards } from '../../../../../opensearch_dashboards_react/public';
@@ -14,13 +14,13 @@ import { getTopNavLinks } from '../../components/top_nav/get_top_nav_links';
 import { useDiscoverContext } from '../context';
 import { getRootBreadcrumbs } from '../../helpers/breadcrumbs';
 import { opensearchFilters, connectStorageToQueryState } from '../../../../../data/public';
-import DataExplorerQueryStringInputUI from 'src/plugins/data_explorer/public/components/query_bar';
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiLink } from '@elastic/eui';
-import { PersistedLog, getQueryLog } from 'src/plugins/data/public/query';
+import { PersistedLog, getQueryLog } from '../../../../../data/public/query';
 import { FormattedMessage } from 'react-intl';
 import { i18n } from '@osd/i18n';
+import DiscoverQueryStringInputUI from './discover_query_bar';
 
-const QueryStringInput = withOpenSearchDashboards(DataExplorerQueryStringInputUI);
+const QueryStringInput = withOpenSearchDashboards(DiscoverQueryStringInputUI);
 
 export interface TopNavProps {
   opts: {
@@ -35,8 +35,8 @@ export const TopNav = ({ opts }: TopNavProps) => {
   const { inspectorAdapters, savedSearch, indexPattern } = useDiscoverContext();
   const [indexPatterns, setIndexPatterns] = useState<IndexPattern[] | undefined>(undefined);
   const [isQueryInputFocused, setIsQueryInputFocused] = useState(false);
-  const [query, setQuery] = useState<Query | undefined>()
-  const queryLanguage = props.query && props.query.language;
+  const [query, setQuery] = useState<Query | undefined>({query:'', language:''})
+  //const queryLanguage = props.query && props.query.language;
   const osdDQLDocs: string = docLinks!.links.opensearchDashboards.dql.base;
   // const persistedLog: PersistedLog | undefined = React.useMemo(
   //   () =>

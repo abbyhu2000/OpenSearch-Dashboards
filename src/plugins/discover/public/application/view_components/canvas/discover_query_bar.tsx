@@ -28,14 +28,10 @@ import {
 import { FormattedMessage } from '@osd/i18n/react';
 import { debounce, compact, isEqual, isFunction } from 'lodash';
 import { Toast } from 'src/core/public';
-import { IIndexPattern, Query } from 'src/plugins/data/common';
-import { PersistedLog, fromUser, getQueryLog, matchPairs, toUser } from 'src/plugins/data/public/query';
-import SuggestionsComponent, { SuggestionsListSize } from 'src/plugins/data/public/ui/typeahead/suggestions_component';
-import { IDataPluginServices, QuerySuggestion, QuerySuggestionTypes } from 'src/plugins/data/public';
-import { OpenSearchDashboardsReactContextValue, toMountPoint } from 'src/plugins/opensearch_dashboards_react/public';
-import { fetchIndexPatterns } from 'src/plugins/data/public/ui/query_string_input/fetch_index_patterns';
-import { QueryLanguageSwitcher } from 'src/plugins/data/public/ui/query_string_input/language_switcher';
-
+import { IIndexPattern, Query } from '../../../../../data/common';
+import { PersistedLog, fromUser, getQueryLog, matchPairs, toUser, fetchIndexPatterns, QueryLanguageSwitcher, IDataPluginServices, QuerySuggestion, QuerySuggestionTypes, SuggestionsComponent } from '../../../../../data/public';
+import { SuggestionsListSize } from '../../../../../data/public/ui/typeahead/suggestions_component';
+import { OpenSearchDashboardsReactContextValue, toMountPoint } from '../../../../../opensearch_dashboards_react/public';
 
 export interface QueryStringInputProps {
   indexPatterns: Array<IIndexPattern | string>;
@@ -86,7 +82,7 @@ const KEY_CODES = {
 
 // Needed for React.lazy
 // eslint-disable-next-line import/no-default-export
-export default class DataExplorerQueryStringInputUI extends Component<Props, State> {
+export default class DiscoverQueryStringInputUI extends Component<Props, State> {
   public state: State = {
     isSuggestionsVisible: false,
     index: null,
@@ -496,7 +492,7 @@ export default class DataExplorerQueryStringInputUI extends Component<Props, Sta
       this.onChange({ ...this.props.query, query: parsedQuery });
     }
 
-    this.initPersistedLog();
+    //this.initPersistedLog();
     this.fetchIndexPatterns().then(this.updateSuggestions);
     this.handleListUpdate();
 
@@ -513,7 +509,7 @@ export default class DataExplorerQueryStringInputUI extends Component<Props, Sta
       this.onChange({ ...this.props.query, query: parsedQuery });
     }
 
-    this.initPersistedLog();
+    //this.initPersistedLog();
 
     if (!isEqual(prevProps.indexPatterns, this.props.indexPatterns)) {
       this.fetchIndexPatterns().then(this.updateSuggestions);

@@ -163,7 +163,7 @@ export class DiscoverPlugin
   private readonly storage: IStorageWrapper;
 
   constructor(private readonly initializerContext: PluginInitializerContext) {
-    this.storage = new Storage(window.localStorage);
+    //this.storage = new Storage(window.localStorage);
   }
 
   setup(core: CoreSetup<DiscoverStartPlugins, DiscoverStart>, plugins: DiscoverSetupPlugins) {
