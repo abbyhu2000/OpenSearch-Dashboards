@@ -4,28 +4,47 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { TimeRange, Query } from 'src/plugins/data/common';
-import { AppMountParameters } from '../../../../../../core/public';
+import { TimeRange, Query, doesKueryExpressionHaveLuceneSyntaxError } from 'src/plugins/data/common';
+import { AppMountParameters, Toast } from '../../../../../../core/public';
 import { PLUGIN_ID } from '../../../../common';
-import { useOpenSearchDashboards } from '../../../../../opensearch_dashboards_react/public';
+import { toMountPoint, useOpenSearchDashboards, withOpenSearchDashboards } from '../../../../../opensearch_dashboards_react/public';
 import { DiscoverViewServices } from '../../../build_services';
 import { IndexPattern } from '../../../opensearch_dashboards_services';
 import { getTopNavLinks } from '../../components/top_nav/get_top_nav_links';
 import { useDiscoverContext } from '../context';
 import { getRootBreadcrumbs } from '../../helpers/breadcrumbs';
 import { opensearchFilters, connectStorageToQueryState } from '../../../../../data/public';
+import DataExplorerQueryStringInputUI from 'src/plugins/data_explorer/public/components/query_bar';
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiLink } from '@elastic/eui';
+import { PersistedLog, getQueryLog } from 'src/plugins/data/public/query';
+import { FormattedMessage } from 'react-intl';
+import { i18n } from '@osd/i18n';
+
+const QueryStringInput = withOpenSearchDashboards(DataExplorerQueryStringInputUI);
 
 export interface TopNavProps {
   opts: {
     setHeaderActionMenu: AppMountParameters['setHeaderActionMenu'];
-    onQuerySubmit: (payload: { dateRange: TimeRange; query?: Query }, isUpdate?: boolean) => void;
+    onQuerySubmit: (payload: { dateRange?: TimeRange; query?: Query }, isUpdate?: boolean) => void;
   };
 }
 
 export const TopNav = ({ opts }: TopNavProps) => {
   const { services } = useOpenSearchDashboards<DiscoverViewServices>();
+  const { uiSettings, notifications, docLinks } = services
   const { inspectorAdapters, savedSearch, indexPattern } = useDiscoverContext();
   const [indexPatterns, setIndexPatterns] = useState<IndexPattern[] | undefined>(undefined);
+  const [isQueryInputFocused, setIsQueryInputFocused] = useState(false);
+  const [query, setQuery] = useState<Query | undefined>()
+  const queryLanguage = props.query && props.query.language;
+  const osdDQLDocs: string = docLinks!.links.opensearchDashboards.dql.base;
+  // const persistedLog: PersistedLog | undefined = React.useMemo(
+  //   () =>
+  //     queryLanguage && uiSettings && storage && appName
+  //       ? getQueryLog(uiSettings!, storage, appName, queryLanguage)
+  //       : undefined,
+  //   [appName, queryLanguage, uiSettings, storage]
+  // );
 
   const {
     navigation: {
@@ -79,17 +98,105 @@ export const TopNav = ({ opts }: TopNavProps) => {
     indexPattern,
   ]);
 
+  function onChangeQueryInputFocus(isFocused: boolean) {
+    setIsQueryInputFocused(isFocused);
+  }
+
+  const onQueryBarChange = (query?: Query ) => {
+    setQuery(query)
+    // if (this.props.onQueryChange) {
+    //   this.props.onQueryChange(queryAndDateRange);
+    // }
+  };
+
+  const onLuceneSyntaxWarningOptOut = (toast: Toast) => {
+    if (!storage) return;
+    storage.set('opensearchDashboards.luceneSyntaxWarningOptOut', true);
+    notifications!.toasts.remove(toast);
+  }
+
+  const handleLuceneSyntaxWarning = (queryCombo?: Query) => {
+    if (!queryCombo) return;
+    const { query, language } = queryCombo;
+    if (
+      language === 'kuery' &&
+      typeof query === 'string' &&
+      //(!storage || !storage.get('opensearchDashboards.luceneSyntaxWarningOptOut')) &&
+      doesKueryExpressionHaveLuceneSyntaxError(query)
+    ) {
+      const toast = notifications!.toasts.addWarning({
+        title: i18n.translate('data.query.queryBar.luceneSyntaxWarningTitle', {
+          defaultMessage: 'Lucene syntax warning',
+        }),
+        text: toMountPoint(
+          <div>
+            <p>
+              <FormattedMessage
+                id="data.query.queryBar.luceneSyntaxWarningMessage"
+                defaultMessage="It looks like you may be trying to use Lucene query syntax, although you
+               have opensearchDashboards Query Language (DQL) selected. Please review the DQL docs {link}."
+                values={{
+                  link: (
+                    <EuiLink href={osdDQLDocs} target="_blank">
+                      <FormattedMessage
+                        id="data.query.queryBar.syntaxOptionsDescription.docsLinkText"
+                        defaultMessage="here"
+                      />
+                    </EuiLink>
+                  ),
+                }}
+              />
+            </p>
+            <EuiFlexGroup justifyContent="flexEnd" gutterSize="s">
+              <EuiFlexItem grow={false}>
+                <EuiButton size="s" onClick={() => onLuceneSyntaxWarningOptOut(toast)}>
+                  <FormattedMessage
+                    id="data.query.queryBar.luceneSyntaxWarningOptOutText"
+                    defaultMessage="Don't show again"
+                  />
+                </EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </div>
+        ),
+      });
+    }
+  }
+
+  const onSubmit = (query?: Query) => {
+    handleLuceneSyntaxWarning(query);
+
+    opts.onQuerySubmit({query});
+  }
+
   return (
-    <TopNavMenu
+    <EuiFlexGroup>
+    <EuiFlexItem>
+      <QueryStringInput
+          indexPatterns={indexPattern ? [indexPattern] : []}
+          prepend
+          query={query!}
+          onChange={onQueryBarChange}
+          //onChangeQueryInputFocus={onChangeQueryInputFocus}
+          onSubmit={onSubmit}
+          //persistedLog={persistedLog}
+        />
+    </EuiFlexItem>
+    <EuiFlexItem>
+      <TopNavMenu
       appName={PLUGIN_ID}
       config={topNavLinks}
       showSearchBar
+      showQueryBar
+      showQueryInput={false}
       showDatePicker={showDatePicker}
       showSaveQuery
       useDefaultBehaviors
       setMenuMountPoint={opts.setHeaderActionMenu}
       indexPatterns={indexPattern ? [indexPattern] : indexPatterns}
       onQuerySubmit={opts.onQuerySubmit}
-    />
+      />
+    </EuiFlexItem>
+    </EuiFlexGroup>
   );
 };

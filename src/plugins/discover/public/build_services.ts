@@ -58,6 +58,8 @@ import { OpenSearchDashboardsLegacyStart } from '../../opensearch_dashboards_leg
 import { UrlForwardingStart } from '../../url_forwarding/public';
 import { NavigationPublicPluginStart } from '../../navigation/public';
 import { DataExplorerServices } from '../../data_explorer/public';
+import { IStorageWrapper } from 'src/plugins/opensearch_dashboards_utils/public';
+import { useWindowScroll } from 'react-use';
 
 export interface DiscoverServices {
   addBasePath: (path: string) => string;
@@ -122,7 +124,7 @@ export function buildServices(
     timefilter: plugins.data.query.timefilter.timefilter,
     toastNotifications: core.notifications.toasts,
     uiSettings: core.uiSettings,
-    visualizations: plugins.visualizations,
+    visualizations: plugins.visualizations
   };
 }
 
