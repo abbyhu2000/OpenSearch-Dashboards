@@ -14,7 +14,7 @@ import { IndexPattern } from '../../../opensearch_dashboards_services';
 import { getTopNavLinks } from '../../components/top_nav/get_top_nav_links';
 import { useDiscoverContext } from '../context';
 import { getRootBreadcrumbs } from '../../helpers/breadcrumbs';
-import { opensearchFilters, connectStorageToQueryState, SavedQueryManagementComponent } from '../../../../../data/public';
+import { opensearchFilters, connectStorageToQueryState, SavedQueryManagementComponent, FilterBar } from '../../../../../data/public';
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiLink } from '@elastic/eui';
 import { FormattedMessage } from 'react-intl';
 import { i18n } from '@osd/i18n';
@@ -205,6 +205,12 @@ export const TopNav = ({ opts }: TopNavProps) => {
           onSubmit={onSubmit}
           //persistedLog={persistedLog}
           //class='globalQueryBar'
+        />
+        <FilterBar
+          className="globalFilterGroup__filterBar"
+          filters={[]}
+          onFiltersUpdated={() => {}}
+          indexPatterns={indexPattern ? [indexPattern] : []}
         />
         </div>
     </EuiFlexItem>

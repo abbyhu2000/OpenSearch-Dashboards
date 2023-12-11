@@ -437,7 +437,8 @@ export {
   fetchIndexPatterns,
   QueryLanguageSwitcher,
   SuggestionsComponent,
-  SavedQueryManagementComponent
+  SavedQueryManagementComponent,
+  FilterBar
 } from './ui';
 
 /**
