@@ -436,7 +436,8 @@ export {
   QueryStringInputProps,
   fetchIndexPatterns,
   QueryLanguageSwitcher,
-  SuggestionsComponent
+  SuggestionsComponent,
+  SavedQueryManagementComponent
 } from './ui';
 
 /**

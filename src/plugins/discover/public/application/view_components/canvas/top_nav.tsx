@@ -4,6 +4,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
+import classNames from 'classnames';
 import { TimeRange, Query, doesKueryExpressionHaveLuceneSyntaxError } from '../../../../../data/common';
 import { AppMountParameters, Toast } from '../../../../../../core/public';
 import { PLUGIN_ID } from '../../../../common';
@@ -13,9 +14,8 @@ import { IndexPattern } from '../../../opensearch_dashboards_services';
 import { getTopNavLinks } from '../../components/top_nav/get_top_nav_links';
 import { useDiscoverContext } from '../context';
 import { getRootBreadcrumbs } from '../../helpers/breadcrumbs';
-import { opensearchFilters, connectStorageToQueryState } from '../../../../../data/public';
+import { opensearchFilters, connectStorageToQueryState, SavedQueryManagementComponent } from '../../../../../data/public';
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiLink } from '@elastic/eui';
-import { PersistedLog, getQueryLog } from '../../../../../data/public/query';
 import { FormattedMessage } from 'react-intl';
 import { i18n } from '@osd/i18n';
 import DiscoverQueryStringInputUI from './discover_query_bar';
@@ -169,26 +169,54 @@ export const TopNav = ({ opts }: TopNavProps) => {
     opts.onQuerySubmit({query});
   }
 
+  const savedQueryManagement = (
+    <SavedQueryManagementComponent
+        showSaveQuery
+        //loadedSavedQuery={this.props.savedQuery}
+        onSave={() => {}}
+        onSaveAsNew={() => {}}
+        onLoad={() => {}}
+        savedQueryService={services.data.query.savedQueries}
+        onClearSavedQuery={() => {}}
+      />
+  )
+
+  const classes = classNames('osdQueryBar', {
+    'osdQueryBar--withDatePicker': true,
+  });
+
   return (
-    <EuiFlexGroup>
-    <EuiFlexItem>
+    <EuiFlexGroup
+      //className={classes}
+      responsive
+      gutterSize="s"
+      justifyContent="flexEnd"
+    >
+    <EuiFlexItem
+      className='globalQueryBar'
+    >
+      <div>
       <QueryStringInput
           indexPatterns={indexPattern ? [indexPattern] : []}
-          prepend
+          prepend={savedQueryManagement}
           query={query!}
           onChange={onQueryBarChange}
           //onChangeQueryInputFocus={onChangeQueryInputFocus}
           onSubmit={onSubmit}
           //persistedLog={persistedLog}
+          //class='globalQueryBar'
         />
+        </div>
     </EuiFlexItem>
     <EuiFlexItem>
+      <div className='osdQueryBar__datePickerWrapper'>
       <TopNavMenu
       appName={PLUGIN_ID}
       config={topNavLinks}
       showSearchBar
       showQueryBar
       showQueryInput={false}
+      showFilterBar={false}
       showDatePicker={showDatePicker}
       showSaveQuery
       useDefaultBehaviors
@@ -196,6 +224,7 @@ export const TopNav = ({ opts }: TopNavProps) => {
       indexPatterns={indexPattern ? [indexPattern] : indexPatterns}
       onQuerySubmit={opts.onQuerySubmit}
       />
+      </div>
     </EuiFlexItem>
     </EuiFlexGroup>
   );

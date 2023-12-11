@@ -1,4 +1,5 @@
 import { SuggestionsListSize } from './typeahead/suggestions_component';
+import { SavedQueryManagementComponent } from './saved_query_management/saved_query_management_component';
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -36,3 +37,5 @@ export { SearchBar, SearchBarProps, StatefulSearchBarProps } from './search_bar'
 export { SuggestionsComponent } from './typeahead';
 export { fetchIndexPatterns } from './query_string_input/fetch_index_patterns'
 export { QueryLanguageSwitcher } from './query_string_input/language_switcher'
+export { SavedQueryManagementComponent } from './saved_query_management/saved_query_management_component'
+export { FilterBar } from './filter_bar/filter_bar'
