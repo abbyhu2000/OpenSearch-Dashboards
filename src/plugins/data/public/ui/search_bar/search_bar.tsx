@@ -315,6 +315,7 @@ class SearchBarUI extends Component<SearchBarProps, State> {
   };
 
   public onQueryBarChange = (queryAndDateRange: { dateRange: TimeRange; query?: Query }) => {
+    console.log("dashaboard", queryAndDateRange.query)
     this.setState({
       query: queryAndDateRange.query,
       dateRangeFrom: queryAndDateRange.dateRange.from,

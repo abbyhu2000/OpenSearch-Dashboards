@@ -35,7 +35,7 @@ export const TopNav = ({ opts }: TopNavProps) => {
   const { inspectorAdapters, savedSearch, indexPattern } = useDiscoverContext();
   const [indexPatterns, setIndexPatterns] = useState<IndexPattern[] | undefined>(undefined);
   const [isQueryInputFocused, setIsQueryInputFocused] = useState(false);
-  const [query, setQuery] = useState<Query | undefined>({query:'', language:''})
+  const [query, setQuery] = useState<Query | undefined>({query:'', language:'kuery'})
   //const queryLanguage = props.query && props.query.language;
   const osdDQLDocs: string = docLinks!.links.opensearchDashboards.dql.base;
   // const persistedLog: PersistedLog | undefined = React.useMemo(

@@ -221,7 +221,7 @@ export default class DiscoverQueryStringInputUI extends Component<Props, State> 
       index: null,
       suggestionLimit: 50,
     });
-
+    console.log("in onQueryStringChange", value)
     this.onChange({ query: value, language: this.props.query.language });
   };
 

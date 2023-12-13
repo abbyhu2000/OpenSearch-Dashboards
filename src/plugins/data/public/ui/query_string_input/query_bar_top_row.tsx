@@ -122,6 +122,7 @@ export default function QueryBarTopRow(props: QueryBarTopRowProps) {
   }
 
   function onQueryChange(query: Query) {
+    console.log("dashboard1", query)
     props.onChange({
       query,
       dateRange: getDateRange(),

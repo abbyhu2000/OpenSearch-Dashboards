@@ -248,12 +248,13 @@ export default class QueryStringInputUI extends Component<Props, State> {
       index: null,
       suggestionLimit: 50,
     });
-
+    console.log("dashboard query, onQueryStringChange", this.props.query.language)
     this.onChange({ query: value, language: this.props.query.language });
   };
 
   private onInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     this.onQueryStringChange(event.target.value);
+    console.log("dashboard query, onInputChange", event.target.value)
     if (event.target.value === '') {
       this.handleRemoveHeight();
     } else {
