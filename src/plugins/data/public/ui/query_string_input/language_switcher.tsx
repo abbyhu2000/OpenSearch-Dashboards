@@ -30,6 +30,8 @@
 
 import {
   EuiButtonEmpty,
+  EuiComboBox,
+  EuiComboBoxOptionOption,
   EuiForm,
   EuiFormRow,
   EuiLink,
@@ -42,7 +44,9 @@ import {
 } from '@elastic/eui';
 import { FormattedMessage } from '@osd/i18n/react';
 import React, { useState } from 'react';
+import { useObservable } from 'react-use';
 import { useOpenSearchDashboards } from '../../../../opensearch_dashboards_react/public';
+import { IDataPluginServices } from '../../types';
 
 interface Props {
   language: string;
@@ -51,6 +55,34 @@ interface Props {
 }
 
 export function QueryLanguageSwitcher(props: Props) {
+  const opensearchDashboards = useOpenSearchDashboards<IDataPluginServices>();
+  const { application } = opensearchDashboards.services;
+  const currentApp$ = application?.currentAppId$;
+  let useNewQuerySelector;
+  application?.applications$.subscribe((applications) => {
+    applications.forEach((applicationEntry) => {
+      if (applicationEntry.id === 'observability-dashboards') {
+        useNewQuerySelector = true;
+        return;
+      }
+    });
+  });
+
+  const dataExplorerOptions = [
+    {
+      label: 'DQL',
+    },
+    {
+      label: 'lucene',
+    },
+    {
+      label: 'PPL',
+    },
+    {
+      label: 'SQL',
+    },
+  ];
+
   const osdDQLDocs = useOpenSearchDashboards().services.docLinks?.links.opensearchDashboards.dql
     .base;
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -78,66 +110,95 @@ export function QueryLanguageSwitcher(props: Props) {
     </EuiButtonEmpty>
   );
 
-  return (
-    <EuiPopover
-      id="queryLanguageSwitcherPopover"
-      anchorClassName="euiFormControlLayout__append"
-      ownFocus
-      anchorPosition={props.anchorPosition || 'downRight'}
-      button={button}
-      isOpen={isPopoverOpen}
-      closePopover={() => setIsPopoverOpen(false)}
-      repositionOnScroll
-    >
-      <EuiPopoverTitle>
-        <FormattedMessage
-          id="data.query.queryBar.syntaxOptionsTitle"
-          defaultMessage="Syntax options"
-        />
-      </EuiPopoverTitle>
-      <div style={{ width: '350px' }}>
-        <EuiText>
-          <p>
-            <FormattedMessage
-              id="data.query.queryBar.syntaxOptionsDescription"
-              defaultMessage="The {docsLink} (DQL) offers a simplified query
-              syntax and support for scripted fields. If you turn off DQL,
-              OpenSearch Dashboards uses Lucene."
-              values={{
-                docsLink: (
-                  <EuiLink href={osdDQLDocs} target="_blank">
-                    {dqlFullName}
-                  </EuiLink>
-                ),
-              }}
-            />
-          </p>
-        </EuiText>
+  const handleLanguageChange = (newLanguage: EuiComboBoxOptionOption[]) => {
+    if (['PPL', 'SQL'].includes(newLanguage[0].label)) {
+      application?.navigateToUrl('../observability-logs#/explorer');
+      return;
+    }
+    const queryLanguage = newLanguage[0].label === 'DQL' ? 'kuery' : newLanguage[0].label;
+    props.onSelectLanguage(queryLanguage);
+  };
 
-        <EuiSpacer size="m" />
+  // The following is a temporary solution for adding PPL navigation, and should be replaced once final solution is determined.
+  // Follow-up issue: https://github.com/opensearch-project/OpenSearch-Dashboards/issues/5628
+  if (useObservable(currentApp$!, '') === 'data-explorer' && useNewQuerySelector) {
+    const selectedLanguage = {
+      label: props.language === 'kuery' ? 'DQL' : props.language,
+    };
+    return (
+      <EuiComboBox
+        className="languageSwitcher"
+        data-test-subj="languageSelect"
+        options={dataExplorerOptions}
+        selectedOptions={[selectedLanguage]}
+        onChange={handleLanguageChange}
+        singleSelection={{ asPlainText: true }}
+        isClearable={false}
+        async
+      />
+    );
+  } else {
+    return (
+      <EuiPopover
+        id="queryLanguageSwitcherPopover"
+        anchorClassName="euiFormControlLayout__append"
+        ownFocus
+        anchorPosition={props.anchorPosition || 'downRight'}
+        button={button}
+        isOpen={isPopoverOpen}
+        closePopover={() => setIsPopoverOpen(false)}
+        repositionOnScroll
+      >
+        <EuiPopoverTitle>
+          <FormattedMessage
+            id="data.query.queryBar.syntaxOptionsTitle"
+            defaultMessage="Syntax options"
+          />
+        </EuiPopoverTitle>
+        <div style={{ width: '350px' }}>
+          <EuiText>
+            <p>
+              <FormattedMessage
+                id="data.query.queryBar.syntaxOptionsDescription"
+                defaultMessage="The {docsLink} (DQL) offers a simplified query	
+                syntax and support for scripted fields. If you turn off DQL,	
+                OpenSearch Dashboards uses Lucene."
+                values={{
+                  docsLink: (
+                    <EuiLink href={osdDQLDocs} target="_blank">
+                      {dqlFullName}
+                    </EuiLink>
+                  ),
+                }}
+              />
+            </p>
+          </EuiText>
 
-        <EuiForm>
-          <EuiFormRow label={dqlFullName}>
-            <EuiSwitch
-              id="queryEnhancementOptIn"
-              name="popswitch"
-              label={
-                props.language === 'kuery' ? (
-                  <FormattedMessage id="data.query.queryBar.dqlOnLabel" defaultMessage="On" />
-                ) : (
-                  <FormattedMessage id="data.query.queryBar.dqlOffLabel" defaultMessage="Off" />
-                )
-              }
-              checked={props.language === 'kuery'}
-              onChange={() => {
-                const newLanguage = props.language === 'lucene' ? 'kuery' : 'lucene';
-                props.onSelectLanguage(newLanguage);
-              }}
-              data-test-subj="languageToggle"
-            />
-          </EuiFormRow>
-        </EuiForm>
-      </div>
-    </EuiPopover>
-  );
+          <EuiSpacer size="m" />
+
+          <EuiForm>
+            <EuiFormRow label={dqlFullName}>
+              <EuiSwitch
+                id="queryEnhancementOptIn"
+                name="popswitch"
+                label={
+                  props.language === 'kuery' ? (
+                    <FormattedMessage id="data.query.queryBar.dqlOnLabel" defaultMessage="On" />
+                  ) : (
+                    <FormattedMessage id="data.query.queryBar.dqlOffLabel" defaultMessage="Off" />
+                  )
+                }
+                checked={props.language === 'kuery'}
+                onChange={() => {
+                  const newLanguage = props.language === 'lucene' ? 'kuery' : 'lucene';
+                  props.onSelectLanguage(newLanguage);
+                }}
+                data-test-subj="languageToggle"
+              />
+            </EuiFormRow>
+          </EuiForm>
+        </div>
+      </EuiPopover>
+    );
+  }
 }

@@ -229,7 +229,6 @@ export default class QueryStringInputUI extends Component<Props, State> {
       if (this.persistedLog) {
         this.persistedLog.add(query.query);
       }
-
       this.props.onSubmit({ query: fromUser(query.query), language: query.language });
     }
   };
