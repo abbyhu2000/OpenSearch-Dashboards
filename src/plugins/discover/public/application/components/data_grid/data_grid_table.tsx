@@ -16,6 +16,8 @@ import { DocViewFilterFn, OpenSearchSearchHit } from '../../doc_views/doc_views_
 import { usePagination } from '../utils/use_pagination';
 import { SortOrder } from '../../../saved_searches/types';
 import { buildColumns } from '../../utils/columns';
+import { showInlineExpandToggle } from './data_grid_table_inline_expand';
+import { InlineInspectButton } from './data_grid_table_inline_inspect_button';
 
 export interface DataGridTableProps {
   columns: string[];
@@ -120,16 +122,19 @@ export const DataGridTable = ({
     [sortingColumns, onColumnSort]
   );
 
+  const [showInline, setShowInline] = useState(false);
+  console.log('showInline', showInline);
+
   const leadingControlColumns = useMemo(() => {
     return [
       {
         id: 'inspectCollapseColumn',
         headerCellRender: () => null,
-        rowCellRender: DocViewInspectButton,
+        rowCellRender: showInline ? InlineInspectButton : DocViewInspectButton,
         width: 40,
       },
     ];
-  }, []);
+  }, [showInline]);
 
   const table = useMemo(
     () => (
@@ -143,7 +148,14 @@ export const DataGridTable = ({
         renderCellValue={renderCellValue}
         rowCount={rowCount}
         sorting={sorting}
-        toolbarVisibility={isToolbarVisible ? toolbarVisibility : false}
+        toolbarVisibility={
+          isToolbarVisible
+            ? {
+                ...toolbarVisibility,
+                additionalControls: showInlineExpandToggle(showInline, setShowInline),
+              }
+            : false
+        }
         rowHeightsOptions={rowHeightsOptions}
       />
     ),
@@ -157,16 +169,24 @@ export const DataGridTable = ({
       sorting,
       isToolbarVisible,
       rowHeightsOptions,
+      showInline,
+      setShowInline,
     ]
   );
+
+  const onClose = () => setInspectedHit(undefined);
 
   return (
     <DiscoverGridContextProvider
       value={{
         inspectedHit,
         onFilter,
+        onAddColumn,
+        onRemoveColumn,
+        onClose,
         setInspectedHit,
         rows: rows || [],
+        columns: columns || [],
         indexPattern,
       }}
     >
@@ -190,7 +210,7 @@ export const DataGridTable = ({
             onRemoveColumn={onRemoveColumn}
             onAddColumn={onAddColumn}
             onFilter={onFilter}
-            onClose={() => setInspectedHit(undefined)}
+            onClose={onClose}
           />
         )}
       </div>

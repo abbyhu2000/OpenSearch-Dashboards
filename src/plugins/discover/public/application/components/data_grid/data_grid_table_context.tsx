@@ -10,8 +10,12 @@ import { DocViewFilterFn, OpenSearchSearchHit } from '../../doc_views/doc_views_
 export interface DataGridContextProps {
   inspectedHit?: OpenSearchSearchHit;
   onFilter: DocViewFilterFn;
+  onAddColumn: (columnName: string) => void;
+  onRemoveColumn: (columnName: string) => void;
+  onClose: () => void;
   setInspectedHit: (hit?: OpenSearchSearchHit) => void;
   rows: OpenSearchSearchHit[];
+  columns: string[];
   indexPattern: IndexPattern;
 }
 
