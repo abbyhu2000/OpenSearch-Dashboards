@@ -202,7 +202,7 @@ export const DataGridTable = ({
             {table}
           </EuiPanel>
         </EuiPanel>
-        {inspectedHit && (
+        {inspectedHit && !showInline && (
           <DataGridFlyout
             indexPattern={indexPattern}
             hit={inspectedHit}

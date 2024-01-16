@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   EuiAccordion,
   EuiFlyoutHeader,
@@ -12,6 +12,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiDataGridCellValueElementProps,
+  EuiButtonIcon,
 } from '@elastic/eui';
 import { FormattedMessage } from 'react-intl';
 import { DocViewerLinks } from '../doc_viewer_links/doc_viewer_links';
@@ -32,9 +33,12 @@ export function InlineInspectButton({ rowIndex }: EuiDataGridCellValueElementPro
     onRemoveColumn,
     setInspectedHit,
   } = useDataGridContext();
+  console.log('rowIndex', rowIndex);
+  console.log('inspectedHit', inspectedHit);
   const currentInspected = rows[rowIndex];
   const isCurrentInspected = currentInspected === inspectedHit;
-  console.log('currentInspected', currentInspected);
+  console.log('isCurrentInspected', isCurrentInspected);
+
   return (
     <EuiAccordion
       id={`inlineExpanding`}
@@ -44,45 +48,56 @@ export function InlineInspectButton({ rowIndex }: EuiDataGridCellValueElementPro
       onClick={() => setInspectedHit(isCurrentInspected ? undefined : currentInspected)}
     >
       {inspectedHit && (
-        <div>
-          <EuiFlyoutHeader>
-            <EuiTitle>
-              <h2>
-                <FormattedMessage
-                  id="discover.docView.flyoutTitle"
-                  defaultMessage="Document Details"
-                />
-              </h2>
-            </EuiTitle>
-          </EuiFlyoutHeader>
-          <EuiFlyoutBody>
-            <EuiFlexGroup direction="column">
-              <EuiFlexItem>
-                <DocViewerLinks hit={inspectedHit} indexPattern={indexPattern} columns={columns} />
-              </EuiFlexItem>
-              <EuiFlexItem>
-                <DocViewer
-                  hit={inspectedHit}
-                  columns={columns}
-                  indexPattern={indexPattern}
-                  onRemoveColumn={(columnName: string) => {
-                    onRemoveColumn(columnName);
-                    onClose();
-                  }}
-                  onAddColumn={(columnName: string) => {
-                    onAddColumn(columnName);
-                    onClose();
-                  }}
-                  filter={(mapping, value, mode) => {
-                    onFilter(mapping, value, mode);
-                    onClose();
-                  }}
-                />
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiFlyoutBody>
-        </div>
+        // <div>
+        //     <EuiTitle>
+        //       <h2>
+        //         <FormattedMessage
+        //           id="discover.docView.flyoutTitle"
+        //           defaultMessage="Document Details"
+        //         />
+        //       </h2>
+        //     </EuiTitle>
+        //     <EuiFlexGroup direction="column">
+        //       <EuiFlexItem>
+        //         <DocViewerLinks hit={inspectedHit} indexPattern={indexPattern} columns={columns} />
+        //       </EuiFlexItem>
+        //       <EuiFlexItem>
+        //         <DocViewer
+        //           hit={inspectedHit}
+        //           columns={columns}
+        //           indexPattern={indexPattern}
+        //           onRemoveColumn={(columnName: string) => {
+        //             onRemoveColumn(columnName);
+        //             onClose();
+        //           }}
+        //           onAddColumn={(columnName: string) => {
+        //             onAddColumn(columnName);
+        //             onClose();
+        //           }}
+        //           filter={(mapping, value, mode) => {
+        //             onFilter(mapping, value, mode);
+        //             onClose();
+        //           }}
+        //         />
+        //       </EuiFlexItem>
+        //     </EuiFlexGroup>
+        // </div>
+        <tr>
+          <td colSpan={3}>
+            <div>
+              <EuiTitle>
+                <h2>
+                  <FormattedMessage
+                    id="discover.docView.flyoutTitle"
+                    defaultMessage="Document Details"
+                  />
+                </h2>
+              </EuiTitle>
+            </div>
+          </td>
+        </tr>
       )}
+      //
     </EuiAccordion>
   );
 }
