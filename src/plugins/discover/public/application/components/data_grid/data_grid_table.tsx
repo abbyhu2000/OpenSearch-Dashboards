@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { EuiDataGrid, EuiDataGridSorting, EuiPanel } from '@elastic/eui';
+import { EuiDataGrid, EuiDataGridSorting, EuiPanel, EuiBasicTable } from '@elastic/eui';
 import { IndexPattern } from '../../../opensearch_dashboards_services';
 import { fetchTableDataCell } from './data_grid_table_cell_value';
 import { buildDataGridColumns, computeVisibleColumns } from './data_grid_table_columns';
@@ -52,6 +52,8 @@ export const DataGridTable = ({
   isContextView = false,
   isLoading = false,
 }: DataGridTableProps) => {
+  console.log("rows", rows)
+  console.log("column", columns)
   const [inspectedHit, setInspectedHit] = useState<OpenSearchSearchHit | undefined>();
   const rowCount = useMemo(() => (rows ? rows.length : 0), [rows]);
   const pagination = usePagination(rowCount);
@@ -100,6 +102,8 @@ export const DataGridTable = ({
       ),
     [adjustedColumns, indexPattern, displayTimeColumn, includeSourceInColumns, isContextView]
   );
+
+  console.log("dataGridTableColumns", dataGridTableColumns)
 
   const dataGridTableColumnsVisibility = useMemo(
     () => ({
@@ -160,6 +164,21 @@ export const DataGridTable = ({
     ]
   );
 
+  const basicTableColumns = dataGridTableColumns.map((column)=> {
+    return {
+      field: `_source.${column.id}`, //todo: _source field should just be _source
+      name: column.display,
+    }
+  })
+
+
+  const basicTable = useMemo(() =>(
+  <EuiBasicTable 
+    items={rows}
+    columns={basicTableColumns}
+  />
+  ),[rows,basicTableColumns])
+
   return (
     <DiscoverGridContextProvider
       value={{
@@ -179,7 +198,7 @@ export const DataGridTable = ({
       >
         <EuiPanel hasBorder={false} hasShadow={false} paddingSize="s" color="transparent">
           <EuiPanel paddingSize="s" style={{ height: '100%' }}>
-            {table}
+            {basicTable}
           </EuiPanel>
         </EuiPanel>
         {inspectedHit && (
