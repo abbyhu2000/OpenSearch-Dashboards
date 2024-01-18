@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
-import { EuiDataGrid, EuiDataGridSorting, EuiPanel, EuiBasicTable } from '@elastic/eui';
+import React, { useState, useMemo, useCallback, Fragment } from 'react';
+import { EuiDataGrid, EuiDataGridSorting, EuiPanel, EuiBasicTable, EuiDescriptionList, EuiDescriptionListTitle, EuiDescriptionListDescription } from '@elastic/eui';
 import { IndexPattern } from '../../../opensearch_dashboards_services';
-import { fetchTableDataCell } from './data_grid_table_cell_value';
+import { fetchSourceTypeDataCell, fetchTableDataCell } from './data_grid_table_cell_value';
 import { buildDataGridColumns, computeVisibleColumns } from './data_grid_table_columns';
 import { DocViewInspectButton } from './data_grid_table_docview_inspect_button';
 import { DataGridFlyout } from './data_grid_table_flyout';
@@ -16,6 +16,7 @@ import { DocViewFilterFn, OpenSearchSearchHit } from '../../doc_views/doc_views_
 import { usePagination } from '../utils/use_pagination';
 import { SortOrder } from '../../../saved_searches/types';
 import { buildColumns } from '../../utils/columns';
+import dompurify from 'dompurify';
 
 export interface DataGridTableProps {
   columns: string[];
@@ -52,8 +53,8 @@ export const DataGridTable = ({
   isContextView = false,
   isLoading = false,
 }: DataGridTableProps) => {
-  console.log("rows", rows)
-  console.log("column", columns)
+  console.log('rows', rows);
+  console.log('column', columns);
   const [inspectedHit, setInspectedHit] = useState<OpenSearchSearchHit | undefined>();
   const rowCount = useMemo(() => (rows ? rows.length : 0), [rows]);
   const pagination = usePagination(rowCount);
@@ -103,7 +104,7 @@ export const DataGridTable = ({
     [adjustedColumns, indexPattern, displayTimeColumn, includeSourceInColumns, isContextView]
   );
 
-  console.log("dataGridTableColumns", dataGridTableColumns)
+  console.log('dataGridTableColumns', dataGridTableColumns);
 
   const dataGridTableColumnsVisibility = useMemo(
     () => ({
@@ -164,20 +165,36 @@ export const DataGridTable = ({
     ]
   );
 
-  const basicTableColumns = dataGridTableColumns.map((column)=> {
+  const basicTableColumns = dataGridTableColumns.map((column) => {
+    console.log("here1", column)
     return {
-      field: `_source.${column.id}`, //todo: _source field should just be _source
+      field: column.id === '_source' ? '_source' : `_source.${column.id}`,
       name: column.display,
-    }
-  })
+      render: (item) => {
+        console.log("here2", item)
+        
+        return column.id === '_source' ? (
+        <EuiDescriptionList type="inline" compressed>
+        {Object.keys(item).map((key) => (
+          <Fragment key={key}>
+            <EuiDescriptionListTitle className="osdDescriptionListFieldTitle">
+              {key}
+            </EuiDescriptionListTitle>
+            <EuiDescriptionListDescription
+              dangerouslySetInnerHTML={{ __html: dompurify.sanitize(item[key]) }}
+            />
+          </Fragment>
+        ))}
+      </EuiDescriptionList>)
+      : item
+      }
+    };
+  });
 
-
-  const basicTable = useMemo(() =>(
-  <EuiBasicTable 
-    items={rows}
-    columns={basicTableColumns}
-  />
-  ),[rows,basicTableColumns])
+  const basicTable = useMemo(() => <EuiBasicTable items={rows} columns={basicTableColumns} />, [
+    rows,
+    basicTableColumns,
+  ]);
 
   return (
     <DiscoverGridContextProvider
