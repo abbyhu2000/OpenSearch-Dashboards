@@ -52,4 +52,21 @@ export function toOpenSearchQuery(
       }),
     },
   };
+
+  /*
+  * return {
+    bool: {
+      filter: [
+        bool: {
+          minimum_should_match: 1,
+          should: [
+            match: {
+              customer_id: 10
+            }
+          ]
+        }
+      ]
+    }
+  }
+  */
 }

@@ -73,4 +73,6 @@ export function toOpenSearchQuery(
 ) {
   const kueryFunction = functions[node.function as FunctionName];
   return kueryFunction.toOpenSearchQuery(node, indexPattern, config, context);
+
+  // go to opensearch_query/kuery/functions/and.ts
 }

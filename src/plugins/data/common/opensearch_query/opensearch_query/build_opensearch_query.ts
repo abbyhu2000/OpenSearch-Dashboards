@@ -36,6 +36,7 @@ import { IIndexPattern } from '../../index_patterns';
 import { Filter } from '../filters';
 import { Query } from '../../query/types';
 import { buildQueryFromSql } from './from_sql';
+import Mustache from 'mustache';
 
 export interface OpenSearchQueryConfig {
   allowLeadingWildcards: boolean;
@@ -67,16 +68,22 @@ export function buildOpenSearchQuery(
 
   // TODO: SQL make this combinable. SQL needs to support DSL
   // console.log('queries', queries);
-  const sqlQueries = queries.filter((query) => query.language === 'SQL');
-  if (sqlQueries.length > 0) {
-    // console.log('sqlQueries', sqlQueries);
-    return buildQueryFromSql(sqlQueries, config.dateFormatTZ);
-  }
+  // const sqlQueries = queries.filter((query) => query.language === 'SQL');
+  // if (sqlQueries.length > 0) {
+  //   // console.log('sqlQueries', sqlQueries);
+  //   return buildQueryFromSql(sqlQueries, config.dateFormatTZ);
+  // }
 
   const validQueries = queries
-    .filter((query) => query.language !== 'SQL')
+    //.filter((query) => query.language !== 'SQL')
     .filter((query) => has(query, 'query'));
   const queriesByLanguage = groupBy(validQueries, 'language');
+  // const sqlQuery = buildQueryFromSql(
+  //   indexPattern,
+  //   queriesByLanguage.SQL,
+  //   config.allowLeadingWildcards,
+  //   config.dateFormatTZ
+  // );
   const kueryQuery = buildQueryFromKuery(
     indexPattern,
     queriesByLanguage.kuery,
@@ -96,10 +103,30 @@ export function buildOpenSearchQuery(
 
   return {
     bool: {
-      must: [...kueryQuery.must, ...luceneQuery.must, ...filterQuery.must],
-      filter: [...kueryQuery.filter, ...luceneQuery.filter, ...filterQuery.filter],
-      should: [...kueryQuery.should, ...luceneQuery.should, ...filterQuery.should],
-      must_not: [...kueryQuery.must_not, ...luceneQuery.must_not, ...filterQuery.must_not],
+      must: [
+        //...sqlQuery.must,
+        ...kueryQuery.must,
+        ...luceneQuery.must,
+        ...filterQuery.must,
+      ],
+      filter: [
+        //...sqlQuery.filter,
+        ...kueryQuery.filter,
+        ...luceneQuery.filter,
+        ...filterQuery.filter,
+      ],
+      should: [
+        //...sqlQuery.should,
+        ...kueryQuery.should,
+        ...luceneQuery.should,
+        ...filterQuery.should,
+      ],
+      must_not: [
+        //...sqlQuery.must_not,
+        ...kueryQuery.must_not,
+        ...luceneQuery.must_not,
+        ...filterQuery.must_not,
+      ],
     },
   };
 }

@@ -47,6 +47,26 @@ const fromExpression = (
   }
 
   return parse(expression, { ...parseOptions, helpers: { nodeTypes } });
+  /*
+  * input: 'customer_id: 10'
+  * 
+  * output:  {
+    arguments: [
+      {
+        type: 'literal',
+        value: 'customer_id'
+      }, 
+      {
+        type: 'literal',
+        value: 10
+      },
+      {
+        type: 'literal',
+        value: false
+      }
+    ]
+  }
+  */
 };
 
 export const fromLiteralExpression = (
@@ -109,4 +129,6 @@ export const toOpenSearchQuery = (
   const nodeType = (nodeTypes[node.type] as unknown) as any;
 
   return nodeType.toOpenSearchQuery(node, indexPattern, config, context);
+  // every node type has its own unique opensearch query,
+  // if its a function node type, then do to opensearch_query/kuery/node_types/function.ts
 };

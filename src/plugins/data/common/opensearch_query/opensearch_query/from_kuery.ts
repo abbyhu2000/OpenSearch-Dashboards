@@ -51,7 +51,41 @@ function buildQuery(
   config: Record<string, any> = {}
 ) {
   const compoundQueryAST = nodeTypes.function.buildNode('and', queryASTs);
+  /*
+   * compoundQueryAST:
+   * {
+   * arguments: [{
+   *  arguments: [],
+   *  function: "is",
+   *  type: "function"
+   * }],
+   * function: "and",
+   * type: "function"
+   * }
+   */
+
   const kueryQuery = toOpenSearchQuery(compoundQueryAST, indexPattern, config);
+
+  /*
+  * kueryQuery: {
+    bool: {
+      filter: [
+        {
+          bool: {
+            minimum_should_match: 1,
+            should: [
+              {
+                match: {
+                  customer_id: 10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+  */
 
   return Object.assign(
     {
@@ -62,4 +96,8 @@ function buildQuery(
     },
     kueryQuery.bool
   );
+
+  /*
+   * assign to filter
+   */
 }
