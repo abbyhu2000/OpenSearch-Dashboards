@@ -455,6 +455,7 @@ class SearchBarUI extends Component<SearchBarProps, State> {
       );
     }
 
+    console.log('isEnhancementsEnabledOverride', isEnhancementsEnabledOverride);
     let queryBar;
     if (this.shouldRenderQueryBar(isEnhancementsEnabledOverride)) {
       queryBar = (
@@ -524,6 +525,8 @@ class SearchBarUI extends Component<SearchBarProps, State> {
 
     const className = isEnhancementsEnabledOverride ? 'globalQueryEditor' : 'globalQueryBar';
 
+    // query bar is the old query bar
+    // query editor is the new query editor
     return (
       <div className={className} data-test-subj={className}>
         {queryBar}

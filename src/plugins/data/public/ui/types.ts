@@ -13,6 +13,9 @@ import { SuggestionsComponentProps } from './typeahead/suggestions_component';
 
 export * from './settings';
 
+// TODO: COULD POTENTIALLY ADD IF IT CAN HAVE A QUERY EDITOR WHEN EXPANDED OR NOT
+// DQL doesn't really need onebecause it is is one line
+// BUT WHAT ABOUT DSL? SQL? PPL?
 export interface QueryEnhancement {
   // TODO: MQL do want to default have supported all data_sources?
   // or should data connect have a record of query enhancements that are supported

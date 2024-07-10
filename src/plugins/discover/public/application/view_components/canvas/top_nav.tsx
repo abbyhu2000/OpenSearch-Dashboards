@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Query, TimeRange } from 'src/plugins/data/common';
+import { Query, TimeRange, UI_SETTINGS } from 'src/plugins/data/common';
 import { AppMountParameters } from '../../../../../../core/public';
 import { connectStorageToQueryState, opensearchFilters } from '../../../../../data/public';
 import { useOpenSearchDashboards } from '../../../../../opensearch_dashboards_react/public';

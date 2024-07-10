@@ -3,11 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { EuiFlexGroup, EuiFlexItem, htmlIdGenerator, PopoverAnchorPosition } from '@elastic/eui';
+// TODO: this shows the query editor
+
+import {
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiOutsideClickDetector,
+  EuiPortal,
+  EuiTextArea,
+  htmlIdGenerator,
+  PopoverAnchorPosition,
+} from '@elastic/eui';
+import { i18n } from '@osd/i18n';
 import classNames from 'classnames';
 import { isEqual } from 'lodash';
 import React, { Component, createRef, RefObject } from 'react';
-import { Settings } from '..';
+import { Settings, SuggestionsComponent } from '..';
 import { DataSource, IDataPluginServices, IIndexPattern, Query, TimeRange } from '../..';
 import {
   CodeEditor,
@@ -20,6 +31,8 @@ import { DataSettings } from '../types';
 import { fetchIndexPatterns } from './fetch_index_patterns';
 import { QueryLanguageSelector } from './language_selector';
 import { QueryEditorExtensions } from './query_editor_extensions';
+import { QueryEditorBtnCollapse } from './query_editor_btn_collapse';
+import { QueryLanguageSwitcher } from '../query_string_input/language_switcher';
 
 export interface QueryEditorProps {
   indexPatterns: Array<IIndexPattern | string>;
@@ -47,6 +60,8 @@ export interface QueryEditorProps {
   queryLanguage?: string;
   headerClassName?: string;
   bannerClassName?: string;
+  isCollapsed: boolean;
+  onToggleCollapsed: () => void;
 }
 
 interface Props extends QueryEditorProps {
@@ -285,61 +300,171 @@ export default class QueryEditorUI extends Component<Props, State> {
   };
 
   public render() {
-    const className = classNames(this.props.className);
-    const headerClassName = classNames('osdQueryEditorHeader', this.props.headerClassName);
-    const bannerClassName = classNames('osdQueryEditorBanner', this.props.bannerClassName);
+    console.log('query language', this.props.query.language);
+    if (
+      this.props.query.language === 'SQLAsync' ||
+      this.props.query.language === 'SQL' ||
+      this.props.query.language === 'PPL'
+    ) {
+      console.log('i am PPL or SQL!');
+      const className = classNames(this.props.className);
+      const headerClassName = classNames('osdQueryEditorHeader', this.props.headerClassName);
+      const bannerClassName = classNames('osdQueryEditorBanner', this.props.bannerClassName);
 
-    return (
-      <div className={className}>
-        <div ref={this.bannerRef} className={bannerClassName} />
-        <EuiFlexGroup gutterSize="xs" direction="column">
-          <EuiFlexItem grow={false}>
-            <EuiFlexGroup gutterSize="xs" alignItems="center" className={`${className}__wrapper`}>
-              <EuiFlexItem grow={false}>{this.props.prepend}</EuiFlexItem>
-              {this.state.isDataSourcesVisible && (
-                <EuiFlexItem grow={false} className={`${className}__dataSourceWrapper`}>
-                  <div ref={this.props.dataSourceContainerRef} />
+      return (
+        <div className={className}>
+          <EuiFlexGroup gutterSize="xs" direction="column">
+            <div ref={this.bannerRef} className={bannerClassName} />
+            <EuiFlexItem grow={false}>
+              <EuiFlexGroup gutterSize="xs" alignItems="center" className={`${className}__wrapper`}>
+                <EuiFlexItem grow={false}>
+                  <QueryEditorBtnCollapse
+                    onClick={this.props.onToggleCollapsed}
+                    isCollapsed={this.props.isCollapsed}
+                  />
                 </EuiFlexItem>
-              )}
-              <EuiFlexItem grow={false} className={`${className}__languageWrapper`}>
-                <QueryLanguageSelector
-                  language={this.props.query.language}
-                  anchorPosition={this.props.languageSwitcherPopoverAnchorPosition}
-                  onSelectLanguage={this.onSelectLanguage}
-                  appName={this.services.appName}
+                <EuiFlexItem grow={false}>{this.props.prepend}</EuiFlexItem>
+                {this.state.isDataSourcesVisible && (
+                  <EuiFlexItem grow={false} className={`${className}__dataSourceWrapper`}>
+                    <div ref={this.props.dataSourceContainerRef} />
+                  </EuiFlexItem>
+                )}
+                <EuiFlexItem grow={false} className={`${className}__languageWrapper`}>
+                  <QueryLanguageSelector
+                    language={this.props.query.language}
+                    anchorPosition={this.props.languageSwitcherPopoverAnchorPosition}
+                    onSelectLanguage={this.onSelectLanguage}
+                    appName={this.services.appName}
+                  />
+                </EuiFlexItem>
+                {this.state.isDataSetsVisible && (
+                  <EuiFlexItem grow={false} className={`${className}__dataSetWrapper`}>
+                    <div ref={this.props.containerRef} />
+                  </EuiFlexItem>
+                )}
+              </EuiFlexGroup>
+            </EuiFlexItem>
+            {this.props.isCollapsed && (
+              <EuiFlexItem onClick={this.onClickInput} grow={true}>
+                <div ref={this.headerRef} className={headerClassName} />
+                <CodeEditor
+                  height={70}
+                  languageId="opensearchql"
+                  value={this.getQueryString()}
+                  onChange={this.onInputChange}
+                  options={{
+                    lineNumbers: 'on',
+                    lineHeight: 24,
+                    fontSize: 14,
+                    fontFamily: 'Roboto Mono',
+                    minimap: {
+                      enabled: false,
+                    },
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    wrappingIndent: 'indent',
+                  }}
                 />
               </EuiFlexItem>
-              {this.state.isDataSetsVisible && (
-                <EuiFlexItem grow={false} className={`${className}__dataSetWrapper`}>
-                  <div ref={this.props.containerRef} />
+            )}
+          </EuiFlexGroup>
+          {this.renderQueryEditorExtensions()}
+        </div>
+      );
+    } else {
+      console.log('i am not PPL or SQL!');
+      const className = classNames(this.props.className);
+      const headerClassName = classNames('osdQueryEditorHeader', this.props.headerClassName);
+      const bannerClassName = classNames('osdQueryEditorBanner', this.props.bannerClassName);
+
+      return (
+        <div className={className}>
+          <EuiFlexGroup gutterSize="xs" direction="column">
+            <div ref={this.bannerRef} className={bannerClassName} />
+            <EuiFlexItem grow={false}>
+              <EuiFlexGroup gutterSize="xs" alignItems="center" className={`${className}__wrapper`}>
+                <EuiFlexItem grow={false}>
+                  <QueryEditorBtnCollapse
+                    onClick={this.props.onToggleCollapsed}
+                    isCollapsed={this.props.isCollapsed}
+                  />
                 </EuiFlexItem>
-              )}
-            </EuiFlexGroup>
-          </EuiFlexItem>
-          <EuiFlexItem onClick={this.onClickInput} grow={true}>
-            <div ref={this.headerRef} className={headerClassName} />
-            <CodeEditor
-              height={70}
-              languageId="opensearchql"
-              value={this.getQueryString()}
-              onChange={this.onInputChange}
-              options={{
-                lineNumbers: 'on',
-                lineHeight: 24,
-                fontSize: 14,
-                fontFamily: 'Roboto Mono',
-                minimap: {
-                  enabled: false,
-                },
-                scrollBeyondLastLine: false,
-                wordWrap: 'on',
-                wrappingIndent: 'indent',
-              }}
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        {this.renderQueryEditorExtensions()}
-      </div>
-    );
+                {this.state.isDataSourcesVisible && (
+                  <EuiFlexItem grow={false} className={`${className}__dataSourceWrapper`}>
+                    <div ref={this.props.dataSourceContainerRef} />
+                  </EuiFlexItem>
+                )}
+
+                {this.state.isDataSetsVisible && (
+                  <EuiFlexItem grow={false} className={`${className}__dataSetWrapper`}>
+                    <div ref={this.props.containerRef} />
+                  </EuiFlexItem>
+                )}
+                <EuiFlexItem
+                  grow={false}
+                  className={`euiFormControlLayout euiFormControlLayout--group osdQueryBar__wrap`}
+                >
+                  <div className="euiFormControlLayout__childrenWrapper osdQueryBar__textareaWrap">
+                    <EuiTextArea
+                      placeholder={
+                        this.props.placeholder ||
+                        i18n.translate('data.query.queryBar.searchInputPlaceholder', {
+                          defaultMessage: 'Search',
+                        })
+                      }
+                      value={this.getQueryString()}
+                      onKeyDown={this.onKeyDown}
+                      onKeyUp={this.onKeyUp}
+                      onChange={this.onInputChange}
+                      onClick={this.onClickInput}
+                      onBlur={this.onInputBlur}
+                      onFocus={this.handleOnFocus}
+                      className="osdQueryBar__textarea"
+                      fullWidth
+                      rows={1}
+                      id={this.textareaId}
+                      autoFocus={
+                        this.props.onChangeQueryInputFocus ? false : !this.props.disableAutoFocus
+                      }
+                      inputRef={(node: any) => {
+                        if (node) {
+                          this.inputRef = node;
+                        }
+                      }}
+                      autoComplete="off"
+                      spellCheck={false}
+                      aria-label={i18n.translate('data.query.queryBar.searchInputAriaLabel', {
+                        defaultMessage: 'Start typing to search and filter the {pageType} page',
+                        values: { pageType: this.services.appName },
+                      })}
+                      aria-autocomplete="list"
+                      aria-controls={
+                        this.state.isSuggestionsVisible ? 'osdTypeahead__items' : undefined
+                      }
+                      aria-activedescendant={
+                        this.state.isSuggestionsVisible && typeof this.state.index === 'number'
+                          ? `suggestion-${this.state.index}`
+                          : undefined
+                      }
+                      role="textbox"
+                      data-test-subj={this.props.dataTestSubj || 'queryInput'}
+                      isInvalid={this.props.isInvalid}
+                    >
+                      {this.getQueryString()}
+                    </EuiTextArea>
+                  </div>
+                  <QueryLanguageSwitcher
+                    language={this.props.query.language}
+                    anchorPosition={this.props.languageSwitcherPopoverAnchorPosition}
+                    onSelectLanguage={this.onSelectLanguage}
+                  />
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+          {this.renderQueryEditorExtensions()}
+        </div>
+      );
+    }
   }
 }

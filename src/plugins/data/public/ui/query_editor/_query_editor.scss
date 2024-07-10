@@ -53,6 +53,11 @@
   }
 }
 
+.osdQueryBar__wrap {
+  max-width: 100%;
+  z-index: $euiZContentMenu;
+}
+
 @include euiBreakpoint("xs", "s") {
   .osdQueryEditor--withDatePicker {
     > :first-child {

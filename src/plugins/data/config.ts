@@ -34,6 +34,8 @@ export const configSchema = schema.object({
   enhancements: schema.object({
     enabled: schema.boolean({ defaultValue: false }),
     supportedAppNames: schema.arrayOf(schema.string(), {
+      // TODO: this is how we make sure it is only discover
+      // if empty all apps have it
       defaultValue: ['discover'],
     }),
   }),
