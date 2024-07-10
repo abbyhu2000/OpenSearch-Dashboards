@@ -307,14 +307,17 @@ export default class QueryEditorUI extends Component<Props, State> {
       this.props.query.language === 'PPL'
     ) {
       console.log('i am PPL or SQL!');
+      console.log('isDataSourcesVisible', this.state.isDataSourcesVisible);
+      console.log('isDataSetsVisible', this.state.isDataSetsVisible);
       const className = classNames(this.props.className);
+      // query assist bar
       const headerClassName = classNames('osdQueryEditorHeader', this.props.headerClassName);
+      // the banner message
       const bannerClassName = classNames('osdQueryEditorBanner', this.props.bannerClassName);
 
       return (
         <div className={className}>
           <EuiFlexGroup gutterSize="xs" direction="column">
-            <div ref={this.bannerRef} className={bannerClassName} />
             <EuiFlexItem grow={false}>
               <EuiFlexGroup gutterSize="xs" alignItems="center" className={`${className}__wrapper`}>
                 <EuiFlexItem grow={false}>
@@ -380,7 +383,6 @@ export default class QueryEditorUI extends Component<Props, State> {
       return (
         <div className={className}>
           <EuiFlexGroup gutterSize="xs" direction="column">
-            <div ref={this.bannerRef} className={bannerClassName} />
             <EuiFlexItem grow={false}>
               <EuiFlexGroup gutterSize="xs" alignItems="center" className={`${className}__wrapper`}>
                 <EuiFlexItem grow={false}>
@@ -453,10 +455,11 @@ export default class QueryEditorUI extends Component<Props, State> {
                       {this.getQueryString()}
                     </EuiTextArea>
                   </div>
-                  <QueryLanguageSwitcher
+                  <QueryLanguageSelector
                     language={this.props.query.language}
                     anchorPosition={this.props.languageSwitcherPopoverAnchorPosition}
                     onSelectLanguage={this.onSelectLanguage}
+                    appName={this.services.appName}
                   />
                 </EuiFlexItem>
               </EuiFlexGroup>
