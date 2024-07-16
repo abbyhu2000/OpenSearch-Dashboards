@@ -8,12 +8,11 @@ import { i18n } from '@osd/i18n';
 import React from 'react';
 import { getUiService } from '../../services';
 
-export interface QueryLanguageSelectorProps {
+interface Props {
   language: string;
   onSelectLanguage: (newLanguage: string) => void;
   anchorPosition?: PopoverAnchorPosition;
   appName?: string;
-  languageSelectorContainerRef?: React.RefCallback<HTMLDivElement>;
 }
 
 const mapExternalLanguageToOptions = (language: string) => {
@@ -23,8 +22,9 @@ const mapExternalLanguageToOptions = (language: string) => {
   };
 };
 
-export const QueryLanguageSelector = (props: QueryLanguageSelectorProps) => {
-  const ref = React.createRef<HTMLDivElement>();
+// This is the expansion button, and containerRef(dataset selector),
+// language actions, query actions
+export const QueryEditorHeader = (props: Props) => {
   const dqlLabel = i18n.translate('data.query.queryEditor.dqlLanguageName', {
     defaultMessage: 'DQL',
   });
@@ -75,22 +75,16 @@ export const QueryLanguageSelector = (props: QueryLanguageSelectorProps) => {
   uiService.Settings.setUserQueryLanguage(props.language);
 
   return (
-    <div ref={props.languageSelectorContainerRef}>
-      <EuiComboBox
-        fullWidth
-        className="languageSelector"
-        data-test-subj="languageSelector"
-        options={languageOptions}
-        selectedOptions={[selectedLanguage]}
-        onChange={handleLanguageChange}
-        singleSelection={{ asPlainText: true }}
-        isClearable={false}
-        async
-      />
-    </div>
+    <EuiComboBox
+      fullWidth
+      className="languageSelector"
+      data-test-subj="languageSelector"
+      options={languageOptions}
+      selectedOptions={[selectedLanguage]}
+      onChange={handleLanguageChange}
+      singleSelection={{ asPlainText: true }}
+      isClearable={false}
+      async
+    />
   );
 };
-
-// Needed for React.lazy
-// eslint-disable-next-line import/no-default-export
-export default QueryLanguageSelector;

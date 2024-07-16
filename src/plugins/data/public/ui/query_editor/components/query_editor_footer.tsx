@@ -8,12 +8,11 @@ import { i18n } from '@osd/i18n';
 import React from 'react';
 import { getUiService } from '../../services';
 
-export interface QueryLanguageSelectorProps {
+interface Props {
   language: string;
   onSelectLanguage: (newLanguage: string) => void;
   anchorPosition?: PopoverAnchorPosition;
   appName?: string;
-  languageSelectorContainerRef?: React.RefCallback<HTMLDivElement>;
 }
 
 const mapExternalLanguageToOptions = (language: string) => {
@@ -23,8 +22,10 @@ const mapExternalLanguageToOptions = (language: string) => {
   };
 };
 
-export const QueryLanguageSelector = (props: QueryLanguageSelectorProps) => {
-  const ref = React.createRef<HTMLDivElement>();
+// footer container ref: language selector, line count, timestamp fields,
+// errors, feedbacks(ref from query enhancement plugin), shortcuts
+// all the above are registerable by language
+export const QueryEditorFooter = (props: Props) => {
   const dqlLabel = i18n.translate('data.query.queryEditor.dqlLanguageName', {
     defaultMessage: 'DQL',
   });
@@ -75,7 +76,7 @@ export const QueryLanguageSelector = (props: QueryLanguageSelectorProps) => {
   uiService.Settings.setUserQueryLanguage(props.language);
 
   return (
-    <div ref={props.languageSelectorContainerRef}>
+    <div>
       <EuiComboBox
         fullWidth
         className="languageSelector"
@@ -90,7 +91,3 @@ export const QueryLanguageSelector = (props: QueryLanguageSelectorProps) => {
     </div>
   );
 };
-
-// Needed for React.lazy
-// eslint-disable-next-line import/no-default-export
-export default QueryLanguageSelector;

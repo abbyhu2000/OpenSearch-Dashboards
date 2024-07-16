@@ -60,8 +60,9 @@ export interface QueryEditorExtensionConfig {
    * @returns The component the query editor extension.
    */
   getBanner?: (dependencies: QueryEditorExtensionDependencies) => React.ReactElement | null;
-}
 
+  getFooter?: (dependencies: QueryEditorExtensionDependencies) => React.ReactElement | null;
+}
 const QueryEditorExtensionPortal: React.FC<{ container: Element }> = (props) => {
   if (!props.children) return null;
 
@@ -85,6 +86,11 @@ export const QueryEditorExtension: React.FC<QueryEditorExtensionProps> = (props)
     props.dependencies,
   ]);
 
+  const footer = useMemo(() => props.config.getFooter?.(props.dependencies), [
+    props.config,
+    props.dependencies,
+  ]);
+
   useEffect(() => {
     isMounted.current = true;
     return () => {
@@ -99,6 +105,10 @@ export const QueryEditorExtension: React.FC<QueryEditorExtensionProps> = (props)
     return () => subscription.unsubscribe();
   }, [props.dependencies, props.config]);
 
+  console.log('isEnabled', isEnabled);
+  console.log('props.config', props.config);
+  console.log('banner', props.bannerContainer, banner);
+  console.log('component', props.componentContainer, component);
   if (!isEnabled) return null;
 
   return (
