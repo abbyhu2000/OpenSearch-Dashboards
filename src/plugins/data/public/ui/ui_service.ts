@@ -9,7 +9,7 @@ import { IStorageWrapper } from '../../../opensearch_dashboards_utils/public';
 import { ConfigSchema } from '../../config';
 import { DataPublicPluginStart } from '../types';
 import { createIndexPatternSelect } from './index_pattern_select';
-import { QueryEditorExtensionConfig } from './query_editor';
+import { QueryEditorExtensionConfig, QueryLanguageSelector } from './query_editor';
 import { createSearchBar } from './search_bar/create_search_bar';
 import { createSettings } from './settings';
 import { SuggestionsComponent } from './typeahead';
@@ -30,7 +30,9 @@ export class UiService implements Plugin<IUiSetup, IUiStart> {
   private queryEnhancements: Map<string, QueryEnhancement> = new Map();
   private queryEditorExtensionMap: Record<string, QueryEditorExtensionConfig> = {};
   private dataSourceContainer$ = new BehaviorSubject<HTMLDivElement | null>(null);
+  private dataSourceFooter$ = new BehaviorSubject<HTMLDivElement | null>(null);
   private container$ = new BehaviorSubject<HTMLDivElement | null>(null);
+  private languageSelectorContainer$ = new BehaviorSubject<HTMLDivElement | null>(null);
 
   constructor(initializerContext: PluginInitializerContext<ConfigSchema>) {
     const { enhancements } = initializerContext.config.get<ConfigSchema>();
@@ -71,6 +73,10 @@ export class UiService implements Plugin<IUiSetup, IUiStart> {
       this.container$.next(ref);
     };
 
+    const setLanguageSelectorContainerRef = (ref: HTMLDivElement | null) => {
+      this.languageSelectorContainer$.next(ref);
+    };
+
     const SearchBar = createSearchBar({
       core,
       data: dataServices,
@@ -78,14 +84,18 @@ export class UiService implements Plugin<IUiSetup, IUiStart> {
       settings: Settings,
       setDataSourceContainerRef,
       setContainerRef,
+      setLanguageSelectorContainerRef,
     });
 
     return {
       IndexPatternSelect: createIndexPatternSelect(core.savedObjects.client),
       SearchBar,
       SuggestionsComponent,
+      QueryLanguageSelector,
+      languageSelectorContainer$: this.languageSelectorContainer$,
       Settings,
       dataSourceContainer$: this.dataSourceContainer$,
+      dataSourceFooter$: this.dataSourceFooter$,
       container$: this.container$,
     };
   }

@@ -60,8 +60,9 @@ export interface QueryEditorExtensionConfig {
    * @returns The component the query editor extension.
    */
   getBanner?: (dependencies: QueryEditorExtensionDependencies) => React.ReactElement | null;
-}
 
+  getFooter?: (dependencies: QueryEditorExtensionDependencies) => React.ReactElement | null;
+}
 const QueryEditorExtensionPortal: React.FC<{ container: Element }> = (props) => {
   if (!props.children) return null;
 
@@ -81,6 +82,11 @@ export const QueryEditorExtension: React.FC<QueryEditorExtensionProps> = (props)
   ]);
 
   const component = useMemo(() => props.config.getComponent?.(props.dependencies), [
+    props.config,
+    props.dependencies,
+  ]);
+
+  const footer = useMemo(() => props.config.getFooter?.(props.dependencies), [
     props.config,
     props.dependencies,
   ]);
