@@ -30,6 +30,8 @@ interface DiscoverChartProps {
   showResetButton?: boolean;
   isTimeBased?: boolean;
   services: DiscoverServices;
+  isEnhancementsEnabled: boolean;
+  discoverOptions: any;
 }
 
 export const DiscoverChart = ({
@@ -42,6 +44,8 @@ export const DiscoverChart = ({
   isTimeBased,
   services,
   showResetButton = false,
+  isEnhancementsEnabled,
+  discoverOptions,
 }: DiscoverChartProps) => {
   const { refetch$ } = useDiscoverContext();
   const { from, to } = data.query.timefilter.timefilter.getTime();
@@ -66,27 +70,52 @@ export const DiscoverChart = ({
     [data]
   );
 
+  const hitsCounter = (
+    <div className="dscChart__hitsCounter">
+      <HitsCounter
+        hits={hits > 0 ? hits : 0}
+        showResetButton={showResetButton}
+        onResetQuery={resetQuery}
+      />
+    </div>
+  );
+
+  const timeChartHeader = (
+    <div className="dscChart__TimechartHeader">
+      <TimechartHeader
+        bucketInterval={bucketInterval}
+        dateFormat={config.get('dateFormat')}
+        timeRange={timeRange}
+        options={search.aggs.intervalOptions}
+        onChangeInterval={onChangeInterval}
+        stateInterval={interval || ''}
+      />
+    </div>
+  );
+
+  const queryEnhancedHistogramHeader = (
+    <EuiFlexGroup direction="row" gutterSize="none">
+      <EuiFlexItem grow={false}>{hitsCounter}</EuiFlexItem>
+      <EuiFlexItem grow={false}>{isTimeBased && timeChartHeader}</EuiFlexItem>
+      <EuiFlexItem grow={false}>{discoverOptions}</EuiFlexItem>
+    </EuiFlexGroup>
+  );
+
+  const histogramHeader = (
+    <EuiFlexGroup direction="column" gutterSize="none">
+      <EuiFlexItem grow={false}>{hitsCounter}</EuiFlexItem>
+      <EuiFlexItem grow={false}>{isTimeBased && timeChartHeader}</EuiFlexItem>
+      <EuiFlexItem grow={false}>{discoverOptions}</EuiFlexItem>
+    </EuiFlexGroup>
+  );
+
   return (
-    <EuiFlexGroup direction="column" gutterSize="none" className="dscChart__wrapper">
-      <EuiFlexItem grow={false} className="dscChart__hitsCounter">
-        <HitsCounter
-          hits={hits > 0 ? hits : 0}
-          showResetButton={showResetButton}
-          onResetQuery={resetQuery}
-        />
-      </EuiFlexItem>
-      {isTimeBased && (
-        <EuiFlexItem className="dscChart__TimechartHeader">
-          <TimechartHeader
-            bucketInterval={bucketInterval}
-            dateFormat={config.get('dateFormat')}
-            timeRange={timeRange}
-            options={search.aggs.intervalOptions}
-            onChangeInterval={onChangeInterval}
-            stateInterval={interval || ''}
-          />
-        </EuiFlexItem>
-      )}
+    <EuiFlexGroup
+      direction="column"
+      gutterSize="none"
+      className={isEnhancementsEnabled ? 'dscChart__wrapper' : ''}
+    >
+      {isEnhancementsEnabled ? queryEnhancedHistogramHeader : histogramHeader}
       {isTimeBased && chartData && (
         <EuiFlexItem grow={false}>
           <section
