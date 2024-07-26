@@ -67,7 +67,7 @@ export const DiscoverChart = ({
   );
 
   return (
-    <EuiFlexGroup direction="column" gutterSize="none">
+    <EuiFlexGroup direction="column" gutterSize="none" className="dscChart__wrapper">
       <EuiFlexItem grow={false} className="dscChart__hitsCounter">
         <HitsCounter
           hits={hits > 0 ? hits : 0}

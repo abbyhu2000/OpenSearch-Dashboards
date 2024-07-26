@@ -193,11 +193,11 @@ export default function DiscoverCanvas({ setHeaderActionMenu, history, optionalR
       )}
       {fetchState.status === ResultStatus.LOADING && <LoadingSpinner />}
       {fetchState.status === ResultStatus.READY && (
-        <EuiPanel hasShadow={false} paddingSize="none" className="dscCanvas_results">
+        <>
           <MemoizedDiscoverChartContainer {...fetchState} />
           <MemoizedDiscoverTable rows={rows} scrollToTop={scrollToTop} />
           <DiscoverOptions />
-        </EuiPanel>
+        </>
       )}
     </EuiPanel>
   );
