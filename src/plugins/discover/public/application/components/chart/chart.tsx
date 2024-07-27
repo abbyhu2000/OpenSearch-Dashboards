@@ -5,10 +5,10 @@
 
 import './_histogram.scss';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import moment from 'moment';
 import dateMath from '@elastic/datemath';
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui';
 import { i18n } from '@osd/i18n';
 import { IUiSettingsClient } from 'opensearch-dashboards/public';
 import { DataPublicPluginStart, search } from '../../../../../data/public';
@@ -69,6 +69,7 @@ export const DiscoverChart = ({
     },
     [data]
   );
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const hitsCounter = (
     <div className="dscChart__hitsCounter">
@@ -93,8 +94,26 @@ export const DiscoverChart = ({
     </div>
   );
 
+  const toggleLabel = i18n.translate('queryEditor.collapse', {
+    defaultMessage: 'Toggle query editor',
+  });
+
+  const toggle = (
+    <EuiToolTip content={toggleLabel}>
+      <EuiButtonIcon
+        aria-expanded={!isCollapsed}
+        aria-label={toggleLabel}
+        data-test-subj="queryEditorCollapseBtn"
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        iconType={!isCollapsed ? 'arrowRight' : 'arrowDown'}
+        iconSize={'s'}
+      />
+    </EuiToolTip>
+  );
+
   const queryEnhancedHistogramHeader = (
-    <EuiFlexGroup direction="row" gutterSize="none">
+    <EuiFlexGroup direction="row" gutterSize="m">
+      <EuiFlexItem grow={false}>{toggle}</EuiFlexItem>
       <EuiFlexItem grow={false}>{hitsCounter}</EuiFlexItem>
       <EuiFlexItem grow={false}>{isTimeBased && timeChartHeader}</EuiFlexItem>
       <EuiFlexItem grow={false}>{discoverOptions}</EuiFlexItem>
@@ -102,12 +121,14 @@ export const DiscoverChart = ({
   );
 
   const histogramHeader = (
-    <EuiFlexGroup direction="column" gutterSize="none">
+    <EuiFlexGroup direction="column" gutterSize="xs">
       <EuiFlexItem grow={false}>{hitsCounter}</EuiFlexItem>
       <EuiFlexItem grow={false}>{isTimeBased && timeChartHeader}</EuiFlexItem>
       <EuiFlexItem grow={false}>{discoverOptions}</EuiFlexItem>
     </EuiFlexGroup>
   );
+
+  const showHistogram = !isEnhancementsEnabled || isCollapsed;
 
   return (
     <EuiFlexGroup
@@ -116,7 +137,7 @@ export const DiscoverChart = ({
       className={isEnhancementsEnabled ? 'dscChart__wrapper' : ''}
     >
       {isEnhancementsEnabled ? queryEnhancedHistogramHeader : histogramHeader}
-      {isTimeBased && chartData && (
+      {isTimeBased && chartData && showHistogram && (
         <EuiFlexItem grow={false}>
           <section
             aria-label={i18n.translate('discover.histogramOfFoundDocumentsAriaLabel', {
