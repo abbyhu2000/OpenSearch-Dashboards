@@ -41,6 +41,8 @@ export const TopNav = ({ opts, showSaveQuery, isEnhancementsEnabled }: TopNavPro
   const state = useSelector((s) => s.discover);
   const dispatch = useDispatch();
 
+  console.log('inspectors', inspectorAdapters);
+
   const {
     navigation: {
       ui: { TopNavMenu },

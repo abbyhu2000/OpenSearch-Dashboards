@@ -22,6 +22,7 @@ import { SimpleDataSet } from '../../../common';
 import { createDQLEditor, createDefaultEditor } from './editors';
 import { getQueryService, getIndexPatterns } from '../../services';
 import { RecentQuery } from '../history/recent_query';
+import { useSearch } from '../../../../discover/public';
 
 const LANGUAGE_ID_SQL = 'SQL';
 monaco.languages.register({ id: LANGUAGE_ID_SQL });
@@ -310,6 +311,15 @@ export default class QueryEditorUI extends Component<Props, State> {
 
     const queryEnhancements = this.queryService.queryString.getQueryEnhancement();
     console.log('queryEnhancements', queryEnhancements);
+
+    //const { data$, refetch$ } = useSearch(this.services);
+    // useEffect(() => {
+    //   const subscription = data$.subscribe((d) => {
+    //     // do something with the data
+    //   });
+    //   return () => subscription.unsubscribe();
+    // }, [data$]);
+
     const languageSelector = (
       <QueryLanguageSelector
         language={this.props.query.language}

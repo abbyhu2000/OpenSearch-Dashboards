@@ -175,11 +175,14 @@ export const useSearch = (services: DiscoverViewServices) => {
         withLongNumeralsSupport: true,
       });
 
-      inspectorRequest
-        .stats(getResponseInspectorStats(fetchResp, searchSource))
-        .ok({ json: fetchResp });
+      const stats = getResponseInspectorStats(fetchResp, searchSource);
+      console.log('stats', stats);
+
+      inspectorRequest.stats(stats).ok({ json: fetchResp });
+
       const hits = fetchResp.hits.total as number;
       const rows = fetchResp.hits.hits;
+
       let bucketInterval = {};
       let chartData;
       for (const row of rows) {

@@ -40,3 +40,5 @@ export { SavedSearch, SavedSearchLoader, createSavedSearchesLoader } from './sav
 
 export { ISearchEmbeddable, SEARCH_EMBEDDABLE_TYPE, SearchInput } from './embeddable';
 export { DISCOVER_APP_URL_GENERATOR, DiscoverUrlGeneratorState } from './url_generator';
+
+export { useSearch } from './application/view_components';

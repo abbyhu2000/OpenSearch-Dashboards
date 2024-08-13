@@ -140,7 +140,7 @@ export const fetchDataFrame = (
 ) => {
   const { http, path, signal } = context;
   const body = JSON.stringify({ query: { qs: queryString, format: 'jdbc' }, df });
-  return from(
+  const result = from(
     http.fetch({
       method: 'POST',
       path,
@@ -148,6 +148,8 @@ export const fetchDataFrame = (
       signal,
     })
   ).pipe(tap(handleDataFrameError));
+  console.log('result', result);
+  return result;
 };
 
 export const fetchDataFramePolling = (context: FetchDataFrameContext, df: IDataFrame) => {

@@ -29,6 +29,7 @@
  */
 
 import { NameList } from 'elasticsearch';
+import { RequestStatistics } from 'src/plugins/inspector';
 import { Filter, IDataFrame, IndexPattern, Query } from '../..';
 import { SearchSource } from './search_source';
 
@@ -52,6 +53,7 @@ export interface ISearchStartSearchSource {
    * creates empty {@link SearchSource}
    */
   createEmpty: () => ISearchSource;
+  getStats: () => RequestStatistics;
 }
 
 export type OpenSearchQuerySearchAfter = [string | number, string | number];

@@ -11,6 +11,7 @@ import {
   DATA_FRAME_TYPES,
   getRawDataFrame,
   getRawQueryString,
+  getResponseInspectorStats,
   SIMPLE_DATA_SET_TYPES,
 } from '../../../data/common';
 import {
@@ -51,6 +52,7 @@ export class SQLSearchInterceptor extends SearchInterceptor {
     signal?: AbortSignal,
     strategy?: string
   ): Observable<IOpenSearchDashboardsSearchResponse> {
+    console.log('request', request);
     const { id, ...searchRequest } = request;
     const dfContext: FetchDataFrameContext = {
       http: this.deps.http,
@@ -77,6 +79,7 @@ export class SQLSearchInterceptor extends SearchInterceptor {
     if (!dataFrame.schema) {
       return fetchDataFrame(dfContext, queryString, dataFrame).pipe(
         concatMap((response) => {
+          console.log('response', response);
           const df = response.body;
           if (df.error) {
             const jsError = new Error(df.error.response);

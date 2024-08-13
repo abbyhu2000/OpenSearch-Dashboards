@@ -123,6 +123,7 @@ class SearchBarUI extends Component<SearchBarProps, State> {
   private savedQueryService = this.services.data.query.savedQueries;
   private dataSetService = this.services.data.query.dataSetManager;
   private queryStringService = this.services.data.query.queryString;
+  private searchSource = this.services.data.search;
   public filterBarRef: Element | null = null;
   public filterBarWrapperRef: Element | null = null;
 
@@ -422,6 +423,7 @@ class SearchBarUI extends Component<SearchBarProps, State> {
     );
     this.props.settings?.setUserQueryEnhancementsEnabled(isEnhancementsEnabledOverride);
 
+    //const stats = this.searchSource.searchSource.getStats();
     const savedQueryManagement = this.state.query && this.props.onClearSavedQuery && (
       <SavedQueryManagementComponent
         showSaveQuery={this.props.showSaveQuery}

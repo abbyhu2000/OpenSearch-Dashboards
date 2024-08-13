@@ -99,6 +99,7 @@ import {
 import { IOpenSearchSearchRequest, IOpenSearchSearchResponse, ISearchOptions } from '../..';
 import { IOpenSearchDashboardsSearchRequest, IOpenSearchDashboardsSearchResponse } from '../types';
 import { ISearchSource, SearchSourceOptions, SearchSourceFields } from './types';
+import { RequestStatistics } from '../../../../inspector';
 import {
   FetchHandlers,
   RequestFailure,
@@ -165,6 +166,7 @@ export class SearchSource {
   public history: SearchRequest[] = [];
   private fields: SearchSourceFields;
   private readonly dependencies: SearchSourceDependencies;
+  public stats: RequestStatistics = {};
 
   constructor(fields: SearchSourceFields = {}, dependencies: SearchSourceDependencies) {
     this.fields = fields;
@@ -174,6 +176,14 @@ export class SearchSource {
   /** ***
    * PUBLIC API
    *****/
+
+  setStats = (stats: RequestStatistics) => {
+    this.stats = stats;
+  };
+
+  getStats = () => {
+    return this.stats;
+  };
 
   /**
    * internal, dont use
@@ -370,7 +380,7 @@ export class SearchSource {
     if ((response as any).error) {
       throw new RequestFailure(null, response);
     }
-
+    console.log('response in search source 3', response);
     return response;
   }
 
@@ -443,10 +453,13 @@ export class SearchSource {
 
     return search({ params }, options).then(async (response: any) => {
       if (response.hasOwnProperty('type')) {
+        console.log('response here 1', response);
         if ((response as IDataFrameResponse).type === DATA_FRAME_TYPES.DEFAULT) {
           const dataFrameResponse = response as IDataFrameResponse;
           await this.setDataFrame(dataFrameResponse.body as IDataFrame);
-          return onResponse(searchRequest, convertResult(response as IDataFrameResponse));
+          const Response = onResponse(searchRequest, convertResult(response as IDataFrameResponse));
+          console.log('Response in search source', Response);
+          return Response;
         }
         if ((response as IDataFrameResponse).type === DATA_FRAME_TYPES.ERROR) {
           const dataFrameError = response as IDataFrameError;
@@ -454,6 +467,7 @@ export class SearchSource {
         }
         // TODO: MQL else if data_frame_polling then poll for the data frame updating the df fields only
       }
+      console.log('response here 2', response);
       return onResponse(searchRequest, response.rawResponse);
     });
   }
