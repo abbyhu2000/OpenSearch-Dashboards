@@ -29,7 +29,11 @@
  */
 
 import { share } from 'rxjs/operators';
-import { IUiSettingsClient, SavedObjectsClientContract } from 'src/core/public';
+import {
+  IUiSettingsClient,
+  PluginInitializerContext,
+  SavedObjectsClientContract,
+} from 'src/core/public';
 import { FilterManager } from './filter_manager';
 import { createAddToQueryLog } from './lib';
 import { TimefilterService, TimefilterSetup } from './timefilter';
@@ -45,6 +49,7 @@ import {
 } from '../../common';
 import { getUiSettings } from '../services';
 import { IndexPattern } from '..';
+import { ConfigSchema } from '../../config';
 
 /**
  * Query Service
@@ -71,6 +76,8 @@ export class QueryService {
 
   state$!: ReturnType<typeof createQueryStateObservable>;
 
+  constructor(private initializerContext: PluginInitializerContext<ConfigSchema>) {}
+
   public setup({ storage, uiSettings }: QueryServiceSetupDependencies) {
     this.filterManager = new FilterManager(uiSettings);
 
@@ -80,7 +87,9 @@ export class QueryService {
       storage,
     });
 
-    this.queryStringManager = new QueryStringManager(storage, uiSettings);
+    const { enhancements: supportedAppNames } = this.initializerContext.config.get<ConfigSchema>();
+
+    this.queryStringManager = new QueryStringManager(storage, uiSettings, supportedAppNames);
     this.dataSetManager = new DataSetManager(uiSettings);
 
     this.state$ = createQueryStateObservable({

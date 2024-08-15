@@ -33,17 +33,22 @@ import { skip } from 'rxjs/operators';
 import { CoreStart } from 'opensearch-dashboards/public';
 import { DataStorage, Query, SimpleDataSet, TimeRange, UI_SETTINGS } from '../../../common';
 import { createHistory, QueryHistory } from './query_history';
+import { LanguageManager } from './language_manager/language_manager';
+import { ConfigSchema } from '../../../config';
 
 export class QueryStringManager {
   private query$: BehaviorSubject<Query>;
   private queryHistory: QueryHistory;
+  public languageManager: LanguageManager;
 
   constructor(
     private readonly storage: DataStorage,
-    private readonly uiSettings: CoreStart['uiSettings']
+    private readonly uiSettings: CoreStart['uiSettings'],
+    private readonly supportedAppNames: ConfigSchema['enhancements']
   ) {
     this.query$ = new BehaviorSubject<Query>(this.getDefaultQuery());
     this.queryHistory = createHistory({ storage });
+    this.languageManager = new LanguageManager(supportedAppNames);
   }
 
   private getDefaultQueryString() {
@@ -120,6 +125,10 @@ export class QueryStringManager {
 
   public changeQueryHistory(listener: (reqs: any[]) => void) {
     return this.queryHistory.change(listener);
+  }
+
+  public getLanguageManager() {
+    return this.languageManager;
   }
 }
 
