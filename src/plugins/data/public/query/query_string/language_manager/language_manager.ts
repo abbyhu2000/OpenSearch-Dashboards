@@ -7,7 +7,6 @@ import { BehaviorSubject } from 'rxjs';
 import { QueryEnhancement, UiEnhancements } from '../../../ui/types';
 import { QueryEditorExtensionConfig } from '../../../ui';
 import { ConfigSchema } from '../../../../config';
-import { ISearchStart } from '../../../search';
 import { DataStorage, setOverrides as setFieldOverrides } from '../../../../common';
 
 export interface DataSettings {
@@ -31,13 +30,12 @@ export class LanguageManager {
 
   constructor(
     private readonly config: ConfigSchema['enhancements'],
-    private readonly search: ISearchStart,
     private readonly storage: DataStorage
   ) {
     this.isEnabled = true;
     this.setUserQueryEnhancementsEnabled(this.isEnabled);
     this.enhancedAppNames = this.isEnabled ? this.config.supportedAppNames : [];
-    this.queryEnhancements = new Map<string, QueryEnhancement>({} as any);
+    this.queryEnhancements = new Map();
     this.queryEditorExtensionMap = {};
   }
 
@@ -100,16 +98,16 @@ export class LanguageManager {
   }
 
   setUserQueryLanguage(language: string) {
-    if (language !== this.getUserQueryLanguage()) {
-      this.search.df.clear();
-    }
+    // if (language !== this.getUserQueryLanguage()) {
+    //   this.search.df.clear();
+    // }
     this.storage.set('userQueryLanguage', language);
     const queryEnhancement = this.queryEnhancements.get(language);
-    this.search.__enhance({
-      searchInterceptor: queryEnhancement
-        ? queryEnhancement.search
-        : this.search.getDefaultSearchInterceptor(),
-    });
+    // this.search.__enhance({
+    //   searchInterceptor: queryEnhancement
+    //     ? queryEnhancement.search
+    //     : this.search.getDefaultSearchInterceptor(),
+    // });
     this.setUiOverridesByUserQueryLanguage(language);
 
     return true;

@@ -35,6 +35,7 @@ import { DataStorage, Query, SimpleDataSet, TimeRange, UI_SETTINGS } from '../..
 import { createHistory, QueryHistory } from './query_history';
 import { LanguageManager } from './language_manager/language_manager';
 import { ConfigSchema } from '../../../config';
+import { SearchService } from '../../search/search_service';
 
 export class QueryStringManager {
   private query$: BehaviorSubject<Query>;
@@ -48,7 +49,7 @@ export class QueryStringManager {
   ) {
     this.query$ = new BehaviorSubject<Query>(this.getDefaultQuery());
     this.queryHistory = createHistory({ storage });
-    this.languageManager = new LanguageManager(supportedAppNames);
+    this.languageManager = new LanguageManager(this.supportedAppNames, this.storage);
   }
 
   private getDefaultQueryString() {
