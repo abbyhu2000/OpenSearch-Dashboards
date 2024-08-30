@@ -39,6 +39,7 @@ export enum ResultStatus {
   LOADING = 'loading', // initial data load
   READY = 'ready', // results came back
   NO_RESULTS = 'none', // no results came back
+  ERROR = 'error', // error occurred
 }
 
 export interface SearchData {
@@ -50,6 +51,8 @@ export interface SearchData {
   bucketInterval?: TimechartHeaderBucketInterval | {};
   chartData?: Chart;
   title?: string;
+  errorMsg?: any;
+  queryTime?: number;
 }
 
 export type SearchRefetch = 'refetch' | undefined;
@@ -149,6 +152,8 @@ export const useSearch = (services: DiscoverViewServices) => {
 
     dataset = searchSource.getField('index');
 
+    let queryTime;
+
     try {
       // Only show loading indicator if we are fetching when the rows are empty
       if (fetchStateRef.current.rows?.length === 0) {
@@ -180,6 +185,9 @@ export const useSearch = (services: DiscoverViewServices) => {
         .ok({ json: fetchResp });
       const hits = fetchResp.hits.total as number;
       const rows = fetchResp.hits.hits;
+      //setQueryTime(inspectorRequest.getTime());
+      //console.log('queryTime', queryTime);
+      queryTime = inspectorRequest.getTime();
       let bucketInterval = {};
       let chartData;
       for (const row of rows) {
@@ -216,17 +224,25 @@ export const useSearch = (services: DiscoverViewServices) => {
           indexPattern?.title !== searchSource.getDataFrame()?.name
             ? searchSource.getDataFrame()?.name
             : indexPattern?.title,
+        queryTime,
       });
     } catch (error) {
       // If the request was aborted then no need to surface this error in the UI
       if (error instanceof Error && error.name === 'AbortError') return;
 
       data$.next({
-        status: ResultStatus.NO_RESULTS,
-        rows: [],
+        status: ResultStatus.ERROR,
+        errorMsg: error.body || error,
+        title:
+          indexPattern?.title !== searchSource.getDataFrame()?.name
+            ? searchSource.getDataFrame()?.name
+            : indexPattern?.title,
+        queryTime,
       });
 
-      data.search.showError(error as Error);
+      console.log('error', error.body);
+
+      //data.search.showError((error.body || error) as Error);
     } finally {
       initalSearchComplete.current = true;
     }

@@ -211,6 +211,7 @@ export function createSearchBar({ core, storage, data }: StatefulSearchBarDeps) 
           datePickerRef={props.datePickerRef}
           isFilterBarPortable={props.isFilterBarPortable}
           {...overrideDefaultBehaviors(props)}
+          queryResult={props.queryResult}
         />
       </OpenSearchDashboardsContextProvider>
     );

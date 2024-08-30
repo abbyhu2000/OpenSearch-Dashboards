@@ -31,6 +31,7 @@
 import { EuiFlexGroup, EuiFlexItem, EuiHeaderLinks, EuiText } from '@elastic/eui';
 import classNames from 'classnames';
 import React, { ReactElement, useRef } from 'react';
+import { BehaviorSubject } from 'rxjs';
 
 import { MountPoint } from '../../../../core/public';
 import {
@@ -42,6 +43,7 @@ import { DataSourceMenuProps, createDataSourceMenu } from '../../../data_source_
 import { MountPointPortal } from '../../../opensearch_dashboards_react/public';
 import { TopNavMenuData } from './top_nav_menu_data';
 import { TopNavMenuItem } from './top_nav_menu_item';
+import { SearchData } from '../../../discover/public';
 
 export enum TopNavMenuItemRenderType {
   IN_PORTAL = 'in_portal',
@@ -82,6 +84,7 @@ export type TopNavMenuProps = Omit<StatefulSearchBarProps, 'showDatePicker'> &
      * ```
      */
     setMenuMountPoint?: (menuMount: MountPoint | undefined) => void;
+    queryResult?: SearchData;
   };
 
 /*
@@ -102,6 +105,7 @@ export function TopNavMenu(props: TopNavMenuProps): ReactElement | null {
     dataSourceMenuConfig,
     groupActions,
     screenTitle,
+    queryResult,
     ...searchBarProps
   } = props;
 
@@ -156,6 +160,7 @@ export function TopNavMenu(props: TopNavMenuProps): ReactElement | null {
       <SearchBar
         {...searchBarProps}
         showDatePicker={![TopNavMenuItemRenderType.OMITTED, false].includes(showDatePicker!)}
+        queryResult={queryResult}
         {...overrides}
       />
     );

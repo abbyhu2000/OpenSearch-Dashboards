@@ -10,6 +10,7 @@ import {
   DATA_FRAME_TYPES,
   IDataFrameError,
   IDataFrameResponse,
+  IDataFrameResponseError,
   IDataFrameWithAggs,
   IOpenSearchDashboardsSearchRequest,
   Query,
@@ -41,11 +42,9 @@ export const pplSearchStrategyProvider = (
         const rawResponse: any = await pplFacet.describeQuery(context, request);
 
         if (!rawResponse.success) {
-          return {
-            type: DATA_FRAME_TYPES.ERROR,
-            body: { error: rawResponse.data },
-            took: rawResponse.took,
-          } as IDataFrameError;
+          const error = new Error(rawResponse.data.body);
+          error.name = rawResponse.data.status;
+          throw error;
         }
 
         const dataFrame = createDataFrame({
@@ -79,7 +78,7 @@ export const pplSearchStrategyProvider = (
           took: rawResponse.took,
         } as IDataFrameResponse;
       } catch (e) {
-        logger.error(`pplSearchStrategy: ${e.message}`);
+        logger.error(`pplSearchStrategy: ${e}`);
         if (usage) usage.trackError();
         throw e;
       }
