@@ -360,7 +360,12 @@ export const QueryEditorUI: React.FC<Props> = (props) => {
         <EuiText size="xs" color="subdued" className="queryEditor__footerItem">
           {`${lineCount ?? 1} ${lineCount === 1 || !lineCount ? 'line' : 'lines'}`}
         </EuiText>,
-        <EuiText size="xs" color="subdued" className="queryEditor__footerItem">
+        <EuiText
+          size="xs"
+          color="subdued"
+          className="queryEditor__footerItem"
+          data-test-subj="queryEditorFooterTimestamp"
+        >
           {props.query.dataset?.timeFieldName || ''}
         </EuiText>,
         <QueryResult queryStatus={props.queryStatus!} />,
