@@ -16,6 +16,7 @@ import {
   getVisualizationType,
   VisualizationTypeResult,
   useVisualizationRegistry,
+  AllChartStyleControls,
 } from './utils/use_visualization_types';
 
 import './visualization_container.scss';
@@ -37,7 +38,7 @@ export const VisualizationContainer = ({ rows, fieldSchema }: SearchData) => {
   );
 
   const [expression, setExpression] = useState<string>();
-  const [styleOptions, setStyleOptions] = useState<LineChartStyleControls | undefined>(undefined);
+  const [styleOptions, setStyleOptions] = useState<AllChartStyleControls | undefined>(undefined);
   const [searchContext, setSearchContext] = useState<IExpressionLoaderParams['searchContext']>({
     query: queryString.getQuery(),
     filters: filterManager.getFilters(),
@@ -49,6 +50,7 @@ export const VisualizationContainer = ({ rows, fieldSchema }: SearchData) => {
   useEffect(() => {
     if (fieldSchema) {
       const result = getVisualizationType(rows, fieldSchema);
+      console.log('result', result);
       if (result) {
         setVisualizationData({ ...result });
 
@@ -107,6 +109,7 @@ export const VisualizationContainer = ({ rows, fieldSchema }: SearchData) => {
         visualizationData.dateColumns,
         styleOptions
       );
+      console.log('exp', exp);
       setExpression(exp);
     }
 
@@ -138,7 +141,7 @@ export const VisualizationContainer = ({ rows, fieldSchema }: SearchData) => {
     };
   }, [queryString, services.data.query.state$]);
 
-  const handleStyleChange = (newOptions: Partial<LineChartStyleControls>) => {
+  const handleStyleChange = (newOptions: Partial<AllChartStyleControls>) => {
     if (styleOptions) {
       setStyleOptions({ ...styleOptions, ...newOptions });
     }
