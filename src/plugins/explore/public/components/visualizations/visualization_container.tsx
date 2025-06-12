@@ -10,7 +10,7 @@ import { useDiscoverContext } from '../../application/legacy/discover/applicatio
 
 import { SearchData } from '../../application/legacy/discover/application/view_components/utils';
 import { IExpressionLoaderParams } from '../../../../expressions/public';
-import { LineChartStyleControls } from './line/line_vis_config';
+
 import { Visualization } from './visualization';
 import {
   getVisualizationType,
@@ -50,7 +50,6 @@ export const VisualizationContainer = ({ rows, fieldSchema }: SearchData) => {
   useEffect(() => {
     if (fieldSchema) {
       const result = getVisualizationType(rows, fieldSchema);
-      console.log('result', result);
       if (result) {
         setVisualizationData({ ...result });
 
@@ -109,7 +108,6 @@ export const VisualizationContainer = ({ rows, fieldSchema }: SearchData) => {
         visualizationData.dateColumns,
         styleOptions
       );
-      console.log('exp', exp);
       setExpression(exp);
     }
 
