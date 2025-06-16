@@ -19,6 +19,7 @@ import {
   createThreeMetricOneCateScatter,
 } from './scatter/to_expression';
 import { createSingleMetric } from './metric/to_expression';
+import { createBarSpec } from './bar/to_expression';
 
 // The file contains visualization rules for different scenarios solely based on the number of metrics, categories, and dates fields.
 // Each rule can be mapped to multiple chart types with different priorities.
@@ -234,12 +235,11 @@ const oneMetricTwoCateRule: VisualizationRule = {
 const oneMetricOneCateRule: VisualizationRule = {
   id: 'one-metric-one-category',
   name: 'one metric and one category',
-  description: 'Heatmap for one metric and one category',
+  description: 'Bar chart for one metric and one category',
   matches: (numerical, categorical, date) =>
     numerical.length === 1 && date.length === 0 && categorical.length === 1,
   chartTypes: [
-    // TODO: when bar is implemented, bar will take higher priority
-    // { type: 'bar', priority: 100, name: 'Bar Chart' },
+    { type: 'bar', priority: 100, name: 'Bar Chart' },
     { type: 'pie', priority: 80, name: 'Pie Chart' },
     { type: 'line', priority: 60, name: 'Line Chart' },
     { type: 'area', priority: 40, name: 'Area Chart' },
@@ -262,7 +262,13 @@ const oneMetricOneCateRule: VisualizationRule = {
           styleOptions
         );
       case 'bar':
-        // TODO: Implement bar chart creation
+        return createBarSpec(
+          transformedData,
+          numericalColumns,
+          categoricalColumns,
+          dateColumns,
+          styleOptions
+        );
         return;
       case 'line':
         // TODO: Implement area chart creation

@@ -10,6 +10,7 @@ import { createMetricConfig } from './metric/metric_vis_config';
 import { createPieConfig } from './pie/pie_vis_config';
 import { ALL_VISUALIZATION_RULES } from './rule_repository';
 import { ChartTypeMapping, VisColumn, VisFieldType, VisualizationRule } from './types';
+import { createBarConfig } from './bar/bar_vis_config';
 
 /**
  * Registry for visualization rules and configurations.
@@ -93,6 +94,8 @@ export class VisualizationRegistry {
         return createScatterConfig();
       case 'metric':
         return createMetricConfig();
+      case 'bar':
+        return createBarConfig();
       // TODO: Add other chart types' configs here
       default:
         return;

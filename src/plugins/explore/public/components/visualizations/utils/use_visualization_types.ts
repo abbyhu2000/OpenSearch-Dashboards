@@ -15,11 +15,13 @@ import { OPENSEARCH_FIELD_TYPES, OSD_FIELD_TYPES } from '../../../../../data/com
 import { ChartTypeMapping, VisColumn, VisFieldType } from '../types';
 import { visualizationRegistry } from '../visualization_registry';
 import { useOpenSearchDashboards } from '../../../../../opensearch_dashboards_react/public';
-import { DiscoverViewServices } from '../../../application/legacy/discover/build_services';
+import { BarChartStyleControls } from '../bar/bar_vis_config';
+import { ExploreServices } from '../../../types';
 
 export type AllChartStyleControls =
   | LineChartStyleControls
   | PieChartStyleControls
+  | BarChartStyleControls
   | MetricChartStyleControls
   | HeatmapChartStyleControls
   | ScatterChartStyleControls;
@@ -137,7 +139,7 @@ export const getVisualizationType = <T = unknown>(
  * Hook to get the visualization registry from the service
  */
 export const useVisualizationRegistry = () => {
-  const { services } = useOpenSearchDashboards<DiscoverViewServices>();
+  const { services } = useOpenSearchDashboards<ExploreServices>();
 
   // If the service is available, use it, otherwise fall back to the singleton
   return services.visualizationRegistry?.getRegistry() || visualizationRegistry;
