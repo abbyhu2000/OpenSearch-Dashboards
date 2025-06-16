@@ -141,7 +141,7 @@ export const VisualizationContainer = ({ rows, fieldSchema }: SearchData) => {
 
   const handleStyleChange = (newOptions: Partial<AllChartStyleControls>) => {
     if (styleOptions) {
-      setStyleOptions({ ...styleOptions, ...newOptions });
+      setStyleOptions({ ...styleOptions, ...newOptions } as AllChartStyleControls);
     }
   };
 
