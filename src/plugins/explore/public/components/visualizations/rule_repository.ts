@@ -19,7 +19,7 @@ import {
   createThreeMetricOneCateScatter,
 } from './scatter/to_expression';
 import { createSingleMetric } from './metric/to_expression';
-import { createBarSpec } from './bar/to_expression';
+import { createBarSpec, createStackedBarSpec } from './bar/to_expression';
 
 // The file contains visualization rules for different scenarios solely based on the number of metrics, categories, and dates fields.
 // Each rule can be mapped to multiple chart types with different priorities.
@@ -219,7 +219,54 @@ const oneMetricTwoCateRule: VisualizationRule = {
   description: 'Heatmap for one metric and two category',
   matches: (numerical, categorical, date) =>
     numerical.length === 1 && date.length === 0 && categorical.length === 2,
-  chartTypes: [{ type: 'heatmap', priority: 100, name: 'Heatmap' }],
+  chartTypes: [],
+  getChartTypes: (
+    transformedData,
+    numericalColumns = [],
+    categoricalColumns = [],
+    dateColumns = []
+  ) => {
+    // Count unique values in the numerical field
+    const numericalColumn = numericalColumns[0];
+    const numericalUniqueValues = new Set();
+
+    transformedData.forEach((row) => {
+      const value = row[numericalColumn.column]; // Using column property (e.g., field-0)
+      if (value !== undefined && value !== null) {
+        numericalUniqueValues.add(value);
+      }
+    });
+
+    // Count unique values in each categorical dimension
+    const categoricalUniqueValuesCounts = categoricalColumns.map((column) => {
+      const uniqueValues = new Set();
+      transformedData.forEach((row) => {
+        const value = row[column.column]; // Using column property (e.g., field-1)
+        if (value !== undefined && value !== null) {
+          uniqueValues.add(value);
+        }
+      });
+      return uniqueValues.size;
+    });
+
+    const hasHighCardinality =
+      numericalUniqueValues.size >= 7 || categoricalUniqueValuesCounts.some((count) => count >= 7);
+
+    // Set chart types based on the minimum unique values
+    if (hasHighCardinality) {
+      return [
+        { type: 'heatmap', priority: 100, name: 'Heatmap' },
+        { type: 'bar', priority: 80, name: 'Bar Chart' },
+        { type: 'area', priority: 60, name: 'Area Chart' },
+      ];
+    } else {
+      return [
+        { type: 'bar', priority: 100, name: 'Bar Chart' },
+        { type: 'heatmap', priority: 80, name: 'Heatmap' },
+        { type: 'area', priority: 60, name: 'Area Chart' },
+      ];
+    }
+  },
   toExpression: (
     transformedData,
     numericalColumns,
@@ -228,7 +275,22 @@ const oneMetricTwoCateRule: VisualizationRule = {
     styleOptions,
     chartType = 'heatmap'
   ) => {
-    return createRegularHeatmap(transformedData, numericalColumns, styleOptions);
+    switch (chartType) {
+      case 'heatmap':
+        return createRegularHeatmap(transformedData, numericalColumns, styleOptions);
+      case 'bar':
+        return createStackedBarSpec(
+          transformedData,
+          numericalColumns,
+          categoricalColumns,
+          styleOptions
+        );
+      case 'area':
+        // TODO: Implement stack area chart creation
+        return;
+      default:
+        return createRegularHeatmap(transformedData, numericalColumns, styleOptions);
+    }
   },
 };
 

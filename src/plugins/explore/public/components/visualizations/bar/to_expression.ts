@@ -30,15 +30,16 @@ export const createBarSpec = (
       tooltip: true,
     },
     encoding: {
-      x: {
+      // Y-axis: Categorical field (categories)
+      y: {
         field: categoryField,
         type: 'nominal',
         axis: {
           title: categoryName,
-          labelAngle: -45,
         },
       },
-      y: {
+      // X-axis: Numerical field (values)
+      x: {
         field: metricField,
         type: 'quantitative',
         axis: {
@@ -55,5 +56,71 @@ export const createBarSpec = (
     title: `${metricName} by ${categoryName}`,
     data: { values: transformedData },
     layer: layers,
+  };
+};
+
+export const createStackedBarSpec = (
+  transformedData: Array<Record<string, any>>,
+  numericalColumns: VisColumn[],
+  categoricalColumns: VisColumn[],
+  styles: Partial<BarChartStyleControls>
+): any => {
+  // Check if we have the required columns
+  if (numericalColumns.length === 0 || categoricalColumns.length < 2) {
+    throw new Error(
+      'Stacked bar chart requires at least one numerical column and two categorical columns'
+    );
+  }
+
+  const metricField = numericalColumns[0].column;
+  const categoryField1 = categoricalColumns[0].column; // Y-axis (categories)
+  const categoryField2 = categoricalColumns[1].column; // Color (stacking)
+
+  const metricName = numericalColumns[0].name;
+  const categoryName1 = categoricalColumns[0].name;
+  const categoryName2 = categoricalColumns[1].name;
+
+  return {
+    $schema: VEGASCHEMA,
+    title: `${metricName} by ${categoryName1} and ${categoryName2}`,
+    data: { values: transformedData },
+    mark: {
+      type: 'bar',
+      tooltip: true,
+    },
+    encoding: {
+      // Y-axis: First categorical field (categories)
+      y: {
+        field: categoryField1,
+        type: 'nominal',
+        axis: {
+          title: categoryName1,
+        },
+      },
+      // X-axis: Numerical field (values)
+      x: {
+        field: metricField,
+        type: 'quantitative',
+        axis: {
+          title: metricName,
+        },
+        stack: 'normalize', // Can be 'zero', 'normalize', or 'center'
+      },
+      // Color: Second categorical field (stacking)
+      color: {
+        field: categoryField2,
+        type: 'nominal',
+        legend: {
+          title: categoryName2,
+          orient: 'bottom',
+        },
+      },
+      // Optional: Add tooltip with all information
+      tooltip: [
+        { field: categoryField1, type: 'nominal', title: categoryName1 },
+        { field: categoryField2, type: 'nominal', title: categoryName2 },
+        { field: metricField, type: 'quantitative', title: metricName },
+      ],
+    },
   };
 };

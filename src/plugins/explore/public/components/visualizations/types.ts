@@ -25,6 +25,13 @@ export interface VisualizationRule {
     dateColumns: VisColumn[]
   ) => boolean;
   chartTypes: ChartTypeMapping[]; // Each rule can map to multiple chart types with priorities
+  getChartTypes?: (
+    // Optional function to dynamically determine chart types based on data
+    transformedData: Array<Record<string, any>>,
+    numericalColumns: VisColumn[],
+    categoricalColumns: VisColumn[],
+    dateColumns: VisColumn[]
+  ) => ChartTypeMapping[];
   toExpression?: (
     transformedData: Array<Record<string, any>>,
     numericalColumns: VisColumn[],

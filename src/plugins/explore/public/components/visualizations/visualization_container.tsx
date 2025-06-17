@@ -57,7 +57,6 @@ export const VisualizationContainer = ({ rows, fieldSchema }: Props) => {
     if (fieldSchema) {
       const result = getVisualizationType(rows, fieldSchema);
       if (result) {
-        console.debug('Visualization type result:', result);
         setVisualizationData({ ...result });
 
         // TODO: everytime the fields change, do we reset the chart type and its style options? P1: we will implement chart type selection persistence

@@ -27,14 +27,19 @@ export class VisualizationRegistry {
    * Get the matching visualization type based on the columns.
    * Currently every time this is called, it will browse all rules and find the best match.
    */
-  getVisualizationType(columns: VisColumn[]) {
+  getVisualizationType(columns: VisColumn[], transformedData: Array<Record<string, any>>) {
     const numericalColumns = columns.filter((column) => column.schema === VisFieldType.Numerical);
     const categoricalColumns = columns.filter(
       (column) => column.schema === VisFieldType.Categorical
     );
     const dateColumns = columns.filter((column) => column.schema === VisFieldType.Date);
 
-    const bestMatch = this.findBestMatch(numericalColumns, categoricalColumns, dateColumns);
+    const bestMatch = this.findBestMatch(
+      numericalColumns,
+      categoricalColumns,
+      dateColumns,
+      transformedData
+    );
 
     if (bestMatch) {
       return {
@@ -59,13 +64,24 @@ export class VisualizationRegistry {
   private findBestMatch(
     numericalColumns: VisColumn[],
     categoricalColumns: VisColumn[],
-    dateColumns: VisColumn[]
+    dateColumns: VisColumn[],
+    transformedData: Array<Record<string, any>>
   ): { rule: VisualizationRule; chartType: ChartTypeMapping } | null {
     let bestMatch: { rule: VisualizationRule; chartType: ChartTypeMapping } | null = null;
     let highestPriority = -1;
 
     for (const rule of this.rules) {
       if (rule.matches(numericalColumns, categoricalColumns, dateColumns)) {
+        // If the rule has a getChartTypes function, use it to get dynamic chart types
+        if (rule.getChartTypes) {
+          rule.chartTypes = rule.getChartTypes(
+            transformedData,
+            numericalColumns,
+            categoricalColumns,
+            dateColumns
+          );
+        }
+
         // Get the highest priority chart type from this rule
         const topChartType = rule.chartTypes[0];
 

@@ -130,7 +130,7 @@ export const getVisualizationType = <T = unknown>(
   });
 
   return {
-    ...registry.getVisualizationType(columns),
+    ...registry.getVisualizationType(columns, transformedData),
     transformedData,
   };
 };
