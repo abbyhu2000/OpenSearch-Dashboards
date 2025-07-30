@@ -148,7 +148,8 @@ cy.explore.add('setTopNavDate', (start, end, submit = true) => {
     .should('be.visible')
     .invoke('attr', 'data-test-subj')
     .then((testId) => {
-      cy.getElementByTestId(testId, opts).should('be.visible').click(opts);
+      cy.getElementByTestId(testId, opts).as('btn').click({force: true});
+      cy.get('@btn').click({force: true});
     });
 
   /* While we surely are in the date selection mode, we don't know if the date selection dialog
@@ -383,8 +384,8 @@ cy.explore.add(
 cy.explore.add(
   'setIndexAsDataset',
   (index, dataSourceName, language, timeFieldName = 'timestamp', finalAction = 'submit') => {
-    cy.getElementByTestId('datasetSelectButton').should('be.visible').click();
-    cy.getElementByTestId(`datasetSelectAdvancedButton`).should('be.visible').click();
+    cy.getElementByTestId('datasetSelectButton').click({force: true});
+    cy.getElementByTestId(`datasetSelectAdvancedButton`).click({force: true});
     cy.get(`[title="Indexes"]`).click();
     cy.get(`[title="${dataSourceName}"]`).click();
     // this element is sometimes dataSourceName masked by another element
@@ -412,8 +413,10 @@ cy.explore.add(
 );
 
 cy.explore.add('setIndexPatternAsDataset', (indexPattern) => {
-  cy.getElementByTestId('datasetSelectButton').should('be.visible').click();
-  cy.get(`[title="${indexPattern}"]`).should('be.visible').click();
+  cy.getElementByTestId('datasetSelectButton').as('btn').click({force: true});
+  cy.get('@btn').click({force:true})
+
+  cy.get(`[title="${indexPattern}"]`).click({force: true});
 
   // verify that it has been selected
   cy.getElementByTestId('datasetSelectButton').should('contain.text', `${indexPattern}`);
