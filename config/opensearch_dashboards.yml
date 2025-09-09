@@ -4,9 +4,17 @@
 # Specifies the address to which the OpenSearch Dashboards server will bind. IP addresses and host names are both valid values.
 # The default is 'localhost', which usually means remote machines will not be able to connect.
 # To allow connections from remote users, set this parameter to a non-loopback address.
-#server.host: "localhost"
+server.host: '0.0.0.0'
+opensearch.hosts: ["https://localhost:9200"]
+opensearch.username: "admin"
+opensearch.password: "OSDashboard@123"
+opensearch.ssl.verificationMode: none
+opensearch.requestTimeout: 120000
+# Optional: Enable security features
+#opensearch_security.enabled: true
 
-# Enables you to specify a path to mount OpenSearch Dashboards at if you are running behind a proxy.
+# Enables you to speci:wq
+# fy a path to mount OpenSearch Dashboards at if you are running behind a proxy.
 # Use the `server.rewriteBasePath` setting to tell OpenSearch Dashboards if it should remove the basePath
 # from requests it receives, and to prevent a deprecation warning at startup.
 # This setting cannot end in a slash.
