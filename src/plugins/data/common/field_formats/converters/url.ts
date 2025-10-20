@@ -28,6 +28,7 @@
  * under the License.
  */
 
+import dompurify from 'dompurify';
 import { i18n } from '@osd/i18n';
 import { escape, memoize } from 'lodash';
 import { getHighlightHtml } from '../utils';
@@ -148,8 +149,10 @@ export class UrlFormat extends FieldFormat {
     const isValidHeight = !isNaN(parsedHeight);
     const maxWidth = isValidWidth ? `${parsedWidth}px` : 'none';
     const maxHeight = isValidHeight ? `${parsedHeight}px` : 'none';
+    const sanitizedUrl = dompurify.sanitize(url);
+    const sanitizedImageLabel = dompurify.sanitize(imageLabel);
 
-    return `<img src="${url}" alt="${imageLabel}" style="width:auto; height:auto; max-width:${maxWidth}; max-height:${maxHeight};">`;
+    return `<img src="${sanitizedUrl}" alt="${sanitizedImageLabel}" style="width:auto; height:auto; max-width:${maxWidth}; max-height:${maxHeight};">`;
   }
 
   textConvert: TextContextTypeConvert = (value) => this.formatLabel(value);

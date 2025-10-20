@@ -89,7 +89,7 @@ export class Utils {
         for (const item of value) {
           if (typeof item === 'function') {
             return true;
-          } else if (typeof item === 'object' && item !== null) {
+          } else if (Utils.isObject(item) && item !== null) {
             // Properly handle objects inside arrays by recursively checking them
             if (Utils.checkForFunctionProperty(item)) {
               return true;
