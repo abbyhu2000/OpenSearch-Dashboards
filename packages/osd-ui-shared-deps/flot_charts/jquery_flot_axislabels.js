@@ -156,17 +156,19 @@ import dompurify from 'dompurify';
         ALLOWED_TAGS: [],
         ALLOWED_ATTR: [],
       })
-      .replace(/[^a-zA-Z0-9_-]/g, '');
+      .replace(/[^a-zA-Z0-9\s\-_.,!?()]/g, '');
 
     this.plot
       .getPlaceholder()
       .find('#' + sanitizedAxisName + 'Label')
       .remove();
 
-    const sanitizedLabel = dompurify.sanitize(this.opts.axisLabel, {
-      ALLOWED_TAGS: ['b', 'i', 'em', 'strong'], // Only allow basic formatting if needed
-      ALLOWED_ATTR: [],
-    });
+    const sanitizedLabel = dompurify
+      .sanitize(this.opts.axisLabel, {
+        ALLOWED_TAGS: [],
+        ALLOWED_ATTR: [],
+      })
+      .replace(/[^a-zA-Z0-9\s\-_.,!?()]/g, '');
 
     this.elem = $('<div>')
       .attr('id', sanitizedAxisName + 'Label')
@@ -270,7 +272,7 @@ import dompurify from 'dompurify';
         ALLOWED_TAGS: [],
         ALLOWED_ATTR: [],
       })
-      .replace(/[^a-zA-Z0-9_-]/g, '');
+      .replace(/[^a-zA-Z0-9\s\-_.,!?()]/g, '');
 
     this.plot
       .getPlaceholder()
@@ -279,10 +281,12 @@ import dompurify from 'dompurify';
 
     var offsets = this.calculateOffsets(box);
 
-    const sanitizedLabel = dompurify.sanitize(this.opts.axisLabel, {
-      ALLOWED_TAGS: ['b', 'i', 'em', 'strong'], // Only allow basic formatting if needed
-      ALLOWED_ATTR: [],
-    });
+    const sanitizedLabel = dompurify
+      .sanitize(this.opts.axisLabel, {
+        ALLOWED_TAGS: [],
+        ALLOWED_ATTR: [],
+      })
+      .replace(/[^a-zA-Z0-9\s\-_.,!?()]/g, '');
 
     // Create the element with sanitized values
     this.elem = $('<div>')
