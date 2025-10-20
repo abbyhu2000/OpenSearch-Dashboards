@@ -29,6 +29,7 @@
  */
 
 import { schema, TypeOf } from '@osd/config-schema';
+import { containsDangerousTemplateName } from './utils';
 
 export type Query = TypeOf<typeof routeValidationConfig.query>;
 export type Body = TypeOf<typeof routeValidationConfig.body>;
@@ -44,7 +45,16 @@ const acceptedHttpVerb = schema.string({
 });
 
 const nonEmptyString = schema.string({
-  validate: (s) => (s === '' ? 'Expected non-empty string' : undefined),
+  validate: (s) => {
+    if (s === '') return 'Expected non-empty string';
+
+    // Validate paths to prevent XSS through template names
+    if (containsDangerousTemplateName(s)) {
+      return 'Path contains potentially dangerous template name';
+    }
+
+    return undefined;
+  },
 });
 
 export const routeValidationConfig = {

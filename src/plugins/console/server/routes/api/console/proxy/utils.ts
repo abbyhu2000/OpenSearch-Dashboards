@@ -11,6 +11,17 @@
 
 import { Stream } from 'stream';
 
+/**
+ * Checks if a path contains potentially dangerous template names that could be used for XSS attacks
+ * @param path The path to check
+ * @returns true if the path contains a dangerous template name, false otherwise
+ */
+export const containsDangerousTemplateName = (path: string): boolean => {
+  // This pattern matches common JavaScript functions and objects that could be used for XSS
+  const dangerousTemplatePattern = /(_cat\/templates\/|_index_template\/)(eval|javascript|script|function|alert|document|window|location|history|fetch|XMLHttpRequest|Promise|setTimeout|setInterval|constructor|prototype|__proto__|__defineGetter__|__defineSetter__|toString|valueOf)\s*[\(\[\{]/i;
+  return dangerousTemplatePattern.test(path);
+};
+
 export const buildBufferedBody = (body: Stream): Promise<Buffer> => {
   return new Promise((resolve, reject) => {
     let buff: Buffer = Buffer.alloc(0);

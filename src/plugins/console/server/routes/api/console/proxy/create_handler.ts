@@ -29,7 +29,7 @@
  */
 
 import { OpenSearchDashboardsRequest, RequestHandler } from 'opensearch-dashboards/server';
-import { trimStart } from 'lodash';
+import { trimStart, escapeRegExp } from 'lodash';
 import { Readable } from 'stream';
 import { stringify } from '@osd/std';
 
@@ -41,7 +41,7 @@ import { isResponseError } from '../../../../../../../core/server/opensearch/cli
 import { RouteDependencies } from '../../../';
 
 import { Body, Query } from './validation_config';
-import { buildBufferedBody } from './utils';
+import { buildBufferedBody, containsDangerousTemplateName } from './utils';
 
 function getProxyHeaders(req: OpenSearchDashboardsRequest) {
   const headers = Object.create(null);
@@ -87,6 +87,16 @@ export const createHandler = ({
 }: RouteDependencies): RequestHandler<unknown, Query, Body> => async (ctx, request, response) => {
   const { body, query } = request;
   const { path, method, dataSourceId } = query;
+
+  // Check for potentially dangerous template names in _cat/templates and _index_template endpoints
+  if (containsDangerousTemplateName(path)) {
+    return response.forbidden({
+      body: `Error connecting to '${path}':\n\nPotentially dangerous template name detected.`,
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
+  }
 
   if (!pathFilters.some((re) => re.test(path))) {
     return response.forbidden({
